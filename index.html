@@ -5,122 +5,167 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Muscle Trainer</title>
 <style>
-:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f4f1ea;--card:#fffdf8;--ink:#25292c;--mute:#6f7478;--line:#d9d3c6;--acc:#2f5d50;--accink:#fff;--sil:#e7e0d2;--bad:#c4452f;--gold:#e0a100}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#16181a;--card:#202325;--ink:#ece9e2;--mute:#9a9e9f;--line:#3a3f42;--acc:#7fb8a4;--accink:#10201b;--sil:#2b2f31;--bad:#ee7a63;--gold:#f0b429}}
-:root[data-theme="dark"]{color-scheme:dark;--bg:#16181a;--card:#202325;--ink:#ece9e2;--mute:#9a9e9f;--line:#3a3f42;--acc:#7fb8a4;--accink:#10201b;--sil:#2b2f31;--bad:#ee7a63;--gold:#f0b429}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f4f1ea;--card:#fffdf8;--ink:#25292c;--mute:#6f7478;--line:#d9d3c6;--acc:#2f5d50;--accink:#fff;--sil:#ecd9c6;--sil2:#d9bfa6;--bad:#c4452f;--gold:#e0a100}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#16181a;--card:#202325;--ink:#ece9e2;--mute:#9a9e9f;--line:#3a3f42;--acc:#7fb8a4;--accink:#10201b;--sil:#4a423c;--sil2:#37312c;--bad:#ee7a63;--gold:#f0b429}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#16181a;--card:#202325;--ink:#ece9e2;--mute:#9a9e9f;--line:#3a3f42;--acc:#7fb8a4;--accink:#10201b;--sil:#4a423c;--sil2:#37312c;--bad:#ee7a63;--gold:#f0b429}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:inherit}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 -apple-system,system-ui,"Segoe UI",Roboto,sans-serif}
-main{max-width:560px;margin:0 auto;padding:12px 12px 40px}h1{font:700 26px Georgia,serif;margin:4px 0}.sub{color:var(--mute);font-size:14px;margin:0 0 8px}
+main{max-width:600px;margin:0 auto;padding:12px 12px 40px}h1{font:700 26px Georgia,serif;margin:4px 0}.sub{color:var(--mute);font-size:14px;margin:0 0 8px}
 .row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:6px 0}
-button,select,input{font:600 14px system-ui,sans-serif;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:9px 12px}button.on,button.p{background:var(--acc);color:var(--accink);border-color:var(--acc)}
+button,select,input{font:600 14px system-ui,sans-serif;border-radius:10px;border:2px solid var(--line);background:var(--card);color:var(--ink);padding:9px 12px}button.on,button.p{background:var(--acc);color:var(--accink);border-color:var(--acc)}input[type=text]{border-color:var(--acc)}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin:8px 0}
-svg{width:100%;height:min(66vh,560px);display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;touch-action:pan-y;user-select:none}
-.sil{fill:var(--sil)}.mu *{fill:var(--gc);fill-opacity:.82;stroke:var(--ink);stroke-opacity:.45;stroke-width:1;cursor:pointer}.mu:hover *{fill-opacity:1}
-.mu.dim *{fill-opacity:.15;stroke-opacity:.15}.mu.sel *{stroke:var(--ink);stroke-opacity:1;stroke-width:3;fill-opacity:1}
-.mu.q *{fill:var(--gold);fill-opacity:1;animation:pl 1s infinite}.mu.bad *{fill:var(--bad);fill-opacity:1;stroke-opacity:1;stroke-width:3}.mu.ans *{fill:#3aa66b;fill-opacity:1;stroke-opacity:1;stroke-width:3}
-@keyframes pl{50%{fill-opacity:.45}}.lbl{font:700 15px system-ui;fill:var(--ink);paint-order:stroke;stroke:var(--card);stroke-width:4px;pointer-events:none}
-.ch{display:block;width:100%;text-align:left;margin:5px 0}.k{color:var(--mute);font-size:14px}#fb{min-height:2.6em;margin-top:6px}
+svg{width:100%;height:min(66vh,580px);display:block;background:radial-gradient(circle at 50% 35%,var(--card),var(--bg));border:1px solid var(--line);border-radius:14px;touch-action:none;user-select:none;cursor:grab}
+.v{transition:opacity .35s}.v.off{opacity:0;pointer-events:none}
+.sil{fill:url(#sg);stroke:var(--sil2);stroke-width:1.2}
+.mu *{fill:var(--gf);fill-opacity:.9;stroke:#0006;stroke-width:.7;cursor:pointer;transition:fill-opacity .2s}.mu:hover *{fill-opacity:1;stroke-width:1.4}
+.mu.dim *{fill-opacity:.18}.mu.sel *{stroke:var(--ink);stroke-width:2.6;fill-opacity:1}
+.mu.q *{fill:var(--gold);animation:pl 1s infinite}.mu.bad *{fill:var(--bad);fill-opacity:1;stroke-width:2.4}.mu.ans *{fill:#3aa66b;fill-opacity:1;stroke-width:2.4}
+@keyframes pl{50%{fill-opacity:.4}}.lbl{font:700 14px system-ui;fill:var(--ink);paint-order:stroke;stroke:var(--card);stroke-width:4px;pointer-events:none}
+.ch{display:block;width:100%;text-align:left;margin:5px 0}.ch.x{opacity:.35;text-decoration:line-through}.k{color:var(--mute);font-size:14px}#fb{min-height:2.4em;margin:6px 0}
+#toast{position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);left:50%;transform:translateX(-50%);background:var(--gold);color:#222;padding:10px 18px;border-radius:30px;font-weight:700;display:none;z-index:9;box-shadow:0 4px 16px #0006}
 </style>
 </head>
 <body>
 <main>
 <h1>Muscle Trainer</h1>
-<p class="sub">Drag the body to rotate it. Tap a muscle. 34 major muscles, drawn as a simplified schematic.</p>
-<div class="row" id="modes"><button data-m="learn" class="on">Learn</button><button data-m="practice">Practice</button>
-<span id="po" style="display:none" class="row"><select id="qt"><option value="mc">Multiple choice</option><option value="fill">Fill in the blank</option></select><select id="lv"><option value="b">Beginner</option><option value="e">Expert</option></select></span></div>
+<p class="sub">Drag the picture to move it. Tap a muscle. 60 muscles in 14 groups, drawn as a simplified schematic.</p>
+<div class="row" id="modes"><button data-m="learn" class="on">Learn</button><button data-m="practice">Practice</button><button data-m="speed">Speed run</button></div>
+<div class="row" id="po" style="display:none"><select id="qt"><option value="mc">Multiple choice</option><option value="fill">Fill in the blank</option></select><select id="lv"><option value="b">Beginner</option><option value="e">Expert</option></select></div>
+<div class="row" id="so" style="display:none"><select id="sg"></select><select id="stm"><option value="60">1 minute</option><option value="300">5 minutes</option><option value="0">Untimed</option></select><button class="p" id="sgo">Start</button></div>
 <svg id="s" viewBox="0 0 300 640" aria-label="Human muscle diagram"></svg>
-<div class="row"><button id="front">Front</button><button id="back">Back</button><button id="spin">Spin</button><input type="range" id="rot" min="0" max="359" value="0" aria-label="Rotation" style="flex:1"></div>
-<div class="row"><button id="gp">◀</button><select id="gs" aria-label="Muscle group"></select><button id="gn">▶</button><button id="zo">Zoom out</button></div>
+<div class="row"><button id="front" class="on">Front</button><button id="back">Back</button><button id="zo">Zoom out</button><span class="k" id="vwk"></span></div>
+<div class="row"><button id="gp">◀</button><select id="gs" aria-label="Muscle group"></select><button id="gn">▶</button></div>
 <div class="card" id="info"><b>Tap a muscle to identify it.</b></div>
 <div class="card" id="pq" style="display:none"></div>
+<div class="card" id="spc" style="display:none"></div>
+<div class="card"><b>Badges</b><div id="bdg" class="k">None yet.</div></div>
 </main>
+<div id="toast"></div>
 <script>
-const $=id=>document.getElementById(id),svg=$("s"),NS="http://www.w3.org/2000/svg";
-const GR=["Head & Neck","Shoulder","Chest","Back","Abdomen","Upper arm","Forearm","Hip & Glutes","Thigh","Lower leg"],HUE=[200,30,350,260,50,140,170,310,20,90];
-// id, name, group, views, shape ("e cx cy rx ry rot" or "p path"), action
+const $=id=>document.getElementById(id),svg=$("s");
+const GR=["Face","Neck","Shoulder","Chest","Back","Abdomen","Upper arm","Forearm","Hand","Pelvis","Hip & Glutes","Thigh","Lower leg","Foot"],HUE=[18,200,32,350,262,48,140,172,322,296,308,12,92,60];
 const M=[
-["trap","Trapezius",3,"b","p M150 82 Q192 94 226 112 L204 152 L174 202 L150 242Z","Lifts, lowers and retracts the shoulder blade"],
-["lat","Latissimus dorsi",3,"b","p M158 196 L202 170 L216 180 L206 238 L162 266Z","Pulls the arm down and back"],
-["glutmax","Gluteus maximus",7,"b","p M151 322 L206 324 Q214 352 190 376 L151 374Z","Extends the hip"],
-["glutmed","Gluteus medius",7,"b","p M168 292 L206 296 L208 322 L170 320Z","Moves the leg out to the side"],
-["erector","Erector spinae",3,"b","p M150 150 L162 150 L165 292 L150 294Z","Straightens the spine"],
-["rhomb","Rhomboid major",3,"b","p M154 126 L171 132 L170 168 L154 163Z","Pulls the shoulder blades together"],
-["infra","Infraspinatus",1,"b","p M172 132 L206 128 L202 162 L174 168Z","Rotates the arm outward"],
-["teres","Teres major",1,"b","e 213 166 12 6 -20","Rotates the arm inward and pulls it back"],
-["delt","Deltoid",1,"fb","e 234 130 17 27 -8","Lifts the arm away from the body"],
-["pec","Pectoralis major",2,"f","p M152 116 Q188 112 222 126 Q216 166 190 184 Q166 186 152 170Z","Pulls the arm across the chest"],
-["serr","Serratus anterior",2,"f","p M196 170 L214 162 L217 198 L200 204Z","Holds the shoulder blade against the ribs"],
-["rect","Rectus abdominis",4,"f","p M153 192 L178 192 L177 292 L153 294Z","Bends the trunk forward"],
-["obl","External oblique",4,"f","p M181 196 L206 196 Q213 240 201 286 L181 291Z","Twists and bends the trunk"],
-["scm","Sternocleidomastoid",0,"f","p M168 70 L176 72 L160 108 L151 106Z","Turns and tilts the head"],
-["mass","Masseter",0,"f","e 166 62 6 9 0","Closes the jaw to chew"],
-["temp","Temporalis",0,"f","e 171 40 7 9 0","Closes the jaw"],
-["bic","Biceps brachii",5,"f","e 243 176 11 38 3","Bends the elbow and turns the palm up"],
-["tric","Triceps brachii",5,"b","e 244 180 12 40 3","Straightens the elbow"],
-["brach","Brachioradialis",6,"f","e 259 250 6 26 4","Bends the elbow"],
-["fcr","Flexor carpi radialis",6,"f","e 249 292 7 32 3","Bends the wrist"],
-["extd","Extensor digitorum",6,"b","e 254 286 8 38 3","Straightens the fingers"],
-["tfl","Tensor fasciae latae",7,"f","p M201 300 L214 306 L212 346 L202 346Z","Moves the leg out and steadies the hip"],
-["add","Adductor longus",8,"f","p M153 330 L170 344 L169 420 L157 412Z","Pulls the thigh toward the middle"],
-["sart","Sartorius",8,"f","p M200 312 L208 308 L172 442 L164 440Z","Crosses the legs and bends the hip and knee"],
-["rf","Rectus femoris",8,"f","e 186 386 12 54 0","Straightens the knee and bends the hip"],
-["vl","Vastus lateralis",8,"f","e 208 396 10 54 0","Straightens the knee"],
-["vm","Vastus medialis",8,"f","e 170 444 10 30 0","Straightens the knee"],
-["bf","Biceps femoris",8,"b","e 204 416 11 54 0","Bends the knee and extends the hip"],
-["st","Semitendinosus",8,"b","e 186 412 9 50 0","Bends the knee and extends the hip"],
-["sm","Semimembranosus",8,"b","e 168 414 9 48 0","Bends the knee and extends the hip"],
-["ta","Tibialis anterior",9,"f","e 190 546 7 42 0","Lifts the foot upward"],
-["fib","Fibularis longus",9,"f","e 205 538 6 38 0","Turns the sole outward"],
-["gas","Gastrocnemius",9,"b","e 190 530 13 38 0","Points the foot down and bends the knee"],
-["sol","Soleus",9,"b","e 190 580 10 28 0","Points the foot down"]];
-const BY={};M.forEach(m=>BY[m[0]]=m);
-function shape(sp){const t=sp.split(" ");return t[0]==="e"?`<ellipse cx="${t[1]}" cy="${t[2]}" rx="${t[3]}" ry="${t[4]}" transform="rotate(${t[5]} ${t[1]} ${t[2]})"/>`:`<path d="${sp.slice(2)}"/>`}
+["trap","Trapezius",4,"b","p M150 82 C180 90 208 98 228 112 C220 140 196 170 176 204 C166 222 156 236 150 244Z","Lifts, lowers and pulls back the shoulder blade"],
+["lat","Latissimus dorsi",4,"b","p M158 198 C178 184 198 170 206 166 C214 170 218 178 214 190 C210 220 192 252 162 268Z","Pulls the arm down and back"],
+["glutmax","Gluteus maximus",10,"b","p M151 322 C170 318 196 320 206 326 C216 346 204 368 188 376 C176 380 160 376 151 372Z","Extends the hip"],
+["pec","Pectoralis major",3,"f","p M152 116 C178 110 206 116 224 128 C220 152 204 176 186 184 C170 188 158 180 152 168Z","Pulls the arm across the chest"],
+["rect","Rectus abdominis",5,"f","p M153 192 C162 190 172 190 179 192 C180 224 178 262 177 292 C168 296 160 296 153 294Z","Bends the trunk forward"],
+["obl","External oblique",5,"f","p M182 196 C192 194 202 194 207 198 C214 230 210 264 200 288 C192 292 186 292 181 290Z","Twists and bends the trunk"],
+["serr","Serratus anterior",3,"f","p M197 168 C204 164 211 162 215 163 C218 178 218 192 216 200 C210 204 204 204 200 204Z","Holds the shoulder blade against the ribs"],
+["erector","Erector spinae",4,"b","p M150 150 C156 148 160 150 163 154 C166 200 166 250 164 294 C158 296 154 296 150 294Z","Straightens the spine"],
+["rhomb","Rhomboid major",4,"b","p M154 126 C162 128 168 130 172 134 C172 148 170 158 170 168 C164 168 158 166 154 164Z","Pulls the shoulder blades together"],
+["glutmed","Gluteus medius",10,"b","p M168 292 C184 290 198 292 207 298 C210 308 209 316 207 324 C194 324 180 322 170 320Z","Moves the leg out to the side"],
+["tfl","Tensor fasciae latae",10,"f","p M201 300 C207 301 212 304 215 308 C214 322 213 336 211 347 C207 348 204 348 202 346Z","Moves the leg out and steadies the hip"],
+["delt","Deltoid",2,"fb","e 234 130 17 27 -8","Lifts the arm away from the body"],
+["supra","Supraspinatus",2,"b","e 192 123 14 6 -10","Starts lifting the arm"],
+["infra","Infraspinatus",2,"b","p M172 132 C186 128 198 128 207 129 C206 143 204 154 202 162 C192 166 182 168 174 168Z","Rotates the arm outward"],
+["tmin","Teres minor",2,"b","e 209 150 8 4 -15","Rotates the arm outward"],
+["tmaj","Teres major",2,"b","e 213 167 12 6 -20","Rotates the arm inward and pulls it back"],
+["scm","Sternocleidomastoid",1,"f","p M168 70 C173 70 176 71 177 73 C172 86 166 98 160 108 L151 106 C158 94 164 82 168 70Z","Turns and tilts the head"],
+["plat","Platysma",1,"f","p M140 76 C146 82 154 84 161 78 L171 99 C164 103 156 104 150 102Z","Tightens the neck skin and pulls the mouth down"],
+["scal","Scalenes",1,"f","e 170 92 3.5 9 -15","Lifts the first ribs and tilts the neck"],
+["spl","Splenius capitis",1,"b","p M154 74 C161 76 167 78 171 82 C169 94 167 104 164 112 L153 108Z","Extends and turns the head"],
+["lev","Levator scapulae",1,"b","e 177 107 4 12 -25","Lifts the shoulder blade"],
+["front","Frontalis",0,"f","e 150 18 17 6 0","Raises the eyebrows"],
+["orbi","Orbicularis oculi",0,"f","e 161 37 8 5 0","Closes the eyelid"],
+["zyg","Zygomaticus major",0,"f","e 163 52 8 3.5 30","Lifts the corner of the mouth (smiling)"],
+["oris","Orbicularis oris",0,"f","e 150 62 9 4 0","Closes and purses the lips"],
+["mass","Masseter",0,"f","e 168 58 5 9 0","Closes the jaw to chew"],
+["temp","Temporalis",0,"f","e 173 36 5 9 0","Closes the jaw"],
+["bic","Biceps brachii",6,"f","e 243 176 11 38 3","Bends the elbow and turns the palm up"],
+["bra","Brachialis",6,"f","e 248 198 5 14 3","Bends the elbow"],
+["tric","Triceps brachii",6,"b","e 244 180 12 40 3","Straightens the elbow"],
+["brach","Brachioradialis",7,"f","e 259 250 6 26 4","Bends the elbow"],
+["pron","Pronator teres",7,"f","e 244 227 5 13 40","Turns the palm down"],
+["fcr","Flexor carpi radialis",7,"f","e 249 292 7 32 3","Bends the wrist"],
+["extd","Extensor digitorum",7,"b","e 254 286 8 38 3","Straightens the fingers"],
+["ecrl","Extensor carpi radialis longus",7,"b","e 261 252 4.5 20 3","Bends the wrist backward"],
+["apb","Abductor pollicis brevis",8,"f","e 255 353 4.5 8 20","Moves the thumb away from the palm"],
+["adm","Abductor digiti minimi",8,"f","e 270 353 4 9 -10","Moves the little finger away"],
+["adp","Adductor pollicis",8,"f","e 259 366 4 6 0","Pulls the thumb toward the palm"],
+["dio","Dorsal interossei",8,"b","e 262 357 7 11 0","Spreads the fingers"],
+["ili","Iliopsoas",9,"f","p M158 296 C164 298 170 302 173 308 C172 320 171 328 169 337 C165 336 161 334 158 331Z","Bends the hip"],
+["pect","Pectineus",9,"f","e 166 347 6 7 -20","Pulls the thigh inward and bends the hip"],
+["pirif","Piriformis",9,"b","e 178 333 15 4 12","Rotates the thigh outward"],
+["rf","Rectus femoris",11,"f","e 186 386 12 54 0","Straightens the knee and bends the hip"],
+["vl","Vastus lateralis",11,"f","e 208 396 10 54 0","Straightens the knee"],
+["vm","Vastus medialis",11,"f","e 170 444 10 30 0","Straightens the knee"],
+["sart","Sartorius",11,"f","p M200 312 C204 308 207 308 209 310 C196 350 180 400 168 442 C165 442 163 441 163 440 C174 400 188 356 200 312Z","Crosses the legs and bends the hip and knee"],
+["add","Adductor longus",11,"f","p M153 330 C160 334 166 340 170 345 C171 372 170 396 169 420 C164 418 160 415 157 412Z","Pulls the thigh toward the middle"],
+["grac","Gracilis",11,"f","e 161 400 4 38 0","Pulls the thigh inward and bends the knee"],
+["bf","Biceps femoris",11,"b","e 204 416 11 54 0","Bends the knee and extends the hip"],
+["st","Semitendinosus",11,"b","e 186 412 9 50 0","Bends the knee and extends the hip"],
+["sm","Semimembranosus",11,"b","e 168 414 9 48 0","Bends the knee and extends the hip"],
+["ta","Tibialis anterior",12,"f","e 190 546 7 42 0","Lifts the foot upward"],
+["fib","Fibularis longus",12,"f","e 205 538 6 38 0","Turns the sole outward"],
+["edl","Extensor digitorum longus",12,"f","e 199 548 3.5 34 0","Lifts the toes and foot"],
+["gas","Gastrocnemius",12,"b","e 190 530 13 38 0","Points the foot down and bends the knee"],
+["sol","Soleus",12,"b","e 190 580 10 28 0","Points the foot down"],
+["edb","Extensor digitorum brevis",13,"f","e 198 614 6 3.5 -5","Lifts the toes"],
+["ahal","Abductor hallucis",13,"f","e 176 616 6 3.5 5","Moves the big toe inward"],
+["adm5","Abductor digiti minimi (foot)",13,"f","e 208 618 5 3 0","Moves the little toe outward"],
+["fdb","Flexor digitorum brevis",13,"b","e 192 616 7 4 0","Bends the toes"]];
+const BY={};M.forEach(m=>BY[m[0]]=m);const GN=GR.map((_,i)=>M.filter(m=>m[2]===i).length);
 const MIR='transform="translate(300 0) scale(-1 1)"';
-function viewSvg(v){const sil='<ellipse class="sil" cx="150" cy="46" rx="24" ry="32"/><rect class="sil" x="138" y="70" width="24" height="30"/><path class="sil" d="M150 84 L226 108 L214 300 L212 345 L150 350Z"/><path class="sil" d="M222 108 Q258 116 262 140 L272 250 L274 345 L256 368 L246 362 L242 250 L228 188Z"/><path class="sil" d="M150 332 L214 336 L212 470 L208 600 L218 624 L166 626 L172 480 L150 400Z"/>';
-return `<g class="sil">${sil}<g ${MIR}>${sil}</g></g>`+M.filter(m=>m[3].includes(v)).map(m=>`<g class="mu" data-id="${m[0]}" style="--gc:hsl(${HUE[m[2]]} 55% 52%)">${shape(m[4])}<g ${MIR}>${shape(m[4])}</g></g>`).join("")}
-svg.innerHTML=`<g id="body"><g id="fv">${viewSvg("f")}</g><g id="bv" style="display:none">${viewSvg("b")}</g></g><text id="lbl" class="lbl" x="150" y="632" text-anchor="middle"></text>`;
+const shape=sp=>{const t=sp.split(" ");return t[0]==="e"?`<ellipse cx="${t[1]}" cy="${t[2]}" rx="${t[3]}" ry="${t[4]}" transform="rotate(${t[5]} ${t[1]} ${t[2]})"/>`:`<path d="${sp.slice(2)}"/>`};
+const HALF='<path d="M150 92 C175 96 205 100 226 110 C232 160 224 200 220 240 C218 280 222 310 214 345 L150 352Z"/><path d="M224 108 C246 108 262 122 264 148 C268 200 270 260 274 340 C276 352 270 366 262 374 C252 374 246 360 246 346 C244 280 240 220 228 190Z"/><path d="M150 334 L216 338 C220 400 214 460 212 500 C210 560 214 600 220 626 L168 628 C172 590 172 540 174 500 C176 450 160 400 150 380Z"/>';
+const defs=`<defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--sil)"/><stop offset="1" stop-color="var(--sil2)"/></linearGradient>`+HUE.map((h,i)=>`<linearGradient id="gr${i}" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0" stop-color="hsl(${h} 62% 66%)"/><stop offset="1" stop-color="hsl(${h} 58% 42%)"/></linearGradient>`).join("")+`</defs>`;
+const viewSvg=v=>`<g class="sil">${HALF}<g ${MIR}>${HALF}</g><ellipse cx="150" cy="44" rx="25" ry="33"/><path d="M138 72 L162 72 L168 96 L132 96Z"/></g>`+M.filter(m=>m[3].includes(v)).map(m=>`<g class="mu" data-id="${m[0]}" style="--gf:url(#gr${m[2]})">${shape(m[4])}<g ${MIR}>${shape(m[4])}</g></g>`).join("");
+svg.innerHTML=defs+`<g id="fv" class="v">${viewSvg("f")}</g><g id="bv" class="v off">${viewSvg("b")}</g><text id="lbl" class="lbl" x="150" y="632" text-anchor="middle"></text>`;
 const LOC=m=>`${GR[m[2]]} group, ${m[3]==="b"?"back":"front"} view`;
-let rot=0,mode="learn",sel=null,spin=0,spinT=null,vb=[0,0,300,640],q=null,score=[0,0],busy=false;
-function setRot(r){rot=((r%360)+360)%360;$("rot").value=Math.round(rot);const sx=Math.max(Math.abs(Math.cos(rot*Math.PI/180)),.04),back=Math.cos(rot*Math.PI/180)<0;$("body").setAttribute("transform",`translate(150 0) scale(${sx} 1) translate(-150 0)`);$("fv").style.display=back?"none":"";$("bv").style.display=back?"":"none"}
-function face(v){const t=v==="b"?180:0,s=((t-rot+540)%360)-180,n=12;let i=0;(function step(){i++;setRot(rot+s/n);if(i<n)requestAnimationFrame(step)})()}
-$("rot").oninput=e=>setRot(+e.target.value);$("front").onclick=()=>face("f");$("back").onclick=()=>face("b");
-$("spin").onclick=()=>{spin=!spin;$("spin").classList.toggle("on",spin);clearInterval(spinT);if(spin)spinT=setInterval(()=>setRot(rot+2),40)};
-// drag to rotate, tap to select
-let dr=null;svg.addEventListener("pointerdown",e=>{dr={x:e.clientX,r:rot,moved:false}});
-svg.addEventListener("pointermove",e=>{if(!dr)return;const dx=e.clientX-dr.x;if(Math.abs(dx)>6)dr.moved=true;if(dr.moved)setRot(dr.r+dx*.9)});
+let tok=0,vw="f",mode="learn",vb=[0,0,300,640],q=null,tried=new Set(),streak=0,score=[0,0],busy=false,sp=null,spT=null;
+let prog={g:{},badges:[],best:0};try{prog=Object.assign(prog,JSON.parse(localStorage.getItem("mt3")||"{}"))}catch(e){}
+const save=()=>{try{localStorage.setItem("mt3",JSON.stringify(prog))}catch(e){}};
+function toast(t){const e=$("toast");e.textContent="🏅 "+t;e.style.display="block";setTimeout(()=>e.style.display="none",3200)}
+function award(n){if(prog.badges.includes(n))return;prog.badges.push(n);save();toast("Badge earned: "+n);bdg()}
+function bdg(){$("bdg").innerHTML=prog.badges.length?prog.badges.map(b=>`<span class="card" style="display:inline-block;margin:3px;padding:4px 10px">🏅 ${b}</span>`).join(""):"None yet. Try for 10 in a row, 50 in a row, or a whole group."}
+function face(v){vw=v;$("fv").classList.toggle("off",v!=="f");$("bv").classList.toggle("off",v!=="b");$("front").classList.toggle("on",v==="f");$("back").classList.toggle("on",v==="b")}
+$("front").onclick=()=>face("f");$("back").onclick=()=>face("b");
+const tween=to=>{const from=vb.slice();let i=0;(function s(){i++;const t=i/16,k=t*t*(3-2*t);vb=from.map((x,j)=>x+(to[j]-x)*k);svg.setAttribute("viewBox",vb.join(" "));if(i<16)requestAnimationFrame(s)})()};
+// drag to pan, tap to select
+let dr=null;svg.addEventListener("pointerdown",e=>{dr={x:e.clientX,y:e.clientY,vb:vb.slice(),moved:false}});
+svg.addEventListener("pointermove",e=>{if(!dr)return;const dx=e.clientX-dr.x,dy=e.clientY-dr.y;if(Math.hypot(dx,dy)>6)dr.moved=true;if(dr.moved){const k=dr.vb[2]/svg.clientWidth;vb=[dr.vb[0]-dx*k,dr.vb[1]-dy*k,dr.vb[2],dr.vb[3]];svg.setAttribute("viewBox",vb.join(" "))}});
 svg.addEventListener("pointerup",e=>{const m=dr&&!dr.moved&&e.target.closest(".mu");dr=null;if(m)pick(m.dataset.id)});
-function cls(id,c,on){document.querySelectorAll(`.mu[data-id="${id}"]`).forEach(g=>g.classList.toggle(c,on))}
+const cls=(id,c,on)=>document.querySelectorAll(`.mu[data-id="${id}"]`).forEach(g=>g.classList.toggle(c,on));
 function clearMarks(){document.querySelectorAll(".mu").forEach(g=>g.classList.remove("sel","q","bad","ans"));$("lbl").textContent=""}
-function show(id,c,label){cls(id,c,true);$("lbl").textContent=label||""}
-function pick(id){if(mode==="learn"){clearMarks();sel=id;const m=BY[id];show(id,"sel",m[1]);$("info").innerHTML=`<b>${m[1]}</b><br><span class="k">${GR[m[2]]} · ${m[3]==="b"?"back view":m[3]==="f"?"front view":"both views"}</span><p>${m[5]}.</p><button id="zg">Zoom to ${GR[m[2]]}</button>`;$("zg").onclick=()=>zoom(m[2])}}
-// zoom
-function tween(to){const from=vb.slice();let i=0;(function s(){i++;const t=i/16,k=t*t*(3-2*t);vb=from.map((v,j)=>v+(to[j]-v)*k);svg.setAttribute("viewBox",vb.join(" "));if(i<16)requestAnimationFrame(s)})()}
-GR.forEach((g,i)=>$("gs").insertAdjacentHTML("beforeend",`<option value="${i}">${g}</option>`));
-function zoom(g){$("gs").value=g;const ms=M.filter(m=>m[2]===g),v=ms.filter(m=>m[3].includes("b")).length>ms.length/2?"b":"f";face(v);document.querySelectorAll(".mu").forEach(e=>e.classList.toggle("dim",BY[e.dataset.id][2]!==g));
-setTimeout(()=>{const els=[...document.querySelectorAll(`#${v==="b"?"bv":"fv"} .mu`)].filter(e=>BY[e.dataset.id][2]===g);let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;els.forEach(e=>{const b=e.getBBox();x0=Math.min(x0,b.x);y0=Math.min(y0,b.y);x1=Math.max(x1,b.x+b.width);y1=Math.max(y1,b.y+b.height)});
-x0=Math.min(x0,300-x1);x1=300-x0;const w=Math.max(x1-x0+40,120),h=Math.max(y1-y0+40,120),k=Math.max(w/svg.clientWidth,h/svg.clientHeight),W=k*svg.clientWidth,H=k*svg.clientHeight;tween([150-W/2,(y0+y1)/2-H/2,W,H])},260)}
+function show(id,c,l){cls(id,c,true);$("lbl").textContent=l||""}
+function focus(g,dim){$("gs").value=g;const ms=M.filter(m=>m[2]===g),v=ms.filter(m=>m[3]==="b").length>ms.length/2?"b":"f";face(v);document.querySelectorAll(".mu").forEach(e=>e.classList.toggle("dim",!!dim&&BY[e.dataset.id][2]!==g));
+setTimeout(()=>{const els=[...document.querySelectorAll(`#${v==="b"?"bv":"fv"} .mu`)].filter(e=>BY[e.dataset.id][2]===g);if(!els.length)return;let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;els.forEach(e=>{const b=e.getBBox();x0=Math.min(x0,b.x);y0=Math.min(y0,b.y);x1=Math.max(x1,b.x+b.width);y1=Math.max(y1,b.y+b.height)});
+x0=Math.min(x0,300-x1);x1=300-x0;const w=Math.max(x1-x0+50,140),h=Math.max(y1-y0+50,140),k=Math.max(w/svg.clientWidth,h/svg.clientHeight),W=k*svg.clientWidth,H=k*svg.clientHeight;tween([150-W/2,(y0+y1)/2-H/2,W,H])},120)}
 function out(){document.querySelectorAll(".mu").forEach(e=>e.classList.remove("dim"));tween([0,0,300,640])}
-$("zo").onclick=out;$("gs").onchange=e=>zoom(+e.target.value);$("gp").onclick=()=>zoom((+$("gs").value+GR.length-1)%GR.length);$("gn").onclick=()=>zoom((+$("gs").value+1)%GR.length);
-// quiz
+GR.forEach((g,i)=>$("gs").insertAdjacentHTML("beforeend",`<option value="${i}">${g}</option>`));$("sg").innerHTML='<option value="all">Whole body</option>'+GR.map((g,i)=>`<option value="${i}">${g}</option>`).join("");
+$("zo").onclick=out;$("gs").onchange=e=>focus(+e.target.value,mode==="learn");$("gp").onclick=()=>focus((+$("gs").value+GR.length-1)%GR.length,mode==="learn");$("gn").onclick=()=>focus((+$("gs").value+1)%GR.length,mode==="learn");
+function pick(id){if(mode!=="learn")return;clearMarks();const m=BY[id];show(id,"sel",m[1]);$("info").innerHTML=`<b>${m[1]}</b><br><span class="k">${LOC(m)}</span><p>${m[5]}.</p><button id="zg">Zoom to ${GR[m[2]]}</button>`;$("zg").onclick=()=>focus(m[2],true)}
+// quiz helpers
 const shuf=a=>a.map(x=>[Math.random(),x]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
 function lev(a,b){const d=[...Array(b.length+1).keys()];for(let i=1;i<=a.length;i++){let p=d[0];d[0]=i;for(let j=1;j<=b.length;j++){const t=d[j];d[j]=Math.min(d[j]+1,d[j-1]+1,p+(a[i-1]===b[j-1]?0:1));p=t}}return d[b.length]}
 const norm=s=>s.toLowerCase().replace(/muscle|\bthe\b|[^a-z]/g,"");
-function distract(m,ex){const o=M.filter(x=>x[0]!==m[0]),L=x=>lev(norm(x[1]),norm(m[1]));
-if(ex){const same=shuf(o.filter(x=>x[2]===m[2])).slice(0,2),rest=o.filter(x=>!same.includes(x)).sort((a,b)=>L(a)-L(b));return[...same,...rest].slice(0,3)}
-return shuf(o.filter(x=>x[2]!==m[2]&&x[1][0]!==m[1][0]).sort((a,b)=>L(b)-L(a)).slice(0,8)).slice(0,3)}
-function ask(){busy=false;clearMarks();const pool=M.filter(m=>!q||m[0]!==q[0]);q=pool[Math.floor(Math.random()*pool.length)];face(q[3]==="b"?"b":"f");show(q[0],"q");
-const mc=$("qt").value==="mc";let h=`<b>Which muscle is flashing?</b> <span class="k">Score ${score[0]}/${score[1]}</span><div id="fb"></div>`;
-if(mc)h+=shuf([q,...distract(q,$("lv").value==="e")]).map(m=>`<button class="ch" data-a="${m[0]}">${m[1]}</button>`).join("");else h+=`<div class="row"><input id="ft" placeholder="Type the muscle name" autocomplete="off" style="flex:1"><button class="p" id="fg">Check</button></div>`;
-$("pq").innerHTML=h;if(!mc){$("fg").onclick=()=>answer(find($("ft").value));$("ft").onkeydown=e=>{if(e.key==="Enter")answer(find($("ft").value))}}}
+function distract(m,ex){const o=M.filter(x=>x[0]!==m[0]),L=x=>lev(norm(x[1]),norm(m[1]));if(ex){const same=shuf(o.filter(x=>x[2]===m[2])).slice(0,2),rest=o.filter(x=>!same.includes(x)).sort((a,b)=>L(a)-L(b));return[...same,...rest].slice(0,3)}return shuf(o.filter(x=>x[2]!==m[2]&&x[1][0]!==m[1][0]).sort((a,b)=>L(b)-L(a)).slice(0,8)).slice(0,3)}
 function find(t){const n=norm(t);if(!n)return null;const pre=M.filter(m=>norm(m[1]).startsWith(n));if(n.length>=5&&pre.length===1)return pre[0];let b=null,bd=9;for(const m of M){const d=lev(n,norm(m[1])),lim=norm(m[1]).length>=7?2:0;if(d<=lim&&d<bd){bd=d;b=m}}return b}
-function answer(m){if(busy)return;busy=true;score[1]++;const fb=$("fb");
-if(m&&m[0]===q[0]){score[0]++;clearMarks();show(q[0],"ans",q[1]);fb.innerHTML=`<b>Correct!</b> ${q[1]}: ${q[5]}. <button class="p" id="nx">Next</button>`;$("nx").onclick=ask;return}
-clearMarks();const rv=()=>{face(q[3]==="b"?"b":"f");clearMarks();show(q[0],"ans",q[1]);fb.innerHTML=`<b>The answer is ${q[1]}.</b> It is in the ${LOC(q)}. ${q[5]}. <button class="p" id="nx">Next</button>`;$("nx").onclick=ask};
-if(m){face(m[3]==="b"?"b":"f");show(m[0],"bad",m[1]);fb.innerHTML=`Not quite. You picked <b>${m[1]}</b> (${LOC(m)}).`;setTimeout(rv,2600)}else{fb.textContent="I don’t recognise that name.";setTimeout(rv,1500)}}
-$("pq").addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(b)answer(BY[b.dataset.a])});
-function setMode(m){mode=m;document.querySelectorAll("#modes>button").forEach(b=>b.classList.toggle("on",b.dataset.m===m));$("po").style.display=m==="practice"?"inline-flex":"none";$("pq").style.display=m==="practice"?"":"none";$("info").style.display=m==="learn"?"":"none";clearMarks();if(m==="practice"){score=[0,0];q=null;ask()}}
+// practice
+function ask(){tok++;busy=false;clearMarks();tried=new Set();const pool=M.filter(m=>!q||m[0]!==q[0]);q=pool[Math.floor(Math.random()*pool.length)];focus(q[2],false);show(q[0],"q");
+const mc=$("qt").value==="mc";let h=`<b>Which muscle is flashing?</b> <span class="k">Score ${score[0]}/${score[1]} · streak ${streak}</span><div id="fb"></div>`;
+if(mc)h+=shuf([q,...distract(q,$("lv").value==="e")]).map(m=>`<button class="ch" data-a="${m[0]}">${m[1]}</button>`).join("");else h+=`<div class="row"><input id="ft" type="text" placeholder="Type the muscle name" autocomplete="off" style="flex:1"><button class="p" id="fg">Check</button></div>`;
+h+=`<div class="row"><button id="rv">Show me the answer</button></div>`;$("pq").innerHTML=h;if(!mc){$("fg").onclick=()=>answer(find($("ft").value));$("ft").onkeydown=e=>{if(e.key==="Enter")answer(find($("ft").value))}}$("rv").onclick=reveal}
+function correct(first){score[0]++;if(first){streak++;prog.best=Math.max(prog.best,streak);if(streak===10)award("10 in a row");if(streak===50)award("50 in a row");const a=prog.g[q[2]]=prog.g[q[2]]||[];if(!a.includes(q[0])){a.push(q[0]);if(a.length===GN[q[2]])award("Whole group: "+GR[q[2]])}save()}else streak=0}
+function answer(m){if(busy)return;const fb=$("fb");
+if(m&&m[0]===q[0]){busy=true;score[1]++;const first=tried.size===0;correct(first);clearMarks();face(q[3]==="b"?"b":"f");show(q[0],"ans",q[1]);fb.innerHTML=`<b>Correct!</b> ${q[1]}: ${q[5]}. <button class="p" id="nx">Next</button>`;$("nx").onclick=ask;return}
+if(m&&tried.has(m[0]))return;streak=0;if(m){tried.add(m[0]);busy=true;const my=++tok;const bt=[...document.querySelectorAll("[data-a]")].find(b=>b.dataset.a===m[0]);const back=vw;clearMarks();face(m[3]==="b"?"b":"f");show(m[0],"bad",m[1]);fb.innerHTML=`Not quite: that is <b>${m[1]}</b> (${LOC(m)}).`;
+setTimeout(()=>{if(my!==tok)return;if(bt)bt.classList.add("x");clearMarks();face(q[3]==="b"?"b":"f");show(q[0],"q");fb.innerHTML="Try again, or tap “Show me the answer”.";busy=false},2200)}else fb.textContent="I don’t recognise that name. Try again, or tap “Show me the answer”."}
+function reveal(){tok++;busy=true;score[1]++;streak=0;clearMarks();face(q[3]==="b"?"b":"f");show(q[0],"ans",q[1]);$("fb").innerHTML=`<b>The answer is ${q[1]}.</b> It is in the ${LOC(q)}. ${q[5]}. <button class="p" id="nx">Next</button>`;$("nx").onclick=ask}
+$("pq").addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(b&&!b.classList.contains("x"))answer(BY[b.dataset.a])});
+// speed run
+function startSpeed(){const g=$("sg").value,pool=g==="all"?M:M.filter(m=>m[2]===+g);sp={queue:shuf(pool),total:pool.length,named:[],lim:+$("stm").value,t0:Date.now(),over:false};clearMarks();if(g==="all")out();else focus(+g,false);clearInterval(spT);spT=setInterval(tick,250);spNext()}
+function tick(){if(!sp||sp.over)return;const t=(Date.now()-sp.t0)/1000;if(sp.lim&&t>=sp.lim)return endSpeed();const el=$("tm");if(el)el.textContent=sp.lim?Math.ceil(sp.lim-t)+"s left":Math.floor(t)+"s"}
+function spNext(){if(!sp.queue.length)return endSpeed();clearMarks();const m=sp.queue[0];face(m[3]==="b"?"b":"f");show(m[0],"q");
+$("spc").innerHTML=`<b>Name the flashing muscle.</b> <span class="k"><span id="tm"></span> · ${sp.named.length}/${sp.total} named</span><div id="sf" class="k"></div><div class="row"><input id="si" type="text" placeholder="Type the name, then Enter" autocomplete="off" style="flex:1"><button class="p" id="sok">Enter</button></div><div class="row"><button id="ssk">Skip (next)</button><button id="sfn">Finish</button></div>`;
+const go=()=>{const a=find($("si").value);if(a&&a[0]===sp.queue[0][0]){sp.named.push(sp.queue.shift());spNext()}else $("sf").textContent="Not that one. Try again or skip."};$("sok").onclick=go;$("si").onkeydown=e=>{if(e.key==="Enter")go()};$("ssk").onclick=()=>{sp.queue.push(sp.queue.shift());spNext()};$("sfn").onclick=endSpeed;$("si").focus();tick()}
+function endSpeed(){sp.over=true;clearInterval(spT);clearMarks();const t=Math.round((Date.now()-sp.t0)/1000);$("spc").innerHTML=`<b>Time!</b> You named <b>${sp.named.length}</b> of ${sp.total} in ${t}s.<p class="k"><b>Named:</b> ${sp.named.map(m=>m[1]).join(", ")||"none"}</p><p class="k"><b>Still to learn:</b> ${sp.queue.map(m=>m[1]).join(", ")||"nothing, perfect!"}</p><button class="p" id="sag">Play again</button>`;$("sag").onclick=startSpeed;if(!sp.queue.length)award("Speed run complete: "+($("sg").value==="all"?"whole body":GR[+$("sg").value]))}
+$("sgo").onclick=startSpeed;
+function setMode(m){mode=m;document.querySelectorAll("#modes>button").forEach(b=>b.classList.toggle("on",b.dataset.m===m));$("po").style.display=m==="practice"?"flex":"none";$("so").style.display=m==="speed"?"flex":"none";$("pq").style.display=m==="practice"?"":"none";$("spc").style.display=m==="speed"?"":"none";$("info").style.display=m==="learn"?"":"none";clearMarks();clearInterval(spT);sp=null;out();
+if(m==="practice"){score=[0,0];streak=0;q=null;ask()}if(m==="speed")$("spc").innerHTML='<b>Speed run.</b> Pick the whole body or one group, and a time limit, then press Start. Skip any muscle you don’t know.'}
 $("modes").addEventListener("click",e=>{const b=e.target.closest("[data-m]");if(b)setMode(b.dataset.m)});$("qt").onchange=$("lv").onchange=()=>{$("lv").style.display=$("qt").value==="mc"?"":"none";if(mode==="practice")ask()};
-setRot(0);
+bdg();
 </script>
 </body>
 </html>
