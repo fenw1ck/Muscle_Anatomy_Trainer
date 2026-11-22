@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Muscle Trainer</title>
 <style>
-:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f4f1ea;--card:#fffdf8;--ink:#25292c;--mute:#6f7478;--line:#d9d3c6;--acc:#2f5d50;--accink:#fff;--sil:#ecd9c6;--sil2:#d9bfa6;--bad:#c4452f;--gold:#e0a100}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#16181a;--card:#202325;--ink:#ece9e2;--mute:#9a9e9f;--line:#3a3f42;--acc:#7fb8a4;--accink:#10201b;--sil:#4a423c;--sil2:#37312c;--bad:#ee7a63;--gold:#f0b429}}
-:root[data-theme="dark"]{color-scheme:dark;--bg:#16181a;--card:#202325;--ink:#ece9e2;--mute:#9a9e9f;--line:#3a3f42;--acc:#7fb8a4;--accink:#10201b;--sil:#4a423c;--sil2:#37312c;--bad:#ee7a63;--gold:#f0b429}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f4f1ea;--card:#fffdf8;--ink:#25292c;--mute:#6f7478;--line:#d9d3c6;--acc:#2f5d50;--accink:#fff;--sil:#ecd9c6;--sil2:#d9bfa6;--bad:#c4452f;--gold:#e0a100;--bone:#fbf6ea;--bonel:#a8997c;--bonehi:#f6df9c;--oc:#e8590c;--ic:#1971c2}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#16181a;--card:#202325;--ink:#ece9e2;--mute:#9a9e9f;--line:#3a3f42;--acc:#7fb8a4;--accink:#10201b;--sil:#4a423c;--sil2:#37312c;--bad:#ee7a63;--gold:#f0b429;--bone:#cfc6b1;--bonel:#6e6656;--bonehi:#c9a94e;--oc:#ff8a3d;--ic:#4dabf7}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#16181a;--card:#202325;--ink:#ece9e2;--mute:#9a9e9f;--line:#3a3f42;--acc:#7fb8a4;--accink:#10201b;--sil:#4a423c;--sil2:#37312c;--bad:#ee7a63;--gold:#f0b429;--bone:#cfc6b1;--bonel:#6e6656;--bonehi:#c9a94e;--oc:#ff8a3d;--ic:#4dabf7}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:inherit}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 -apple-system,system-ui,"Segoe UI",Roboto,sans-serif}
 main{max-width:600px;margin:0 auto;padding:12px 12px 40px}h1{font:700 26px Georgia,serif;margin:4px 0}.sub{color:var(--mute);font-size:14px;margin:0 0 8px}
@@ -16,11 +16,27 @@ button,select,input{font:600 14px system-ui,sans-serif;border-radius:10px;border
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin:8px 0}
 svg{width:100%;height:min(66vh,580px);display:block;background:radial-gradient(circle at 50% 35%,var(--card),var(--bg));border:1px solid var(--line);border-radius:14px;touch-action:none;user-select:none;cursor:grab}
 .v{transition:opacity .35s}.v.off{opacity:0;pointer-events:none}
-.sil{fill:url(#sg);stroke:var(--sil2);stroke-width:1.2}
-.mu *{fill:var(--gf);fill-opacity:.9;stroke:#0006;stroke-width:.7;cursor:pointer;transition:fill-opacity .2s}.mu:hover *{fill-opacity:1;stroke-width:1.4}
+.sil{fill:url(#silg);stroke:var(--sil2);stroke-width:1.2}
+/* bones */
+.bn *{fill:var(--bone);stroke:var(--bonel);stroke-width:.8;cursor:pointer}
+.bn .lo{fill:none;stroke:var(--bonel);stroke-linecap:round}.bn .ln{fill:none;stroke:var(--bone);stroke-linecap:round}.bn .hole{fill:var(--sil2);stroke:var(--bonel)}
+.bn:hover :not(.ln):not(g){stroke:var(--ink)}.bn.deep{opacity:.45}
+.bn.hit2 :not(.hole):not(.lo):not(.ln):not(g){fill:var(--bonehi)}.bn.hit2 .ln{stroke:var(--bonehi)}
+.bn.hit :not(.hole):not(.lo):not(.ln):not(g){fill:var(--gold)}.bn.hit .ln{stroke:var(--gold)}
+svg[data-layer="m"] .bones{display:none}
+svg[data-layer="fb"]{--mo:.6}
+svg[data-layer="b"] .mu{opacity:0;pointer-events:none}svg[data-layer="b"] .mu.sel,svg[data-layer="b"] .mu.q,svg[data-layer="b"] .mu.ans{opacity:.45}
+/* muscles */
+.mu *{fill:var(--gf);fill-opacity:var(--mo,.9);stroke:#0006;stroke-width:.7;cursor:pointer;transition:fill-opacity .2s}.mu:hover *{fill-opacity:1;stroke-width:1.4}
 .mu.dim *{fill-opacity:.18}.mu.sel *{stroke:var(--ink);stroke-width:2.6;fill-opacity:1}
+svg.foc .mu:not(.sel):not(.ans):not(.q):not(.bad) *{fill-opacity:.12}
 .mu.q *{fill:var(--gold);animation:pl 1s infinite}.mu.bad *{fill:var(--bad);fill-opacity:1;stroke-width:2.4}.mu.ans *{fill:#3aa66b;fill-opacity:1;stroke-width:2.4}
 @keyframes pl{50%{fill-opacity:.4}}.lbl{font:700 14px system-ui;fill:var(--ink);paint-order:stroke;stroke:var(--card);stroke-width:4px;pointer-events:none}
+/* attachment overlay */
+.att{pointer-events:none}.att line{stroke-width:1.4;stroke-dasharray:3 2;stroke-linecap:round}.att line.o{stroke:var(--oc)}.att line.i{stroke:var(--ic)}
+.att circle{stroke:#fff;stroke-width:1.1}.att circle.o{fill:var(--oc)}.att circle.i{fill:var(--ic)}.att text{font:800 5.4px system-ui,sans-serif;fill:#fff;text-anchor:middle;dominant-baseline:central}
+.dot{display:inline-block;width:18px;height:18px;border-radius:50%;color:#fff;font:800 11px/18px system-ui,sans-serif;text-align:center;vertical-align:1px}.dot.o{background:var(--oc)}.dot.i{background:var(--ic)}
+.chip{padding:4px 9px;margin:2px 2px 2px 0;font-size:13px}.att-row{margin:4px 0}
 .ch{display:block;width:100%;text-align:left;margin:5px 0}.ch.x{opacity:.35;text-decoration:line-through}.k{color:var(--mute);font-size:14px}#fb{min-height:2.4em;margin:6px 0}
 #toast{position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);left:50%;transform:translateX(-50%);background:var(--gold);color:#222;padding:10px 18px;border-radius:30px;font-weight:700;display:none;z-index:9;box-shadow:0 4px 16px #0006}
 </style>
@@ -28,14 +44,15 @@ svg{width:100%;height:min(66vh,580px);display:block;background:radial-gradient(c
 <body>
 <main>
 <h1>Muscle Trainer</h1>
-<p class="sub">Drag the picture to move it. Tap a muscle. 60 muscles in 14 groups, drawn as a simplified schematic.</p>
+<p class="sub">Drag the picture to move it. Tap a muscle to see where it attaches, or tap a bone to see which muscles attach to it. 60 muscles in 14 groups and 24 bones, drawn as a simplified schematic.</p>
 <div class="row" id="modes"><button data-m="learn" class="on">Learn</button><button data-m="practice">Practice</button><button data-m="speed">Speed run</button></div>
-<div class="row" id="po" style="display:none"><select id="qt"><option value="mc">Multiple choice</option><option value="fill">Fill in the blank</option></select><select id="lv"><option value="b">Beginner</option><option value="e">Expert</option></select></div>
+<div class="row" id="po" style="display:none"><select id="qt"><option value="mc">Multiple choice</option><option value="fill">Fill in the blank</option><option value="att">Origins &amp; insertions</option></select><select id="lv"><option value="b">Beginner</option><option value="e">Expert</option></select></div>
 <div class="row" id="so" style="display:none"><select id="sg"></select><select id="stm"><option value="60">1 minute</option><option value="300">5 minutes</option><option value="0">Untimed</option></select><button class="p" id="sgo">Start</button></div>
-<svg id="s" viewBox="0 0 300 640" aria-label="Human muscle diagram"></svg>
+<svg id="s" viewBox="0 0 300 640" aria-label="Human muscle and skeleton diagram"></svg>
 <div class="row"><button id="front" class="on">Front</button><button id="back">Back</button><button id="zo">Zoom out</button><span class="k" id="vwk"></span></div>
+<div class="row" id="lyr"><span class="k">Show:</span><button data-l="m">Muscles</button><button data-l="fb">Muscles + bones</button><button data-l="b" id="lyb">Bones only</button></div>
 <div class="row"><button id="gp">◀</button><select id="gs" aria-label="Muscle group"></select><button id="gn">▶</button></div>
-<div class="card" id="info"><b>Tap a muscle to identify it.</b></div>
+<div class="card" id="info"><b>Tap a muscle or a bone.</b><p class="k" style="margin:4px 0 0"><span class="dot o">O</span> marks where a muscle starts (origin) and <span class="dot i">I</span> where it ends (insertion).</p></div>
 <div class="card" id="pq" style="display:none"></div>
 <div class="card" id="spc" style="display:none"></div>
 <div class="card"><b>Badges</b><div id="bdg" class="k">None yet.</div></div>
@@ -80,10 +97,10 @@ const M=[
 ["fcr","Flexor carpi radialis",7,"f","e 249 292 7 32 3","Bends the wrist"],
 ["extd","Extensor digitorum",7,"b","e 254 286 8 38 3","Straightens the fingers"],
 ["ecrl","Extensor carpi radialis longus",7,"b","e 261 252 4.5 20 3","Bends the wrist backward"],
-["apb","Abductor pollicis brevis",8,"f","e 255 353 4.5 8 20","Moves the thumb away from the palm"],
-["adm","Abductor digiti minimi",8,"f","e 270 353 4 9 -10","Moves the little finger away"],
-["adp","Adductor pollicis",8,"f","e 259 366 4 6 0","Pulls the thumb toward the palm"],
-["dio","Dorsal interossei",8,"b","e 262 357 7 11 0","Spreads the fingers"],
+["apb","Abductor pollicis brevis",8,"f","e 268 351 4.5 8 -20","Moves the thumb away from the palm"],
+["adm","Abductor digiti minimi",8,"f","e 251 354 4 9 10","Moves the little finger away"],
+["adp","Adductor pollicis",8,"f","e 264 362 4 6 -20","Pulls the thumb toward the palm"],
+["dio","Dorsal interossei",8,"b","e 260 357 7 11 0","Spreads the fingers"],
 ["ili","Iliopsoas",9,"f","p M158 296 C164 298 170 302 173 308 C172 320 171 328 169 337 C165 336 161 334 158 331Z","Bends the hip"],
 ["pect","Pectineus",9,"f","e 166 347 6 7 -20","Pulls the thigh inward and bends the hip"],
 ["pirif","Piriformis",9,"b","e 178 333 15 4 12","Rotates the thigh outward"],
@@ -109,51 +126,263 @@ const BY={};M.forEach(m=>BY[m[0]]=m);const GN=GR.map((_,i)=>M.filter(m=>m[2]===i
 const MIR='transform="translate(300 0) scale(-1 1)"';
 const shape=sp=>{const t=sp.split(" ");return t[0]==="e"?`<ellipse cx="${t[1]}" cy="${t[2]}" rx="${t[3]}" ry="${t[4]}" transform="rotate(${t[5]} ${t[1]} ${t[2]})"/>`:`<path d="${sp.slice(2)}"/>`};
 const HALF='<path d="M150 92 C175 96 205 100 226 110 C232 160 224 200 220 240 C218 280 222 310 214 345 L150 352Z"/><path d="M224 108 C246 108 262 122 264 148 C268 200 270 260 274 340 C276 352 270 366 262 374 C252 374 246 360 246 346 C244 280 240 220 228 190Z"/><path d="M150 334 L216 338 C220 400 214 460 212 500 C210 560 214 600 220 626 L168 628 C172 590 172 540 174 500 C176 450 160 400 150 380Z"/>';
-const defs=`<defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--sil)"/><stop offset="1" stop-color="var(--sil2)"/></linearGradient>`+HUE.map((h,i)=>`<linearGradient id="gr${i}" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0" stop-color="hsl(${h} 62% 66%)"/><stop offset="1" stop-color="hsl(${h} 58% 42%)"/></linearGradient>`).join("")+`</defs>`;
-const viewSvg=v=>`<g class="sil">${HALF}<g ${MIR}>${HALF}</g><ellipse cx="150" cy="44" rx="25" ry="33"/><path d="M138 72 L162 72 L168 96 L132 96Z"/></g>`+M.filter(m=>m[3].includes(v)).map(m=>`<g class="mu" data-id="${m[0]}" style="--gf:url(#gr${m[2]})">${shape(m[4])}<g ${MIR}>${shape(m[4])}</g></g>`).join("");
+
+/* ---------- BONES ----------
+   [id, name, views, svg (string, or {f,b} per view), midline (drawn once, not mirrored), view where it sits behind other bones, description]
+   Coordinates use the same 300x640 space as the muscles; the right half is drawn and mirrored. */
+const ln=(d,w)=>`<path class="lo" d="${d}" style="stroke-width:${w+1.6}"/><path class="ln" d="${d}" style="stroke-width:${w}"/>`;
+const rep=(n,f)=>Array.from({length:n},(_,i)=>f(i)).join("");
+const SKULL='<path d="M150 14 C166 14 172 27 172 41 C172 50 170 55 167 59 L159 64 L141 64 L133 59 C130 55 128 50 128 41 C128 27 134 14 150 14Z"/>';
+const RIBX=[190,200,206,210,212,213,212,210,206,200];
+const B=[
+["skull","Skull","fb",{f:SKULL+'<ellipse class="hole" cx="141" cy="41" rx="6" ry="5"/><ellipse class="hole" cx="159" cy="41" rx="6" ry="5"/><path class="hole" d="M150 46 L146 54 L154 54Z"/>',b:SKULL},1,"","The cranium protects the brain; the facial bones (maxilla, zygomatic and others) shape the face."],
+["mand","Mandible (jawbone)","fb",'<path d="M134 57 L139 57 L141 66 C144 70 156 70 159 66 L161 57 L166 57 L164 68 C160 75 140 75 136 68Z"/>',1,"","The only skull bone that moves. It holds the lower teeth; its coronoid process and angle anchor the chewing muscles."],
+["cerv","Cervical vertebrae (C1–C7)","fb",rep(7,i=>`<rect x="145" y="${(72+i*3.9).toFixed(1)}" width="10" height="3.2" rx="1"/>`),1,"","The seven vertebrae of the neck."],
+["thor","Thoracic vertebrae (T1–T12)","fb",rep(12,i=>`<rect x="144" y="${100+i*9}" width="12" height="7.4" rx="1.5"/>`),1,"","Twelve vertebrae of the upper back. Each one carries a pair of ribs."],
+["lumb","Lumbar vertebrae (L1–L5)","fb",rep(5,i=>`<rect x="141.5" y="${211+i*15}" width="17" height="13" rx="2.5"/>`),1,"","The five large vertebrae of the lower back."],
+["sacr","Sacrum and coccyx","fb",'<path d="M141 287 L159 287 L156 318 L150 328 L144 318Z"/><path d="M147 330 L153 330 L150 337Z"/>',1,"","Fused vertebrae at the back of the pelvis. The coccyx is the tailbone."],
+["scap","Scapula (shoulder blade)","fb",'<path d="M172 112 C190 112 204 112 214 112 L222 110 L226 114 L224 122 L222 130 C208 150 196 168 186 182 C182 180 180 178 178 172 C176 150 174 130 172 112Z"/>'+ln("M174 132 L224 110",3)+ln("M214 113 C214 118 216 121 219 121",2.2),0,"f","A flat triangular bone on the back of the rib cage. Its glenoid cavity is the shoulder socket; the spine, acromion and coracoid process are key landmarks. In the front view it sits behind the ribs."],
+["ribs","Ribs","fb",RIBX.map((e,i)=>{const y=+(106+i*9.5).toFixed(1);return ln(`M155 ${y} C${e-14} ${y-5} ${e} ${y+2} ${e} ${y+14}`,3)}).join(""),0,"","Twelve pairs of ribs form the rib cage with the sternum and the thoracic spine (ten pairs are drawn here)."],
+["stern","Sternum (breastbone)","f",'<path d="M143 103 L157 103 L155 118 L145 118Z"/><rect x="145" y="119" width="10" height="49" rx="2"/><path d="M147 169 L153 169 L150 177Z"/>',1,"","Three parts: the manubrium at the top, the body, and the small xiphoid process at the bottom."],
+["clav","Clavicle (collarbone)","fb",'<path d="M154 101 C170 96 186 104 200 103 C210 102 218 102 224 105 L223 109 C216 106 208 106 200 107 C186 108 170 101 155 106Z"/>',0,"","A strut between the sternum and the scapula that holds the shoulder out to the side."],
+["hum","Humerus","fb",'<path d="M227 124 C231 121 236 121 238 125 L254 206 C260 210 264 214 263 220 C258 224 246 224 241 221 C240 214 243 210 246 207Z"/><circle cx="231" cy="121" r="6.5"/>',0,"","The upper arm bone. Landmarks: greater tubercle, intertubercular groove, deltoid tuberosity, and the medial and lateral epicondyles at the elbow."],
+["uln","Ulna","fb",'<path d="M243 220 C247 217 252 221 252 228 L254 332 C254 337 248 337 248 333 L245 230Z"/>',0,"","The forearm bone on the little-finger side. Its olecranon is the point of the elbow."],
+["rad","Radius","fb",'<path d="M255 226 C258 224 262 224 263 228 L262 236 C266 270 270 300 275 330 C273 336 264 337 263 332 C262 300 260 270 257 238Z"/>',0,"","The forearm bone on the thumb side. It rolls over the ulna to turn the palm down."],
+["carp","Carpals (wrist bones)","fb",'<rect x="248" y="336" width="26" height="11" rx="4"/>',0,"","Eight small bones in two rows, including the scaphoid, trapezium, capitate and pisiform."],
+["mc","Metacarpals","fb",ln("M270 345 L274 354",2.6)+[[252,251],[257,256.5],[262,262],[267,267.5]].map(([a,b])=>ln(`M${a} 348 L${b} 361`,2.4)).join(""),0,"","The five bones of the palm, numbered 1 (thumb) to 5 (little finger)."],
+["hph","Phalanges (finger bones)","fb",ln("M274.5 356 L276 363",2)+[[251,366],[256.5,371],[262,372],[267,370]].map(([x,y])=>ln(`M${x} 363 L${x} ${y}`,2)).join(""),0,"","Fourteen finger bones: two in the thumb and three in each finger."],
+["hip","Hip bone (ilium, ischium and pubis)","fb",'<path d="M159 292 C164 284 180 280 194 284 C204 287 209 295 208 303 L203 312 L205 322 C204 330 200 334 194 336 L180 344 C178 350 172 350 170 346 L160 340 L152 338 L152 328 C158 326 164 322 166 316 C164 306 160 300 159 292Z"/><ellipse class="hole" cx="168" cy="335" rx="5" ry="3.5"/>',0,"","Three bones fused into one: the ilium, ischium and pubis. Its socket (the acetabulum) holds the head of the femur."],
+["fem","Femur","fb",'<path d="M200 326 L212 332 C216 336 215 344 211 348 L208 352 C204 380 198 420 196 444 C204 448 206 456 202 462 C196 464 188 464 182 462 C176 458 178 448 186 444 C190 420 196 380 198 350 L194 338Z"/><circle cx="199" cy="330" r="6"/>',0,"","The thigh bone, the longest bone in the body. Landmarks: greater and lesser trochanters, linea aspera on the back, and the condyles at the knee."],
+["pat","Patella (kneecap)","f",'<ellipse cx="192" cy="457" rx="6" ry="7"/>',0,"","A small bone inside the quadriceps tendon at the front of the knee."],
+["tib","Tibia (shinbone)","fb",'<path d="M180 466 C186 462 198 462 202 466 L200 474 C196 520 192 560 192 594 L194 600 C192 606 184 606 182 600 L186 592 C186 560 186 520 188 476Z"/>',0,"","The large, weight-bearing bone of the lower leg. Its lower end is the inner ankle bone (medial malleolus)."],
+["fibb","Fibula","fb",'<path d="M204 468 C208 466 211 468 211 472 L208 480 C208 520 210 560 212 598 C212 604 206 605 205 600 L206 590 C205 560 204 520 205 480Z"/>',0,"","The thin outer bone of the lower leg. Its lower end is the outer ankle bone (lateral malleolus)."],
+["tars","Tarsals (ankle and heel bones)","fb",{f:'<rect x="178" y="602" width="34" height="11" rx="4"/>',b:'<rect x="178" y="602" width="34" height="11" rx="4"/><ellipse cx="194" cy="613" rx="10" ry="6.5"/>'},0,"","Seven bones, including the talus, the calcaneus (heel bone) and the cuneiforms."],
+["mt","Metatarsals","fb",[181,188,195,202,209].map((x,i)=>ln(`M${x} 613 L${[178,186,194.5,203,212][i]} 621`,i?2:3)).join(""),0,"","The five long bones of the foot, numbered 1 (big toe) to 5 (little toe)."],
+["fph","Phalanges (toe bones)","fb",[178,186,194.5,203,212].map((x,i)=>ln(`M${x} 622 L${[177,185,194.5,204,214][i]} 627`,i?1.8:2.6)).join(""),0,"","Fourteen toe bones: two in the big toe and three in each of the others."]];
+const BB={};B.forEach(b=>BB[b[0]]=b);
+
+/* ---------- ATTACHMENT LANDMARKS ----------
+   id: [name, bone ids (space-separated, "" for soft tissue), [[x,y],...] on the right half] */
+const L={
+galea:["Galea aponeurotica (the tendon sheet over the skull)","",[[150,13],[162,16]]],
+brow:["Skin of the eyebrows","",[[159,31]]],
+orbm:["Inner rim of the eye socket (frontal bone and maxilla)","skull",[[146,40]]],
+eyelid:["Skin around the eye and the eyelids","",[[169,41]]],
+zygb:["Zygomatic bone (cheekbone)","skull",[[166,48]]],
+modio:["Corner of the mouth (modiolus)","",[[159,63]]],
+maxmand:["Maxilla and mandible near the midline","skull mand",[[152,57],[152,70]]],
+lips:["Skin and lining of the lips","",[[157,63]]],
+zygarch:["Zygomatic arch","skull",[[168,51]]],
+mandang:["Angle and ramus of the mandible","mand",[[164,68]]],
+tempf:["Temporal fossa (side of the skull)","skull",[[170,30]]],
+coron:["Coronoid process of the mandible","mand",[[163,58]]],
+mast:["Mastoid process of the temporal bone (behind the ear)","skull",[[169,60]]],
+nuchal:["External occipital protuberance, superior nuchal line and ligamentum nuchae","skull cerv",[[150,62],[157,61],[150,84]]],
+nuchlat:["Outer part of the superior nuchal line","skull",[[163,61]]],
+mandlow:["Lower border of the mandible and skin of the lower face","mand",[[158,73]]],
+lignuch:["Ligamentum nuchae and spinous processes of C7–T3","cerv thor",[[150,88],[150,100],[150,120]]],
+cervtp:["Transverse processes of C2–C7","cerv",[[155,80],[155,94]]],
+cervtp14:["Transverse processes of C1–C4","cerv",[[155,73],[155,84]]],
+rib12:["First and second ribs","ribs",[[172,105],[178,114]]],
+chestfascia:["Fascia over the upper chest and shoulder","",[[182,116]]],
+manub:["Manubrium of the sternum","stern",[[152,106]]],
+clavmed:["Inner third of the clavicle","clav",[[166,102]]],
+clavlat:["Outer third of the clavicle","clav",[[212,104]]],
+acrom:["Acromion of the scapula","scap",[[224,111]]],
+scapsp:["Spine of the scapula","scap",[[190,124],[208,118]]],
+supraf:["Supraspinous fossa of the scapula","scap",[[192,117]]],
+infraf:["Infraspinous fossa of the scapula","scap",[[194,148]]],
+latbord:["Upper lateral border of the scapula","scap",[[210,148]]],
+infang:["Inferior angle of the scapula","scap",[[186,180]]],
+supang:["Superior angle and upper medial border of the scapula","scap",[[173,114]]],
+medbord:["Medial border of the scapula, below its spine","scap",[[175,140],[180,170]]],
+medbordant:["Front surface of the medial border of the scapula","scap",[[176,128],[182,174]]],
+coracoid:["Coracoid process of the scapula (short head)","scap",[[217,120]]],
+supragl:["Supraglenoid tubercle of the scapula (long head)","scap",[[224,120]]],
+infragl:["Infraglenoid tubercle of the scapula (long head)","scap",[[221,132]]],
+gtub1:["Greater tubercle of the humerus (top facet)","hum",[[236,117]]],
+gtub2:["Greater tubercle of the humerus (middle facet)","hum",[[238,123]]],
+gtub3:["Greater tubercle of the humerus (lowest facet)","hum",[[237,129]]],
+iglat:["Lateral lip of the intertubercular groove of the humerus","hum",[[236,138]]],
+igfloor:["Floor of the intertubercular groove of the humerus","hum",[[234,142]]],
+igmed:["Medial lip of the intertubercular groove of the humerus","hum",[[232,147]]],
+deltub:["Deltoid tuberosity of the humerus","hum",[[242,164]]],
+humant:["Front of the lower half of the humerus","hum",[[247,192]]],
+humpost:["Back of the humerus (lateral and medial heads)","hum",[[238,150],[246,190]]],
+latsupra:["Lateral supracondylar ridge of the humerus","hum",[[257,204]]],
+medepi:["Medial epicondyle of the humerus (common flexor origin)","hum",[[242,219]]],
+latepi:["Lateral epicondyle of the humerus (common extensor origin)","hum",[[262,219]]],
+olec:["Olecranon of the ulna (point of the elbow)","uln",[[247,224]]],
+ulncor:["Coronoid process and tuberosity of the ulna","uln",[[249,232]]],
+radtub:["Radial tuberosity","rad",[[260,236]]],
+radmid:["Middle of the outer surface of the radius","rad",[[265,275]]],
+radsty:["Styloid process of the radius","rad",[[272,330]]],
+mc23:["Bases of the 2nd and 3rd metacarpals (palm side)","mc",[[267,350],[262,350]]],
+mc2d:["Base of the 2nd metacarpal (back of the hand)","mc",[[268,350]]],
+extexp:["Extensor expansions of fingers 2–5","hph",[[251,365],[256.5,368],[262,369],[267,367]]],
+scaphtrap:["Flexor retinaculum, scaphoid and trapezium","carp",[[268,341]]],
+thumbpp_l:["Base of the thumb's proximal phalanx (outer side)","hph",[[277,357]]],
+thumbpp_m:["Base of the thumb's proximal phalanx (inner side)","hph",[[273,358]]],
+pisi:["Pisiform bone of the wrist","carp",[[250,341]]],
+littlepp:["Base of the little finger's proximal phalanx","hph",[[250,363]]],
+capmc:["Capitate and the 2nd–3rd metacarpals","carp mc",[[260,343],[264,354]]],
+mcsides:["Facing sides of the metacarpals","mc",[[259,355],[264,355]]],
+ppbases:["Bases of the proximal phalanges of fingers 2–4","hph",[[257,363],[262,363]]],
+spC7T12:["Spinous processes of C7–T12","cerv thor",[[150,98],[150,150],[150,206]]],
+spT7L5:["Spinous processes of T7–L5 and the thoracolumbar fascia","thor lumb",[[150,160],[150,220],[150,280]]],
+spT2T5:["Spinous processes of T2–T5","thor",[[150,112],[150,138]]],
+iliaccrest:["Back of the iliac crest","hip",[[178,284]]],
+lowribs:["Lower 3–4 ribs","ribs",[[208,192]]],
+erorig:["Sacrum, iliac crest and lumbar spinous processes","sacr hip lumb",[[154,300],[166,290],[150,250]]],
+erins:["Ribs, upper vertebrae and the mastoid process","ribs thor cerv skull",[[162,150],[156,110],[169,60]]],
+pecorig:["Inner clavicle, sternum and costal cartilages 1–6","clav stern ribs",[[168,103],[152,130],[158,160]]],
+ribs18:["Outer surfaces of ribs 1–8 (side of the chest)","ribs",[[198,140],[206,172]]],
+pubcrest:["Pubic crest and pubic symphysis","hip",[[155,329]]],
+xiph:["Xiphoid process and costal cartilages 5–7","stern ribs",[[150,174],[166,178]]],
+ribs512:["Outer surfaces of ribs 5–12","ribs",[[206,176],[208,198]]],
+oblins:["Linea alba, pubic tubercle and front of the iliac crest","hip",[[152,250],[158,327],[200,290]]],
+iliopsorig:["Bodies of T12–L5 and the iliac fossa","thor lumb hip",[[156,240],[156,275],[182,296]]],
+lesstroch:["Lesser trochanter of the femur","fem",[[195,350]]],
+pectline:["Pectineal line of the pubis","hip",[[166,326]]],
+femPect:["Pectineal line of the femur, below the lesser trochanter","fem",[[197,358]]],
+sacrant:["Front surface of the sacrum","sacr",[[156,308]]],
+gtroch:["Greater trochanter of the femur","fem",[[213,338]]],
+glmaxorig:["Back of the ilium, sacrum and coccyx","hip sacr",[[164,296],[152,326]]],
+glut_tub:["Gluteal tuberosity of the femur and the iliotibial tract","fem",[[207,362]]],
+ilium_out:["Outer surface of the ilium","hip",[[186,298]]],
+asis:["Anterior superior iliac spine (ASIS)","hip",[[207,303]]],
+itt:["Iliotibial tract, to the outer front of the tibia","tib",[[201,470]]],
+aiis:["Anterior inferior iliac spine (AIIS)","hip",[[204,313]]],
+tibtub:["Patella, then the tibial tuberosity via the patellar ligament","pat tib",[[192,457],[193,478]]],
+vlorig:["Greater trochanter and outer lip of the linea aspera","fem",[[211,346],[203,400]]],
+vmorig:["Intertrochanteric line and inner lip of the linea aspera","fem",[[200,350],[194,410]]],
+pesans:["Pes anserinus (inner surface of the upper tibia)","tib",[[184,484]]],
+pubbody:["Body of the pubis","hip",[[160,331]]],
+laspmid:["Middle third of the linea aspera of the femur","fem",[[198,400]]],
+pubinf:["Body and lower ramus of the pubis","hip",[[158,338]]],
+ischtub:["Ischial tuberosity (sit bone)","hip",[[175,346]]],
+laspbf:["Linea aspera of the femur (short head)","fem",[[200,415]]],
+fibhead:["Head of the fibula","fibb",[[208,471]]],
+tibmed:["Back of the medial condyle of the tibia","tib",[[183,472]]],
+tibup:["Lateral condyle and upper outer surface of the tibia","tib",[[195,492]]],
+medcun:["Medial cuneiform and base of the 1st metatarsal","tars mt",[[181,612]]],
+medcunU:["Underside of the medial cuneiform and base of the 1st metatarsal","tars mt",[[183,614]]],
+fibup:["Head and upper two-thirds of the fibula","fibb",[[207,482],[207,520]]],
+edlorig:["Lateral condyle of the tibia and front of the fibula","tib fibb",[[200,476],[206,510]]],
+toes25:["Middle and distal phalanges of toes 2–5","fph",[[185,625],[194.5,626],[204,626],[214,625]]],
+femcond:["Medial and lateral condyles of the femur","fem",[[183,450],[202,450]]],
+calc:["Calcaneus (heel bone), via the Achilles tendon","tars",[[194,612]]],
+soleorig:["Head of the fibula and soleal line of the tibia","fibb tib",[[207,476],[188,494]]],
+calcdors:["Upper outer surface of the calcaneus","tars",[[206,607]]],
+edltend:["Tendons of extensor digitorum longus (toes 2–4)","",[[187,621],[195,621],[203,621]]],
+calcmed:["Medial process of the calcaneal tuberosity","tars",[[184,610]]],
+bigtoe:["Base of the big toe's proximal phalanx (inner side)","fph",[[177,623]]],
+calclat:["Lateral process of the calcaneal tuberosity","tars",[[209,610]]],
+littletoe:["Base of the little toe's proximal phalanx (outer side)","fph",[[214,623]]],
+midph25:["Middle phalanges of toes 2–5","fph",[[186,624],[194.5,624],[203.5,624],[213,624]]]};
+
+/* muscle id: [[origin landmarks],[insertion landmarks]] */
+const A={
+front:[["galea"],["brow"]],orbi:[["orbm"],["eyelid"]],zyg:[["zygb"],["modio"]],oris:[["maxmand"],["lips"]],mass:[["zygarch"],["mandang"]],temp:[["tempf"],["coron"]],
+scm:[["manub","clavmed"],["mast"]],plat:[["chestfascia"],["mandlow"]],scal:[["cervtp"],["rib12"]],spl:[["lignuch"],["mast","nuchlat"]],lev:[["cervtp14"],["supang"]],
+delt:[["clavlat","acrom","scapsp"],["deltub"]],supra:[["supraf"],["gtub1"]],infra:[["infraf"],["gtub2"]],tmin:[["latbord"],["gtub3"]],tmaj:[["infang"],["igmed"]],
+pec:[["pecorig"],["iglat"]],serr:[["ribs18"],["medbordant"]],
+trap:[["nuchal","spC7T12"],["clavlat","acrom","scapsp"]],lat:[["spT7L5","iliaccrest","lowribs"],["igfloor"]],erector:[["erorig"],["erins"]],rhomb:[["spT2T5"],["medbord"]],
+rect:[["pubcrest"],["xiph"]],obl:[["ribs512"],["oblins"]],
+bic:[["coracoid","supragl"],["radtub"]],bra:[["humant"],["ulncor"]],tric:[["infragl","humpost"],["olec"]],
+brach:[["latsupra"],["radsty"]],pron:[["medepi","ulncor"],["radmid"]],fcr:[["medepi"],["mc23"]],extd:[["latepi"],["extexp"]],ecrl:[["latsupra"],["mc2d"]],
+apb:[["scaphtrap"],["thumbpp_l"]],adm:[["pisi"],["littlepp"]],adp:[["capmc"],["thumbpp_m"]],dio:[["mcsides"],["ppbases"]],
+ili:[["iliopsorig"],["lesstroch"]],pect:[["pectline"],["femPect"]],pirif:[["sacrant"],["gtroch"]],
+glutmax:[["glmaxorig"],["glut_tub"]],glutmed:[["ilium_out"],["gtroch"]],tfl:[["asis"],["itt"]],
+rf:[["aiis"],["tibtub"]],vl:[["vlorig"],["tibtub"]],vm:[["vmorig"],["tibtub"]],sart:[["asis"],["pesans"]],add:[["pubbody"],["laspmid"]],grac:[["pubinf"],["pesans"]],
+bf:[["ischtub","laspbf"],["fibhead"]],st:[["ischtub"],["pesans"]],sm:[["ischtub"],["tibmed"]],
+ta:[["tibup"],["medcun"]],fib:[["fibup"],["medcunU"]],edl:[["edlorig"],["toes25"]],gas:[["femcond"],["calc"]],sol:[["soleorig"],["calc"]],
+edb:[["calcdors"],["edltend"]],ahal:[["calcmed"],["bigtoe"]],adm5:[["calclat"],["littletoe"]],fdb:[["calcmed"],["midph25"]]};
+const attText=(id,w)=>A[id][w].map(k=>L[k][0]).join("; ");
+const onBone=(k,b)=>L[k][1].split(" ").includes(b);
+const bonesOf=id=>[...new Set([...A[id][0],...A[id][1]].flatMap(k=>L[k][1].split(" ").filter(Boolean)))];
+
+const defs=`<defs><linearGradient id="silg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--sil)"/><stop offset="1" stop-color="var(--sil2)"/></linearGradient>`+HUE.map((h,i)=>`<linearGradient id="gr${i}" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0" stop-color="hsl(${h} 62% 66%)"/><stop offset="1" stop-color="hsl(${h} 58% 42%)"/></linearGradient>`).join("")+`</defs>`;
+const boneSvg=v=>{const list=[];B.forEach(b=>{if(v==="b"&&b[0]==="scap")return;list.push(b);if(v==="b"&&b[0]==="ribs")list.push(BB.scap)});
+return`<g class="bones">`+list.filter(b=>b[2].includes(v)).map(b=>{const s=typeof b[3]==="string"?b[3]:b[3][v];return`<g class="bn${b[5]===v?" deep":""}" data-b="${b[0]}">${s}${b[4]?"":`<g ${MIR}>${s}</g>`}</g>`}).join("")+`</g>`};
+const viewSvg=v=>`<g class="sil">${HALF}<g ${MIR}>${HALF}</g><ellipse cx="150" cy="44" rx="25" ry="33"/><path d="M138 72 L162 72 L168 96 L132 96Z"/></g>`+boneSvg(v)+M.filter(m=>m[3].includes(v)).map(m=>`<g class="mu" data-id="${m[0]}" style="--gf:url(#gr${m[2]})">${shape(m[4])}<g ${MIR}>${shape(m[4])}</g></g>`).join("");
 svg.innerHTML=defs+`<g id="fv" class="v">${viewSvg("f")}</g><g id="bv" class="v off">${viewSvg("b")}</g><text id="lbl" class="lbl" x="150" y="632" text-anchor="middle"></text>`;
 const LOC=m=>`${GR[m[2]]} group, ${m[3]==="b"?"back":"front"} view`;
-let tok=0,vw="f",mode="learn",vb=[0,0,300,640],q=null,tried=new Set(),streak=0,score=[0,0],busy=false,sp=null,spT=null;
+let tok=0,vw="f",mode="learn",vb=[0,0,300,640],q=null,qa=null,tried=new Set(),streak=0,score=[0,0],busy=false,sp=null,spT=null,cur=null,layer="fb";
 let prog={g:{},badges:[],best:0};try{prog=Object.assign(prog,JSON.parse(localStorage.getItem("mt3")||"{}"))}catch(e){}
+try{layer=localStorage.getItem("mtl")||"fb"}catch(e){}
 const save=()=>{try{localStorage.setItem("mt3",JSON.stringify(prog))}catch(e){}};
 function toast(t){const e=$("toast");e.textContent="🏅 "+t;e.style.display="block";setTimeout(()=>e.style.display="none",3200)}
 function award(n){if(prog.badges.includes(n))return;prog.badges.push(n);save();toast("Badge earned: "+n);bdg()}
 function bdg(){$("bdg").innerHTML=prog.badges.length?prog.badges.map(b=>`<span class="card" style="display:inline-block;margin:3px;padding:4px 10px">🏅 ${b}</span>`).join(""):"None yet. Try for 10 in a row, 50 in a row, or a whole group."}
 function face(v){vw=v;$("fv").classList.toggle("off",v!=="f");$("bv").classList.toggle("off",v!=="b");$("front").classList.toggle("on",v==="f");$("back").classList.toggle("on",v==="b")}
-$("front").onclick=()=>face("f");$("back").onclick=()=>face("b");
+function redraw(){if(cur)cur[0]==="m"?drawAtt(cur[1]):drawBone(cur[1])}
+$("front").onclick=()=>{face("f");redraw()};$("back").onclick=()=>{face("b");redraw()};
+function setLayer(l){layer=l;svg.dataset.layer=l;document.querySelectorAll("#lyr [data-l]").forEach(b=>b.classList.toggle("on",b.dataset.l===l));try{localStorage.setItem("mtl",l)}catch(e){}}
+$("lyr").addEventListener("click",e=>{const b=e.target.closest("[data-l]");if(b)setLayer(b.dataset.l)});
 const tween=to=>{const from=vb.slice();let i=0;(function s(){i++;const t=i/16,k=t*t*(3-2*t);vb=from.map((x,j)=>x+(to[j]-x)*k);svg.setAttribute("viewBox",vb.join(" "));if(i<16)requestAnimationFrame(s)})()};
 // drag to pan, tap to select
 let dr=null;svg.addEventListener("pointerdown",e=>{dr={x:e.clientX,y:e.clientY,vb:vb.slice(),moved:false}});
 svg.addEventListener("pointermove",e=>{if(!dr)return;const dx=e.clientX-dr.x,dy=e.clientY-dr.y;if(Math.hypot(dx,dy)>6)dr.moved=true;if(dr.moved){const k=dr.vb[2]/svg.clientWidth;vb=[dr.vb[0]-dx*k,dr.vb[1]-dy*k,dr.vb[2],dr.vb[3]];svg.setAttribute("viewBox",vb.join(" "))}});
-svg.addEventListener("pointerup",e=>{const m=dr&&!dr.moved&&e.target.closest(".mu");dr=null;if(m)pick(m.dataset.id)});
+svg.addEventListener("pointerup",e=>{const tap=dr&&!dr.moved;dr=null;if(!tap)return;const m=e.target.closest(".mu"),b=e.target.closest(".bn");if(m)pick(m.dataset.id);else if(b)pickBone(b.dataset.b)});
 const cls=(id,c,on)=>document.querySelectorAll(`.mu[data-id="${id}"]`).forEach(g=>g.classList.toggle(c,on));
-function clearMarks(){document.querySelectorAll(".mu").forEach(g=>g.classList.remove("sel","q","bad","ans"));$("lbl").textContent=""}
+const clsB=(id,c,on)=>document.querySelectorAll(`.bn[data-b="${id}"]`).forEach(g=>g.classList.toggle(c,on));
+function clearMarks(){document.querySelectorAll(".mu").forEach(g=>g.classList.remove("sel","q","bad","ans"));document.querySelectorAll(".bn").forEach(g=>g.classList.remove("hit","hit2"));svg.querySelectorAll(".att").forEach(e=>e.remove());svg.classList.remove("foc");$("lbl").textContent="";cur=null}
 function show(id,c,l){cls(id,c,true);$("lbl").textContent=l||""}
-function focus(g,dim){$("gs").value=g;const ms=M.filter(m=>m[2]===g),v=ms.filter(m=>m[3]==="b").length>ms.length/2?"b":"f";face(v);document.querySelectorAll(".mu").forEach(e=>e.classList.toggle("dim",!!dim&&BY[e.dataset.id][2]!==g));
+// attachment overlay: O = origin, I = insertion, dashed lines run to the muscle belly
+function overlay(){svg.querySelectorAll(".att").forEach(e=>e.remove());const g=document.createElementNS("http://www.w3.org/2000/svg","g");g.setAttribute("class","att");$(vw==="b"?"bv":"fv").appendChild(g);return g}
+const dotSvg=(x,y,r)=>`<circle class="${r}" cx="${x}" cy="${y}" r="4"/><text x="${x}" y="${y}">${r==="o"?"O":"I"}</text>`;
+function drawAtt(id){const g=overlay();let c=null;const el=svg.querySelector(`#${vw==="b"?"bv":"fv"} .mu[data-id="${id}"]>:first-child`);if(el){const bb=el.getBBox();c=[bb.x+bb.width/2,bb.y+bb.height/2]}
+let ls="",ds="";[...A[id][0].map(k=>[k,"o"]),...A[id][1].map(k=>[k,"i"])].forEach(([k,r])=>L[k][2].forEach(([x,y])=>[1,-1].forEach(sd=>{const X=sd>0?x:300-x;if(c)ls+=`<line class="${r}" x1="${X}" y1="${y}" x2="${sd>0?c[0]:300-c[0]}" y2="${c[1]}"/>`;if(sd<0&&x<=152.5)return;ds+=dotSvg(X,y,r)})));
+g.innerHTML=ls+ds;svg.classList.add("foc");bonesOf(id).forEach(b=>clsB(b,"hit2",true))}
+function drawBone(b){const g=overlay();let ds="";const seen=new Set();M.forEach(m=>A[m[0]].forEach((ks,w)=>ks.forEach(k=>{if(!onBone(k,b)||seen.has(k+w))return;seen.add(k+w);L[k][2].forEach(([x,y])=>[1,-1].forEach(sd=>{if(sd<0&&x<=152.5)return;ds+=dotSvg(sd>0?x:300-x,y,w?"i":"o")}))})));g.innerHTML=ds;clsB(b,"hit",true)}
+const attLines=id=>`<div class="att-row"><span class="dot o">O</span> <b>Origin:</b> ${attText(id,0)}</div><div class="att-row"><span class="dot i">I</span> <b>Insertion:</b> ${attText(id,1)}</div>`;
+const chipB=b=>`<button class="chip" data-bone="${b}">${BB[b][1]}</button>`,chipM=m=>`<button class="chip" data-mus="${m[0]}">${m[1]}</button>`;
+function focus(g,dim,vo){$("gs").value=g;const ms=M.filter(m=>m[2]===g),v=vo||(ms.filter(m=>m[3]==="b").length>ms.length/2?"b":"f");face(v);document.querySelectorAll(".mu").forEach(e=>e.classList.toggle("dim",!!dim&&BY[e.dataset.id][2]!==g));
 setTimeout(()=>{const els=[...document.querySelectorAll(`#${v==="b"?"bv":"fv"} .mu`)].filter(e=>BY[e.dataset.id][2]===g);if(!els.length)return;let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;els.forEach(e=>{const b=e.getBBox();x0=Math.min(x0,b.x);y0=Math.min(y0,b.y);x1=Math.max(x1,b.x+b.width);y1=Math.max(y1,b.y+b.height)});
 x0=Math.min(x0,300-x1);x1=300-x0;const w=Math.max(x1-x0+50,140),h=Math.max(y1-y0+50,140),k=Math.max(w/svg.clientWidth,h/svg.clientHeight),W=k*svg.clientWidth,H=k*svg.clientHeight;tween([150-W/2,(y0+y1)/2-H/2,W,H])},120)}
 function out(){document.querySelectorAll(".mu").forEach(e=>e.classList.remove("dim"));tween([0,0,300,640])}
 GR.forEach((g,i)=>$("gs").insertAdjacentHTML("beforeend",`<option value="${i}">${g}</option>`));$("sg").innerHTML='<option value="all">Whole body</option>'+GR.map((g,i)=>`<option value="${i}">${g}</option>`).join("");
 $("zo").onclick=out;$("gs").onchange=e=>focus(+e.target.value,mode==="learn");$("gp").onclick=()=>focus((+$("gs").value+GR.length-1)%GR.length,mode==="learn");$("gn").onclick=()=>focus((+$("gs").value+1)%GR.length,mode==="learn");
-function pick(id){if(mode!=="learn")return;clearMarks();const m=BY[id];show(id,"sel",m[1]);$("info").innerHTML=`<b>${m[1]}</b><br><span class="k">${LOC(m)}</span><p>${m[5]}.</p><button id="zg">Zoom to ${GR[m[2]]}</button>`;$("zg").onclick=()=>focus(m[2],true)}
+function pick(id){if(mode!=="learn")return;clearMarks();const m=BY[id];if(!m[3].includes(vw))face(m[3][0]);show(id,"sel",m[1]);drawAtt(id);cur=["m",id];
+$("info").innerHTML=`<b>${m[1]}</b><br><span class="k">${LOC(m)}</span><p style="margin:6px 0">${m[5]}.</p>${attLines(id)}<div class="k" style="margin:6px 0 2px">Bones it attaches to:</div><div>${bonesOf(id).map(chipB).join("")}</div><div class="row"><button id="zg">Zoom to ${GR[m[2]]}</button></div>`;$("zg").onclick=()=>focus(m[2],true)}
+function pickBone(b){if(mode!=="learn")return;if(layer==="m")setLayer("fb");clearMarks();const B0=BB[b];if(!B0[2].includes(vw))face(B0[2][0]);$("lbl").textContent=B0[1];drawBone(b);cur=["b",b];
+const on=w=>M.filter(m=>A[m[0]][w].some(k=>onBone(k,b))),o=on(0),i=on(1);
+$("info").innerHTML=`<b>${B0[1]}</b><p style="margin:6px 0">${B0[6]}</p><div class="att-row"><span class="dot o">O</span> <b>Muscles that start here:</b></div><div>${o.length?o.map(chipM).join(""):'<span class="k">None of the muscles in this game.</span>'}</div><div class="att-row" style="margin-top:8px"><span class="dot i">I</span> <b>Muscles that end here:</b></div><div>${i.length?i.map(chipM).join(""):'<span class="k">None of the muscles in this game.</span>'}</div>`}
+$("info").addEventListener("click",e=>{const b=e.target.closest("[data-bone]"),m=e.target.closest("[data-mus]");if(b)pickBone(b.dataset.bone);else if(m)pick(m.dataset.mus)});
 // quiz helpers
 const shuf=a=>a.map(x=>[Math.random(),x]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
 function lev(a,b){const d=[...Array(b.length+1).keys()];for(let i=1;i<=a.length;i++){let p=d[0];d[0]=i;for(let j=1;j<=b.length;j++){const t=d[j];d[j]=Math.min(d[j]+1,d[j-1]+1,p+(a[i-1]===b[j-1]?0:1));p=t}}return d[b.length]}
 const norm=s=>s.toLowerCase().replace(/muscle|\bthe\b|[^a-z]/g,"");
-function distract(m,ex){const o=M.filter(x=>x[0]!==m[0]),L=x=>lev(norm(x[1]),norm(m[1]));if(ex){const same=shuf(o.filter(x=>x[2]===m[2])).slice(0,2),rest=o.filter(x=>!same.includes(x)).sort((a,b)=>L(a)-L(b));return[...same,...rest].slice(0,3)}return shuf(o.filter(x=>x[2]!==m[2]&&x[1][0]!==m[1][0]).sort((a,b)=>L(b)-L(a)).slice(0,8)).slice(0,3)}
+function distract(m,ex){const o=M.filter(x=>x[0]!==m[0]),L2=x=>lev(norm(x[1]),norm(m[1]));if(ex){const same=shuf(o.filter(x=>x[2]===m[2])).slice(0,2),rest=o.filter(x=>!same.includes(x)).sort((a,b)=>L2(a)-L2(b));return[...same,...rest].slice(0,3)}return shuf(o.filter(x=>x[2]!==m[2]&&x[1][0]!==m[1][0]).sort((a,b)=>L2(b)-L2(a)).slice(0,8)).slice(0,3)}
 function find(t){const n=norm(t);if(!n)return null;const pre=M.filter(m=>norm(m[1]).startsWith(n));if(n.length>=5&&pre.length===1)return pre[0];let b=null,bd=9;for(const m of M){const d=lev(n,norm(m[1])),lim=norm(m[1]).length>=7?2:0;if(d<=lim&&d<bd){bd=d;b=m}}return b}
+const qView=m=>m[3].length===1?m[3]:undefined;
 // practice
-function ask(){tok++;busy=false;clearMarks();tried=new Set();const pool=M.filter(m=>!q||m[0]!==q[0]);q=pool[Math.floor(Math.random()*pool.length)];focus(q[2],false);show(q[0],"q");
+function ask(){if($("qt").value==="att")return askAtt();tok++;busy=false;clearMarks();tried=new Set();const pool=M.filter(m=>!q||m[0]!==q[0]);q=pool[Math.floor(Math.random()*pool.length)];focus(q[2],false,qView(q));show(q[0],"q");
 const mc=$("qt").value==="mc";let h=`<b>Which muscle is flashing?</b> <span class="k">Score ${score[0]}/${score[1]} · streak ${streak}</span><div id="fb"></div>`;
 if(mc)h+=shuf([q,...distract(q,$("lv").value==="e")]).map(m=>`<button class="ch" data-a="${m[0]}">${m[1]}</button>`).join("");else h+=`<div class="row"><input id="ft" type="text" placeholder="Type the muscle name" autocomplete="off" style="flex:1"><button class="p" id="fg">Check</button></div>`;
 h+=`<div class="row"><button id="rv">Show me the answer</button></div>`;$("pq").innerHTML=h;if(!mc){$("fg").onclick=()=>answer(find($("ft").value));$("ft").onkeydown=e=>{if(e.key==="Enter")answer(find($("ft").value))}}$("rv").onclick=reveal}
-function correct(first){score[0]++;if(first){streak++;prog.best=Math.max(prog.best,streak);if(streak===10)award("10 in a row");if(streak===50)award("50 in a row");const a=prog.g[q[2]]=prog.g[q[2]]||[];if(!a.includes(q[0])){a.push(q[0]);if(a.length===GN[q[2]])award("Whole group: "+GR[q[2]])}save()}else streak=0}
+function bumpStreak(){streak++;prog.best=Math.max(prog.best,streak);if(streak===10)award("10 in a row");if(streak===50)award("50 in a row")}
+function correct(first){score[0]++;if(first){bumpStreak();const a=prog.g[q[2]]=prog.g[q[2]]||[];if(!a.includes(q[0])){a.push(q[0]);if(a.length===GN[q[2]])award("Whole group: "+GR[q[2]])}save()}else streak=0}
+function showAns(){clearMarks();face(q[3].includes(vw)?vw:q[3][0]);show(q[0],"ans",q[1]);drawAtt(q[0])}
 function answer(m){if(busy)return;const fb=$("fb");
-if(m&&m[0]===q[0]){busy=true;score[1]++;const first=tried.size===0;correct(first);clearMarks();face(q[3]==="b"?"b":"f");show(q[0],"ans",q[1]);fb.innerHTML=`<b>Correct!</b> ${q[1]}: ${q[5]}. <button class="p" id="nx">Next</button>`;$("nx").onclick=ask;return}
-if(m&&tried.has(m[0]))return;streak=0;if(m){tried.add(m[0]);busy=true;const my=++tok;const bt=[...document.querySelectorAll("[data-a]")].find(b=>b.dataset.a===m[0]);const back=vw;clearMarks();face(m[3]==="b"?"b":"f");show(m[0],"bad",m[1]);fb.innerHTML=`Not quite: that is <b>${m[1]}</b> (${LOC(m)}).`;
+if(m&&m[0]===q[0]){busy=true;score[1]++;const first=tried.size===0;correct(first);showAns();fb.innerHTML=`<b>Correct!</b> ${q[1]}: ${q[5]}.${attLines(q[0])}<button class="p" id="nx">Next</button>`;$("nx").onclick=ask;return}
+if(m&&tried.has(m[0]))return;streak=0;if(m){tried.add(m[0]);busy=true;const my=++tok;const bt=[...document.querySelectorAll("[data-a]")].find(b=>b.dataset.a===m[0]);clearMarks();face(m[3]==="b"?"b":"f");show(m[0],"bad",m[1]);fb.innerHTML=`Not quite: that is <b>${m[1]}</b> (${LOC(m)}).`;
 setTimeout(()=>{if(my!==tok)return;if(bt)bt.classList.add("x");clearMarks();face(q[3]==="b"?"b":"f");show(q[0],"q");fb.innerHTML="Try again, or tap “Show me the answer”.";busy=false},2200)}else fb.textContent="I don’t recognise that name. Try again, or tap “Show me the answer”."}
-function reveal(){tok++;busy=true;score[1]++;streak=0;clearMarks();face(q[3]==="b"?"b":"f");show(q[0],"ans",q[1]);$("fb").innerHTML=`<b>The answer is ${q[1]}.</b> It is in the ${LOC(q)}. ${q[5]}. <button class="p" id="nx">Next</button>`;$("nx").onclick=ask}
-$("pq").addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(b&&!b.classList.contains("x"))answer(BY[b.dataset.a])});
+function reveal(){tok++;busy=true;score[1]++;streak=0;showAns();$("fb").innerHTML=($("qt").value==="att"?`<b>The answer is:</b> ${qa.t}.`:`<b>The answer is ${q[1]}.</b> It is in the ${LOC(q)}. ${q[5]}.`)+attLines(q[0])+`<button class="p" id="nx">Next</button>`;$("nx").onclick=ask}
+// practice: origins & insertions
+function askAtt(){tok++;busy=false;clearMarks();tried=new Set();const pool=M.filter(m=>!q||m[0]!==q[0]);q=pool[Math.floor(Math.random()*pool.length)];focus(q[2],false,qView(q));show(q[0],"q",q[1]);
+const w=Math.random()<.5?0:1,ex=$("lv").value==="e",cor=attText(q[0],w),seen=new Set([cor]),ch=[cor],near=m=>Math.abs(m[2]-q[2])<=1;
+const cand=[...shuf(M.filter(m=>m[0]!==q[0]&&(ex?near(m):!near(m)))),...shuf(M.filter(m=>m[0]!==q[0]))];
+for(const m of cand){if(ch.length>=4)break;const t=attText(m[0],ex?w:(Math.random()<.5?0:1));if(!seen.has(t)){seen.add(t);ch.push(t)}}
+qa={w,t:cor,ch:shuf(ch)};
+$("pq").innerHTML=`<b>Where does ${q[1]} ${w?"end (its insertion)":"start (its origin)"}?</b> <span class="k">Score ${score[0]}/${score[1]} · streak ${streak}</span><div id="fb"></div>`+qa.ch.map((t,i)=>`<button class="ch" data-t="${i}"><span class="dot ${w?"i":"o"}">${w?"I":"O"}</span> ${t}</button>`).join("")+`<div class="row"><button id="rv">Show me the answer</button></div>`;$("rv").onclick=reveal}
+function answerAtt(i){if(busy)return;const t=qa.ch[i],fb=$("fb");
+if(t===qa.t){busy=true;score[1]++;score[0]++;if(tried.size===0){bumpStreak();save()}else streak=0;showAns();fb.innerHTML=`<b>Correct!</b>${attLines(q[0])}<button class="p" id="nx">Next</button>`;$("nx").onclick=ask;return}
+if(tried.has(i))return;tried.add(i);streak=0;const bt=document.querySelector(`[data-t="${i}"]`);if(bt)bt.classList.add("x");
+const who=M.filter(m=>attText(m[0],0)===t||attText(m[0],1)===t).map(m=>`<b>${m[1]}</b> (${attText(m[0],0)===t?"origin":"insertion"})`);
+fb.innerHTML=`Not quite. That is where ${who.join(", ")} attaches. Try again.`}
+$("pq").addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(b&&!b.classList.contains("x"))return answer(BY[b.dataset.a]);const t=e.target.closest("[data-t]");if(t&&!t.classList.contains("x"))answerAtt(+t.dataset.t)});
 // speed run
 function startSpeed(){const g=$("sg").value,pool=g==="all"?M:M.filter(m=>m[2]===+g);sp={queue:shuf(pool),total:pool.length,named:[],lim:+$("stm").value,t0:Date.now(),over:false};clearMarks();if(g==="all")out();else focus(+g,false);clearInterval(spT);spT=setInterval(tick,250);spNext()}
 function tick(){if(!sp||sp.over)return;const t=(Date.now()-sp.t0)/1000;if(sp.lim&&t>=sp.lim)return endSpeed();const el=$("tm");if(el)el.textContent=sp.lim?Math.ceil(sp.lim-t)+"s left":Math.floor(t)+"s"}
@@ -162,10 +391,10 @@ $("spc").innerHTML=`<b>Name the flashing muscle.</b> <span class="k"><span id="t
 const go=()=>{const a=find($("si").value);if(a&&a[0]===sp.queue[0][0]){sp.named.push(sp.queue.shift());spNext()}else $("sf").textContent="Not that one. Try again or skip."};$("sok").onclick=go;$("si").onkeydown=e=>{if(e.key==="Enter")go()};$("ssk").onclick=()=>{sp.queue.push(sp.queue.shift());spNext()};$("sfn").onclick=endSpeed;$("si").focus();tick()}
 function endSpeed(){sp.over=true;clearInterval(spT);clearMarks();const t=Math.round((Date.now()-sp.t0)/1000);$("spc").innerHTML=`<b>Time!</b> You named <b>${sp.named.length}</b> of ${sp.total} in ${t}s.<p class="k"><b>Named:</b> ${sp.named.map(m=>m[1]).join(", ")||"none"}</p><p class="k"><b>Still to learn:</b> ${sp.queue.map(m=>m[1]).join(", ")||"nothing, perfect!"}</p><button class="p" id="sag">Play again</button>`;$("sag").onclick=startSpeed;if(!sp.queue.length)award("Speed run complete: "+($("sg").value==="all"?"whole body":GR[+$("sg").value]))}
 $("sgo").onclick=startSpeed;
-function setMode(m){mode=m;document.querySelectorAll("#modes>button").forEach(b=>b.classList.toggle("on",b.dataset.m===m));$("po").style.display=m==="practice"?"flex":"none";$("so").style.display=m==="speed"?"flex":"none";$("pq").style.display=m==="practice"?"":"none";$("spc").style.display=m==="speed"?"":"none";$("info").style.display=m==="learn"?"":"none";clearMarks();clearInterval(spT);sp=null;out();
+function setMode(m){mode=m;document.querySelectorAll("#modes>button").forEach(b=>b.classList.toggle("on",b.dataset.m===m));$("po").style.display=m==="practice"?"flex":"none";$("so").style.display=m==="speed"?"flex":"none";$("pq").style.display=m==="practice"?"":"none";$("spc").style.display=m==="speed"?"":"none";$("info").style.display=m==="learn"?"":"none";$("lyb").style.display=m==="learn"?"":"none";if(m!=="learn"&&layer==="b")setLayer("fb");clearMarks();clearInterval(spT);sp=null;out();
 if(m==="practice"){score=[0,0];streak=0;q=null;ask()}if(m==="speed")$("spc").innerHTML='<b>Speed run.</b> Pick the whole body or one group, and a time limit, then press Start. Skip any muscle you don’t know.'}
-$("modes").addEventListener("click",e=>{const b=e.target.closest("[data-m]");if(b)setMode(b.dataset.m)});$("qt").onchange=$("lv").onchange=()=>{$("lv").style.display=$("qt").value==="mc"?"":"none";if(mode==="practice")ask()};
-bdg();
+$("modes").addEventListener("click",e=>{const b=e.target.closest("[data-m]");if(b)setMode(b.dataset.m)});$("qt").onchange=$("lv").onchange=()=>{$("lv").style.display=$("qt").value==="fill"?"none":"";if(mode==="practice")ask()};
+setLayer(layer);bdg();
 </script>
 </body>
 </html>
