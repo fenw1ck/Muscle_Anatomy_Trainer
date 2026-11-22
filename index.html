@@ -25,7 +25,11 @@ svg{width:100%;height:min(66vh,580px);display:block;background:radial-gradient(c
 .bn.hit :not(.hole):not(.lo):not(.ln):not(g){fill:var(--gold)}.bn.hit .ln{stroke:var(--gold)}
 svg[data-layer="m"] .bones{display:none}
 svg[data-layer="fb"]{--mo:.6}
-svg[data-layer="b"] .mu{opacity:0;pointer-events:none}svg[data-layer="b"] .mu.sel,svg[data-layer="b"] .mu.q,svg[data-layer="b"] .mu.ans{opacity:.45}
+/* depth layers: a peeled layer fades and drifts outward (the mirrored left half drifts the other way) */
+.side{transition:transform .5s cubic-bezier(.3,.7,.3,1),opacity .5s}
+.dl.peel .side{transform:translate(16px,-12px);opacity:.08;pointer-events:none}
+.dl.peel .mu *{stroke-dasharray:2 2}
+#dep .chip.on{background:var(--acc);color:var(--accink);border-color:var(--acc)}
 /* muscles */
 .mu *{fill:var(--gf);fill-opacity:var(--mo,.9);stroke:#0006;stroke-width:.7;cursor:pointer;transition:fill-opacity .2s}.mu:hover *{fill-opacity:1;stroke-width:1.4}
 .mu.lvx{display:none}.mu.dim *{fill-opacity:.18}.mu.sel *{stroke:var(--ink);stroke-width:2.6;fill-opacity:1}
@@ -44,14 +48,16 @@ svg.foc .mu:not(.sel):not(.ans):not(.q):not(.bad) *{fill-opacity:.12}
 <body>
 <main>
 <h1>Muscle Trainer</h1>
-<p class="sub">Drag the picture to move it. Tap a muscle to see where it attaches, or tap a bone to see which muscles attach to it. Pick a level to choose which muscles to study: Core, Standard, Advanced or Expert. Each level includes the ones before it. 24 bones, drawn as a simplified schematic.</p>
+<p class="sub">Drag the picture to move it. Peel the muscles away layer by layer to reach the bones. Tap a muscle to see where it attaches, or tap a bone to see which muscles attach to it. Pick a level to choose which muscles to study: Core, Standard, Advanced or Expert. Each level includes the ones before it. 24 bones, drawn as a simplified schematic.</p>
 <div class="row" id="modes"><button data-m="learn" class="on">Learn</button><button data-m="practice">Practice</button><button data-m="speed">Speed run</button></div>
 <div class="row" id="lvr"><span class="k">Level:</span><select id="lev" aria-label="Difficulty level"></select><span class="k" id="cnt"></span></div>
 <div class="row" id="po" style="display:none"><select id="qt"><option value="mc">Multiple choice</option><option value="fill">Fill in the blank</option><option value="att">Origins &amp; insertions</option></select></div>
 <div class="row" id="so" style="display:none"><select id="sg"></select><select id="stm"><option value="60">1 minute</option><option value="300">5 minutes</option><option value="0">Untimed</option></select><button class="p" id="sgo">Start</button></div>
 <svg id="s" viewBox="0 0 300 640" aria-label="Human muscle and skeleton diagram"></svg>
 <div class="row"><button id="front" class="on">Front</button><button id="back">Back</button><button id="zo">Zoom out</button><span class="k" id="vwk"></span></div>
-<div class="row" id="lyr"><span class="k">Show:</span><button data-l="m">Muscles</button><button data-l="fb">Muscles + bones</button><button data-l="b" id="lyb">Bones only</button></div>
+<div class="row" id="lyr"><span class="k">Show:</span><button data-l="m">Muscles</button><button data-l="fb">Muscles + bones</button></div>
+<div class="row" id="dep"><span class="k">Layer:</span><button class="chip" data-d="1">Surface</button><button class="chip" data-d="2">Middle</button><button class="chip" data-d="3">Deep</button><button class="chip" data-d="4">Deepest</button><button class="chip" data-d="5">Bones</button></div>
+<p class="k" id="dhint" style="margin:0 0 6px">Scroll down or right-click the picture to peel a layer away; scroll up to put it back.</p>
 <div class="row"><button id="gp">◀</button><select id="gs" aria-label="Muscle group"></select><button id="gn">▶</button></div>
 <div class="card" id="info"><b>Tap a muscle or a bone.</b><p class="k" style="margin:4px 0 0"><span class="dot o">O</span> marks where a muscle starts (origin) and <span class="dot i">I</span> where it ends (insertion).</p></div>
 <div class="card" id="pq" style="display:none"></div>
@@ -70,71 +76,72 @@ const GR=["Face","Neck","Shoulder","Chest","Back","Abdomen","Upper arm","Forearm
   group   index into GR
   tier    1 Core, 2 Standard, 3 Advanced, 4 Expert (each level includes the ones below it)
   view    "f" front, "b" back, "fb" both
-  layer   "s" superficial, "d" deep (deep layer comes in a later phase)
+  depth   layer from the outside in: 1 Surface, 2 Middle, 3 Deep, 4 Deepest (bones lie under layer 4).
+          Peeling a layer fades it and slides it outward to show the one beneath.
   action  what it does, in plain words
   origin / insert   landmark ids from L (below)
   shape   "p <svg path>" or "e cx cy rx ry rotation", right half of the body; mirrored for the left */
 const M=[
-{id:"trap",name:"Trapezius",group:4,tier:1,view:"b",layer:"s",action:"Lifts, lowers and pulls back the shoulder blade",origin:["nuchal", "spC7T12"],insert:["clavlat", "acrom", "scapsp"],alt:["Traps"],shape:"p M150 86.7 C181.8 94.3 206.4 102 224.1 115 C216.5 139.5 193.7 165.8 174.7 195.6 C165.2 211.4 155.7 223.6 150 230.7Z"},
-{id:"lat",name:"Latissimus dorsi",group:4,tier:1,view:"b",layer:"s",action:"Pulls the arm down and back",origin:["spT7L5", "iliaccrest", "lowribs"],insert:["igfloor"],alt:["Lats"],shape:"p M157.6 190.4 C176.6 178.1 195.6 165.8 203.2 162.3 C210.8 165.8 214.6 172.8 210.8 183.3 C207 209.6 189.9 237.7 161.4 251.7Z"},
-{id:"glutmax",name:"Gluteus maximus",group:10,tier:1,view:"b",layer:"s",action:"Extends the hip",origin:["glmaxorig"],insert:["glut_tub"],alt:["Glute max"],shape:"p M151 299 C169 295.5 193.7 297.2 203.2 302.5 C212.7 324.9 201.3 350.8 186.1 360.2 C174.7 365 159.5 360.2 151 355.5Z"},
-{id:"pec",name:"Pectoralis major",group:3,tier:1,view:"f",layer:"s",action:"Pulls the arm across the chest",origin:["pecorig"],insert:["iglat"],alt:["Pecs", "Pectoralis"],shape:"p M151.9 118.5 C176.6 113.3 203.2 118.5 220.3 129 C216.5 150.1 201.3 171.1 184.2 178.1 C169 181.6 157.6 174.6 151.9 164.1Z"},
-{id:"rect",name:"Rectus abdominis",group:5,tier:1,view:"f",layer:"s",action:"Bends the trunk forward",origin:["pubcrest"],insert:["xiph"],alt:["Abs", "Six-pack"],shape:"p M152.9 185.1 C161.4 183.3 170.9 183.3 177.6 185.1 C178.5 213.1 176.6 246.4 175.7 272.7 C167.1 276.2 159.5 276.2 152.9 274.5Z"},
-{id:"obl",name:"External oblique",group:5,tier:1,view:"f",layer:"s",action:"Twists and bends the trunk",origin:["ribs512"],insert:["oblins"],alt:["External obliques", "Obliques"],shape:"p M180.4 188.6 C189.9 186.8 199.4 186.8 204.2 190.4 C210.8 218.4 207 248.2 197.5 269.2 C189.9 272.7 184.2 272.7 179.5 271Z"},
-{id:"serr",name:"Serratus anterior",group:3,tier:1,view:"f",layer:"s",action:"Holds the shoulder blade against the ribs",origin:["ribs18"],insert:["medbordant"],alt:["Serratus"],shape:"p M194.7 164.1 C201.3 160.6 208 158.8 211.8 159.7 C214.6 172.8 214.6 185.1 212.7 192.1 C207 195.6 201.3 195.6 197.5 195.6Z"},
-{id:"erector",name:"Erector spinae",group:4,tier:1,view:"b",layer:"s",action:"Straightens the spine",origin:["erorig"],insert:["erins"],alt:["Erectors", "Sacrospinalis"],shape:"p M150 148.3 C155.7 146.5 159.5 148.3 162.4 151.8 C165.2 192.1 165.2 235.9 163.3 274.5 C157.6 276.2 153.8 276.2 150 274.5Z"},
-{id:"rhomb",name:"Rhomboid major",group:4,tier:1,view:"b",layer:"s",action:"Pulls the shoulder blades together",origin:["spT2T5"],insert:["medbord"],shape:"p M153.8 127.3 C161.4 129 167.1 130.8 170.9 134.3 C170.9 146.5 169 155.3 169 164.1 C163.3 164.1 157.6 162.3 153.8 160.6Z"},
-{id:"glutmed",name:"Gluteus medius",group:10,tier:1,view:"b",layer:"s",action:"Moves the leg out to the side",origin:["ilium_out"],insert:["gtroch"],alt:["Glute med"],shape:"p M167.1 272.7 C182.3 271 195.6 272.7 204.2 278 C207 286.7 206.1 293.7 204.2 300.7 C191.8 300.7 178.5 299 169 297.2Z"},
-{id:"tfl",name:"Tensor fasciae latae",group:10,tier:2,view:"f",layer:"s",action:"Moves the leg out and steadies the hip",origin:["asis"],insert:["itt"],alt:["TFL"],shape:"p M198.5 279.7 C204.2 280.6 208.9 283.2 211.8 286.7 C210.8 299 209.9 313.1 208 326 C204.2 327.2 201.3 327.2 199.4 324.9Z"},
-{id:"delt",name:"Deltoid",group:2,tier:1,view:"fb",layer:"s",action:"Lifts the arm away from the body",origin:["clavlat", "acrom", "scapsp"],insert:["deltub"],alt:["Delts"],shape:"e 229.8 132.9 16.2 29.7 -8"},
-{id:"supra",name:"Supraspinatus",group:2,tier:2,view:"b",layer:"s",action:"Starts lifting the arm",origin:["supraf"],insert:["gtub1"],shape:"e 189.9 124.6 13.3 5.3 -10"},
-{id:"infra",name:"Infraspinatus",group:2,tier:2,view:"b",layer:"s",action:"Rotates the arm outward",origin:["infraf"],insert:["gtub2"],shape:"p M170.9 132.5 C184.2 129 195.6 129 204.2 129.9 C203.2 142.2 201.3 151.8 199.4 158.8 C189.9 162.3 180.4 164.1 172.8 164.1Z"},
-{id:"tmin",name:"Teres minor",group:2,tier:2,view:"b",layer:"s",action:"Rotates the arm outward",origin:["latbord"],insert:["gtub3"],shape:"e 206.1 148.3 7.6 3.5 -15"},
-{id:"tmaj",name:"Teres major",group:2,tier:2,view:"b",layer:"s",action:"Rotates the arm inward and pulls it back",origin:["infang"],insert:["igmed"],shape:"e 209.9 163.2 11.4 5.3 -20"},
-{id:"scm",name:"Sternocleidomastoid",group:1,tier:1,view:"f",layer:"s",action:"Turns and tilts the head",origin:["manub", "clavmed"],insert:["mast"],alt:["SCM"],shape:"p M171.6 73.7 C177.6 73.7 181.2 74.9 182.4 77.3 C174.2 90.5 165.5 102 159.5 111.5 L151 109.8 C158.1 98.1 166 86.7 171.6 73.7Z"},
-{id:"plat",name:"Platysma",group:1,tier:2,view:"f",layer:"s",action:"Tightens the neck skin and pulls the mouth down",origin:["chestfascia"],insert:["mandlow"],shape:"p M138 80.8 C145.4 86.7 154.5 88.6 163.1 82.9 L170.2 103 C163.3 107 155.7 108 150 106Z"},
-{id:"scal",name:"Scalenes",group:1,tier:2,view:"f",layer:"s",action:"Lifts the first ribs and tilts the neck",origin:["cervtp"],insert:["rib12"],shape:"e 170.7 96.2 3.6 8.5 -15"},
-{id:"spl",name:"Splenius capitis",group:1,tier:2,view:"b",layer:"s",action:"Extends and turns the head",origin:["lignuch"],insert:["mast", "nuchlat"],shape:"p M154.8 78.5 C163.2 80.8 170.2 82.9 174.1 86.7 C169.3 98.1 166.2 108 163.3 115 L152.9 111.5Z"},
-{id:"lev",name:"Levator scapulae",group:1,tier:2,view:"b",layer:"s",action:"Lifts the shoulder blade",origin:["cervtp14"],insert:["supang"],shape:"e 175.7 110.6 3.8 10.5 -25"},
-{id:"front",name:"Frontalis",group:0,tier:1,view:"f",layer:"s",action:"Raises the eyebrows",origin:["galea"],insert:["brow"],shape:"e 150 12.3 20.4 7.1 0"},
-{id:"orbi",name:"Orbicularis oculi",group:0,tier:1,view:"f",layer:"s",action:"Closes the eyelid",origin:["orbm"],insert:["eyelid"],shape:"e 163.2 34.7 9.6 5.9 0"},
-{id:"zyg",name:"Zygomaticus major",group:0,tier:1,view:"f",layer:"s",action:"Lifts the corner of the mouth (smiling)",origin:["zygb"],insert:["modio"],shape:"e 165.6 52.5 9.6 4.1 30"},
-{id:"oris",name:"Orbicularis oris",group:0,tier:1,view:"f",layer:"s",action:"Closes and purses the lips",origin:["maxmand"],insert:["lips"],shape:"e 150 64.3 10.8 4.7 0"},
-{id:"mass",name:"Masseter",group:0,tier:1,view:"f",layer:"s",action:"Closes the jaw to chew",origin:["zygarch"],insert:["mandang"],shape:"e 171.6 59.5 6 10.6 0"},
-{id:"temp",name:"Temporalis",group:0,tier:1,view:"f",layer:"s",action:"Closes the jaw",origin:["tempf"],insert:["coron"],shape:"e 177.6 33.5 6 10.6 0"},
-{id:"bic",name:"Biceps brachii",group:6,tier:1,view:"f",layer:"s",action:"Bends the elbow and turns the palm up",origin:["coracoid", "supragl"],insert:["radtub"],alt:["Biceps"],shape:"e 238.4 183.4 10.5 41.8 3"},
-{id:"bra",name:"Brachialis",group:6,tier:1,view:"f",layer:"s",action:"Bends the elbow",origin:["humant"],insert:["ulncor"],shape:"e 243.1 207.6 4.8 15.4 3"},
-{id:"tric",name:"Triceps brachii",group:6,tier:1,view:"b",layer:"s",action:"Straightens the elbow",origin:["infragl", "humpost"],insert:["olec"],alt:["Triceps"],shape:"e 239.3 187.8 11.4 44 3"},
-{id:"brach",name:"Brachioradialis",group:7,tier:1,view:"f",layer:"s",action:"Bends the elbow",origin:["latsupra"],insert:["radsty"],shape:"e 253.6 255.1 5.7 19.6 4"},
-{id:"pron",name:"Pronator teres",group:7,tier:2,view:"f",layer:"s",action:"Turns the palm down",origin:["medepi", "ulncor"],insert:["radmid"],shape:"e 239.3 237.8 4.8 9.8 40"},
-{id:"fcr",name:"Flexor carpi radialis",group:7,tier:2,view:"f",layer:"s",action:"Bends the wrist",origin:["medepi"],insert:["mc23"],alt:["FCR"],shape:"e 244.1 286.8 6.7 24.1 3"},
-{id:"extd",name:"Extensor digitorum",group:7,tier:2,view:"b",layer:"s",action:"Straightens the fingers",origin:["latepi"],insert:["extexp"],shape:"e 248.8 282.3 7.6 28.7 3"},
-{id:"ecrl",name:"Extensor carpi radialis longus",group:7,tier:2,view:"b",layer:"s",action:"Bends the wrist backward",origin:["latsupra"],insert:["mc2d"],alt:["ECRL"],shape:"e 255.5 256.6 4.3 15.1 3"},
-{id:"apb",name:"Abductor pollicis brevis",group:8,tier:3,view:"f",layer:"s",action:"Moves the thumb away from the palm",origin:["scaphtrap"],insert:["thumbpp_l"],alt:["APB"],shape:"e 262.1 345.3 4.3 13.5 -20"},
-{id:"adm",name:"Abductor digiti minimi",group:8,tier:3,view:"f",layer:"s",action:"Moves the little finger away",origin:["pisi"],insert:["littlepp"],shape:"e 246 350.3 3.8 15.2 10"},
-{id:"adp",name:"Adductor pollicis",group:8,tier:3,view:"f",layer:"s",action:"Pulls the thumb toward the palm",origin:["capmc"],insert:["thumbpp_m"],shape:"e 258.3 363.8 3.8 10.1 -20"},
-{id:"dio",name:"Dorsal interossei",group:8,tier:3,view:"b",layer:"s",action:"Spreads the fingers",origin:["mcsides"],insert:["ppbases"],shape:"e 254.5 355.4 6.7 18.5 0"},
-{id:"ili",name:"Iliopsoas",group:9,tier:1,view:"f",layer:"s",action:"Bends the hip",origin:["iliopsorig"],insert:["lesstroch"],alt:["Iliopsoas", "Iliacus and psoas"],shape:"p M157.6 276.2 C163.3 278 169 281.5 171.9 286.7 C170.9 297.2 170 304.2 168.1 314.3 C164.3 313.1 160.5 310.7 157.6 307.2Z"},
-{id:"pect",name:"Pectineus",group:9,tier:2,view:"f",layer:"s",action:"Pulls the thigh inward and bends the hip",origin:["pectline"],insert:["femPect"],shape:"e 165.2 326 5.7 8.3 -20"},
-{id:"pirif",name:"Piriformis",group:9,tier:2,view:"b",layer:"s",action:"Rotates the thigh outward",origin:["sacrant"],insert:["gtroch"],shape:"e 176.6 309.5 14.3 4.7 12"},
-{id:"rf",name:"Rectus femoris",group:11,tier:1,view:"f",layer:"s",action:"Straightens the knee and bends the hip",origin:["aiis"],insert:["tibtub"],alt:["Rec fem"],shape:"e 184.2 372 11.4 63.7 0"},
-{id:"vl",name:"Vastus lateralis",group:11,tier:1,view:"f",layer:"s",action:"Straightens the knee",origin:["vlorig"],insert:["tibtub"],shape:"e 205.1 383.8 9.5 63.7 0"},
-{id:"vm",name:"Vastus medialis",group:11,tier:1,view:"f",layer:"s",action:"Straightens the knee",origin:["vmorig"],insert:["tibtub"],shape:"e 169 440.4 9.5 35.4 0"},
-{id:"sart",name:"Sartorius",group:11,tier:1,view:"f",layer:"s",action:"Crosses the legs and bends the hip and knee",origin:["asis"],insert:["pesans"],shape:"p M197.5 290.2 C201.3 286.7 204.2 286.7 206.1 288.5 C193.7 329.6 178.5 388.5 167.1 438.1 C164.3 438.1 162.4 436.9 162.4 435.7 C172.8 388.5 186.1 336.7 197.5 290.2Z"},
-{id:"add",name:"Adductor longus",group:11,tier:1,view:"f",layer:"s",action:"Pulls the thigh toward the middle",origin:["pubbody"],insert:["laspmid"],shape:"p M152.9 306 C159.5 310.7 165.2 317.8 169 323.7 C170 355.5 169 383.8 168.1 412.1 C163.3 409.8 159.5 406.2 156.7 402.7Z"},
-{id:"grac",name:"Gracilis",group:11,tier:2,view:"f",layer:"s",action:"Pulls the thigh inward and bends the knee",origin:["pubinf"],insert:["pesans"],shape:"e 160.5 388.5 3.8 44.8 0"},
-{id:"bf",name:"Biceps femoris",group:11,tier:1,view:"b",layer:"s",action:"Bends the knee and extends the hip",origin:["ischtub", "laspbf"],insert:["fibhead"],shape:"e 201.3 407.4 10.5 63.7 0"},
-{id:"st",name:"Semitendinosus",group:11,tier:1,view:"b",layer:"s",action:"Bends the knee and extends the hip",origin:["ischtub"],insert:["pesans"],shape:"e 184.2 402.7 8.5 59 0"},
-{id:"sm",name:"Semimembranosus",group:11,tier:1,view:"b",layer:"s",action:"Bends the knee and extends the hip",origin:["ischtub"],insert:["tibmed"],shape:"e 167.1 405 8.5 56.6 0"},
-{id:"ta",name:"Tibialis anterior",group:12,tier:1,view:"f",layer:"s",action:"Lifts the foot upward",origin:["tibup"],insert:["medcun"],alt:["Tibialis anticus"],shape:"e 188 540.7 6.7 39.3 0"},
-{id:"fib",name:"Fibularis longus",group:12,tier:2,view:"f",layer:"s",action:"Turns the sole outward",origin:["fibup"],insert:["medcunU"],alt:["Peroneus longus"],shape:"e 202.3 533.2 5.7 35.6 0"},
-{id:"edl",name:"Extensor digitorum longus",group:12,tier:2,view:"f",layer:"s",action:"Lifts the toes and foot",origin:["edlorig"],insert:["toes25"],alt:["EDL"],shape:"e 196.6 542.6 3.3 31.8 0"},
-{id:"gas",name:"Gastrocnemius",group:12,tier:1,view:"b",layer:"s",action:"Points the foot down and bends the knee",origin:["femcond"],insert:["calc"],alt:["Gastroc"],shape:"e 188 525.8 12.4 35.6 0"},
-{id:"sol",name:"Soleus",group:12,tier:1,view:"b",layer:"s",action:"Points the foot down",origin:["soleorig"],insert:["calc"],shape:"e 188 572.5 9.5 26.2 0"},
-{id:"edb",name:"Extensor digitorum brevis",group:13,tier:3,view:"f",layer:"s",action:"Lifts the toes",origin:["calcdors"],insert:["edltend"],alt:["EDB"],shape:"e 195.6 606.1 5.7 3.9 -5"},
-{id:"ahal",name:"Abductor hallucis",group:13,tier:3,view:"f",layer:"s",action:"Moves the big toe inward",origin:["calcmed"],insert:["bigtoe"],shape:"e 174.7 608.3 5.7 3.9 5"},
-{id:"adm5",name:"Abductor digiti minimi (foot)",group:13,tier:3,view:"f",layer:"s",action:"Moves the little toe outward",origin:["calclat"],insert:["littletoe"],shape:"e 205.1 610.6 4.8 3.3 0"},
-{id:"fdb",name:"Flexor digitorum brevis",group:13,tier:3,view:"b",layer:"s",action:"Bends the toes",origin:["calcmed"],insert:["midph25"],alt:["FDB"],shape:"e 189.9 608.3 6.7 4.4 0"}];
+{id:"trap",name:"Trapezius",group:4,tier:1,view:"b",depth:1,action:"Lifts, lowers and pulls back the shoulder blade",origin:["nuchal", "spC7T12"],insert:["clavlat", "acrom", "scapsp"],alt:["Traps"],shape:"p M150 86.7 C181.8 94.3 206.4 102 224.1 115 C216.5 139.5 193.7 165.8 174.7 195.6 C165.2 211.4 155.7 223.6 150 230.7Z"},
+{id:"lat",name:"Latissimus dorsi",group:4,tier:1,view:"b",depth:1,action:"Pulls the arm down and back",origin:["spT7L5", "iliaccrest", "lowribs"],insert:["igfloor"],alt:["Lats"],shape:"p M157.6 190.4 C176.6 178.1 195.6 165.8 203.2 162.3 C210.8 165.8 214.6 172.8 210.8 183.3 C207 209.6 189.9 237.7 161.4 251.7Z"},
+{id:"glutmax",name:"Gluteus maximus",group:10,tier:1,view:"b",depth:1,action:"Extends the hip",origin:["glmaxorig"],insert:["glut_tub"],alt:["Glute max"],shape:"p M151 299 C169 295.5 193.7 297.2 203.2 302.5 C212.7 324.9 201.3 350.8 186.1 360.2 C174.7 365 159.5 360.2 151 355.5Z"},
+{id:"pec",name:"Pectoralis major",group:3,tier:1,view:"f",depth:1,action:"Pulls the arm across the chest",origin:["pecorig"],insert:["iglat"],alt:["Pecs", "Pectoralis"],shape:"p M151.9 118.5 C176.6 113.3 203.2 118.5 220.3 129 C216.5 150.1 201.3 171.1 184.2 178.1 C169 181.6 157.6 174.6 151.9 164.1Z"},
+{id:"rect",name:"Rectus abdominis",group:5,tier:1,view:"f",depth:1,action:"Bends the trunk forward",origin:["pubcrest"],insert:["xiph"],alt:["Abs", "Six-pack"],shape:"p M152.9 185.1 C161.4 183.3 170.9 183.3 177.6 185.1 C178.5 213.1 176.6 246.4 175.7 272.7 C167.1 276.2 159.5 276.2 152.9 274.5Z"},
+{id:"obl",name:"External oblique",group:5,tier:1,view:"f",depth:1,action:"Twists and bends the trunk",origin:["ribs512"],insert:["oblins"],alt:["External obliques", "Obliques"],shape:"p M180.4 188.6 C189.9 186.8 199.4 186.8 204.2 190.4 C210.8 218.4 207 248.2 197.5 269.2 C189.9 272.7 184.2 272.7 179.5 271Z"},
+{id:"serr",name:"Serratus anterior",group:3,tier:1,view:"f",depth:1,action:"Holds the shoulder blade against the ribs",origin:["ribs18"],insert:["medbordant"],alt:["Serratus"],shape:"p M194.7 164.1 C201.3 160.6 208 158.8 211.8 159.7 C214.6 172.8 214.6 185.1 212.7 192.1 C207 195.6 201.3 195.6 197.5 195.6Z"},
+{id:"erector",name:"Erector spinae",group:4,tier:1,view:"b",depth:3,action:"Straightens the spine",origin:["erorig"],insert:["erins"],alt:["Erectors", "Sacrospinalis"],shape:"p M150 148.3 C155.7 146.5 159.5 148.3 162.4 151.8 C165.2 192.1 165.2 235.9 163.3 274.5 C157.6 276.2 153.8 276.2 150 274.5Z"},
+{id:"rhomb",name:"Rhomboid major",group:4,tier:1,view:"b",depth:2,action:"Pulls the shoulder blades together",origin:["spT2T5"],insert:["medbord"],shape:"p M153.8 127.3 C161.4 129 167.1 130.8 170.9 134.3 C170.9 146.5 169 155.3 169 164.1 C163.3 164.1 157.6 162.3 153.8 160.6Z"},
+{id:"glutmed",name:"Gluteus medius",group:10,tier:1,view:"b",depth:2,action:"Moves the leg out to the side",origin:["ilium_out"],insert:["gtroch"],alt:["Glute med"],shape:"p M167.1 272.7 C182.3 271 195.6 272.7 204.2 278 C207 286.7 206.1 293.7 204.2 300.7 C191.8 300.7 178.5 299 169 297.2Z"},
+{id:"tfl",name:"Tensor fasciae latae",group:10,tier:2,view:"f",depth:1,action:"Moves the leg out and steadies the hip",origin:["asis"],insert:["itt"],alt:["TFL"],shape:"p M198.5 279.7 C204.2 280.6 208.9 283.2 211.8 286.7 C210.8 299 209.9 313.1 208 326 C204.2 327.2 201.3 327.2 199.4 324.9Z"},
+{id:"delt",name:"Deltoid",group:2,tier:1,view:"fb",depth:1,action:"Lifts the arm away from the body",origin:["clavlat", "acrom", "scapsp"],insert:["deltub"],alt:["Delts"],shape:"e 229.8 132.9 16.2 29.7 -8"},
+{id:"supra",name:"Supraspinatus",group:2,tier:2,view:"b",depth:2,action:"Starts lifting the arm",origin:["supraf"],insert:["gtub1"],shape:"e 189.9 124.6 13.3 5.3 -10"},
+{id:"infra",name:"Infraspinatus",group:2,tier:2,view:"b",depth:2,action:"Rotates the arm outward",origin:["infraf"],insert:["gtub2"],shape:"p M170.9 132.5 C184.2 129 195.6 129 204.2 129.9 C203.2 142.2 201.3 151.8 199.4 158.8 C189.9 162.3 180.4 164.1 172.8 164.1Z"},
+{id:"tmin",name:"Teres minor",group:2,tier:2,view:"b",depth:2,action:"Rotates the arm outward",origin:["latbord"],insert:["gtub3"],shape:"e 206.1 148.3 7.6 3.5 -15"},
+{id:"tmaj",name:"Teres major",group:2,tier:2,view:"b",depth:2,action:"Rotates the arm inward and pulls it back",origin:["infang"],insert:["igmed"],shape:"e 209.9 163.2 11.4 5.3 -20"},
+{id:"scm",name:"Sternocleidomastoid",group:1,tier:1,view:"f",depth:1,action:"Turns and tilts the head",origin:["manub", "clavmed"],insert:["mast"],alt:["SCM"],shape:"p M171.6 73.7 C177.6 73.7 181.2 74.9 182.4 77.3 C174.2 90.5 165.5 102 159.5 111.5 L151 109.8 C158.1 98.1 166 86.7 171.6 73.7Z"},
+{id:"plat",name:"Platysma",group:1,tier:2,view:"f",depth:1,action:"Tightens the neck skin and pulls the mouth down",origin:["chestfascia"],insert:["mandlow"],shape:"p M138 80.8 C145.4 86.7 154.5 88.6 163.1 82.9 L170.2 103 C163.3 107 155.7 108 150 106Z"},
+{id:"scal",name:"Scalenes",group:1,tier:2,view:"f",depth:2,action:"Lifts the first ribs and tilts the neck",origin:["cervtp"],insert:["rib12"],shape:"e 170.7 96.2 3.6 8.5 -15"},
+{id:"spl",name:"Splenius capitis",group:1,tier:2,view:"b",depth:2,action:"Extends and turns the head",origin:["lignuch"],insert:["mast", "nuchlat"],shape:"p M154.8 78.5 C163.2 80.8 170.2 82.9 174.1 86.7 C169.3 98.1 166.2 108 163.3 115 L152.9 111.5Z"},
+{id:"lev",name:"Levator scapulae",group:1,tier:2,view:"b",depth:2,action:"Lifts the shoulder blade",origin:["cervtp14"],insert:["supang"],shape:"e 175.7 110.6 3.8 10.5 -25"},
+{id:"front",name:"Frontalis",group:0,tier:1,view:"f",depth:1,action:"Raises the eyebrows",origin:["galea"],insert:["brow"],shape:"e 150 12.3 20.4 7.1 0"},
+{id:"orbi",name:"Orbicularis oculi",group:0,tier:1,view:"f",depth:1,action:"Closes the eyelid",origin:["orbm"],insert:["eyelid"],shape:"e 163.2 34.7 9.6 5.9 0"},
+{id:"zyg",name:"Zygomaticus major",group:0,tier:1,view:"f",depth:1,action:"Lifts the corner of the mouth (smiling)",origin:["zygb"],insert:["modio"],shape:"e 165.6 52.5 9.6 4.1 30"},
+{id:"oris",name:"Orbicularis oris",group:0,tier:1,view:"f",depth:1,action:"Closes and purses the lips",origin:["maxmand"],insert:["lips"],shape:"e 150 64.3 10.8 4.7 0"},
+{id:"mass",name:"Masseter",group:0,tier:1,view:"f",depth:1,action:"Closes the jaw to chew",origin:["zygarch"],insert:["mandang"],shape:"e 171.6 59.5 6 10.6 0"},
+{id:"temp",name:"Temporalis",group:0,tier:1,view:"f",depth:1,action:"Closes the jaw",origin:["tempf"],insert:["coron"],shape:"e 177.6 33.5 6 10.6 0"},
+{id:"bic",name:"Biceps brachii",group:6,tier:1,view:"f",depth:1,action:"Bends the elbow and turns the palm up",origin:["coracoid", "supragl"],insert:["radtub"],alt:["Biceps"],shape:"e 238.4 183.4 10.5 41.8 3"},
+{id:"bra",name:"Brachialis",group:6,tier:1,view:"f",depth:2,action:"Bends the elbow",origin:["humant"],insert:["ulncor"],shape:"e 243.1 207.6 4.8 15.4 3"},
+{id:"tric",name:"Triceps brachii",group:6,tier:1,view:"b",depth:1,action:"Straightens the elbow",origin:["infragl", "humpost"],insert:["olec"],alt:["Triceps"],shape:"e 239.3 187.8 11.4 44 3"},
+{id:"brach",name:"Brachioradialis",group:7,tier:1,view:"f",depth:1,action:"Bends the elbow",origin:["latsupra"],insert:["radsty"],shape:"e 253.6 255.1 5.7 19.6 4"},
+{id:"pron",name:"Pronator teres",group:7,tier:2,view:"f",depth:1,action:"Turns the palm down",origin:["medepi", "ulncor"],insert:["radmid"],shape:"e 239.3 237.8 4.8 9.8 40"},
+{id:"fcr",name:"Flexor carpi radialis",group:7,tier:2,view:"f",depth:1,action:"Bends the wrist",origin:["medepi"],insert:["mc23"],alt:["FCR"],shape:"e 244.1 286.8 6.7 24.1 3"},
+{id:"extd",name:"Extensor digitorum",group:7,tier:2,view:"b",depth:1,action:"Straightens the fingers",origin:["latepi"],insert:["extexp"],shape:"e 248.8 282.3 7.6 28.7 3"},
+{id:"ecrl",name:"Extensor carpi radialis longus",group:7,tier:2,view:"b",depth:1,action:"Bends the wrist backward",origin:["latsupra"],insert:["mc2d"],alt:["ECRL"],shape:"e 255.5 256.6 4.3 15.1 3"},
+{id:"apb",name:"Abductor pollicis brevis",group:8,tier:3,view:"f",depth:1,action:"Moves the thumb away from the palm",origin:["scaphtrap"],insert:["thumbpp_l"],alt:["APB"],shape:"e 262.1 345.3 4.3 13.5 -20"},
+{id:"adm",name:"Abductor digiti minimi",group:8,tier:3,view:"f",depth:1,action:"Moves the little finger away",origin:["pisi"],insert:["littlepp"],shape:"e 246 350.3 3.8 15.2 10"},
+{id:"adp",name:"Adductor pollicis",group:8,tier:3,view:"f",depth:2,action:"Pulls the thumb toward the palm",origin:["capmc"],insert:["thumbpp_m"],shape:"e 258.3 363.8 3.8 10.1 -20"},
+{id:"dio",name:"Dorsal interossei",group:8,tier:3,view:"b",depth:1,action:"Spreads the fingers",origin:["mcsides"],insert:["ppbases"],shape:"e 254.5 355.4 6.7 18.5 0"},
+{id:"ili",name:"Iliopsoas",group:9,tier:1,view:"f",depth:2,action:"Bends the hip",origin:["iliopsorig"],insert:["lesstroch"],alt:["Iliopsoas", "Iliacus and psoas"],shape:"p M157.6 276.2 C163.3 278 169 281.5 171.9 286.7 C170.9 297.2 170 304.2 168.1 314.3 C164.3 313.1 160.5 310.7 157.6 307.2Z"},
+{id:"pect",name:"Pectineus",group:9,tier:2,view:"f",depth:1,action:"Pulls the thigh inward and bends the hip",origin:["pectline"],insert:["femPect"],shape:"e 165.2 326 5.7 8.3 -20"},
+{id:"pirif",name:"Piriformis",group:9,tier:2,view:"b",depth:3,action:"Rotates the thigh outward",origin:["sacrant"],insert:["gtroch"],shape:"e 176.6 309.5 14.3 4.7 12"},
+{id:"rf",name:"Rectus femoris",group:11,tier:1,view:"f",depth:1,action:"Straightens the knee and bends the hip",origin:["aiis"],insert:["tibtub"],alt:["Rec fem"],shape:"e 184.2 372 11.4 63.7 0"},
+{id:"vl",name:"Vastus lateralis",group:11,tier:1,view:"f",depth:1,action:"Straightens the knee",origin:["vlorig"],insert:["tibtub"],shape:"e 205.1 383.8 9.5 63.7 0"},
+{id:"vm",name:"Vastus medialis",group:11,tier:1,view:"f",depth:1,action:"Straightens the knee",origin:["vmorig"],insert:["tibtub"],shape:"e 169 440.4 9.5 35.4 0"},
+{id:"sart",name:"Sartorius",group:11,tier:1,view:"f",depth:1,action:"Crosses the legs and bends the hip and knee",origin:["asis"],insert:["pesans"],shape:"p M197.5 290.2 C201.3 286.7 204.2 286.7 206.1 288.5 C193.7 329.6 178.5 388.5 167.1 438.1 C164.3 438.1 162.4 436.9 162.4 435.7 C172.8 388.5 186.1 336.7 197.5 290.2Z"},
+{id:"add",name:"Adductor longus",group:11,tier:1,view:"f",depth:1,action:"Pulls the thigh toward the middle",origin:["pubbody"],insert:["laspmid"],shape:"p M152.9 306 C159.5 310.7 165.2 317.8 169 323.7 C170 355.5 169 383.8 168.1 412.1 C163.3 409.8 159.5 406.2 156.7 402.7Z"},
+{id:"grac",name:"Gracilis",group:11,tier:2,view:"f",depth:1,action:"Pulls the thigh inward and bends the knee",origin:["pubinf"],insert:["pesans"],shape:"e 160.5 388.5 3.8 44.8 0"},
+{id:"bf",name:"Biceps femoris",group:11,tier:1,view:"b",depth:1,action:"Bends the knee and extends the hip",origin:["ischtub", "laspbf"],insert:["fibhead"],shape:"e 201.3 407.4 10.5 63.7 0"},
+{id:"st",name:"Semitendinosus",group:11,tier:1,view:"b",depth:1,action:"Bends the knee and extends the hip",origin:["ischtub"],insert:["pesans"],shape:"e 184.2 402.7 8.5 59 0"},
+{id:"sm",name:"Semimembranosus",group:11,tier:1,view:"b",depth:2,action:"Bends the knee and extends the hip",origin:["ischtub"],insert:["tibmed"],shape:"e 167.1 405 8.5 56.6 0"},
+{id:"ta",name:"Tibialis anterior",group:12,tier:1,view:"f",depth:1,action:"Lifts the foot upward",origin:["tibup"],insert:["medcun"],alt:["Tibialis anticus"],shape:"e 188 540.7 6.7 39.3 0"},
+{id:"fib",name:"Fibularis longus",group:12,tier:2,view:"f",depth:1,action:"Turns the sole outward",origin:["fibup"],insert:["medcunU"],alt:["Peroneus longus"],shape:"e 202.3 533.2 5.7 35.6 0"},
+{id:"edl",name:"Extensor digitorum longus",group:12,tier:2,view:"f",depth:1,action:"Lifts the toes and foot",origin:["edlorig"],insert:["toes25"],alt:["EDL"],shape:"e 196.6 542.6 3.3 31.8 0"},
+{id:"gas",name:"Gastrocnemius",group:12,tier:1,view:"b",depth:1,action:"Points the foot down and bends the knee",origin:["femcond"],insert:["calc"],alt:["Gastroc"],shape:"e 188 525.8 12.4 35.6 0"},
+{id:"sol",name:"Soleus",group:12,tier:1,view:"b",depth:2,action:"Points the foot down",origin:["soleorig"],insert:["calc"],shape:"e 188 572.5 9.5 26.2 0"},
+{id:"edb",name:"Extensor digitorum brevis",group:13,tier:3,view:"f",depth:1,action:"Lifts the toes",origin:["calcdors"],insert:["edltend"],alt:["EDB"],shape:"e 195.6 606.1 5.7 3.9 -5"},
+{id:"ahal",name:"Abductor hallucis",group:13,tier:3,view:"f",depth:1,action:"Moves the big toe inward",origin:["calcmed"],insert:["bigtoe"],shape:"e 174.7 608.3 5.7 3.9 5"},
+{id:"adm5",name:"Abductor digiti minimi (foot)",group:13,tier:3,view:"f",depth:1,action:"Moves the little toe outward",origin:["calclat"],insert:["littletoe"],shape:"e 205.1 610.6 4.8 3.3 0"},
+{id:"fdb",name:"Flexor digitorum brevis",group:13,tier:3,view:"b",depth:1,action:"Bends the toes",origin:["calcmed"],insert:["midph25"],alt:["FDB"],shape:"e 189.9 608.3 6.7 4.4 0"}];
 const BY={};M.forEach(m=>BY[m.id]=m);
 const MIR='transform="translate(300 0) scale(-1 1)"';
 const shape=sp=>{const t=sp.split(" ");return t[0]==="e"?`<ellipse cx="${t[1]}" cy="${t[2]}" rx="${t[3]}" ry="${t[4]}" transform="rotate(${t[5]} ${t[1]} ${t[2]})"/>`:`<path d="${sp.slice(2)}"/>`};
@@ -298,12 +305,12 @@ const bonesOf=id=>[...new Set([...BY[id].origin,...BY[id].insert].flatMap(k=>L[k
 const defs=`<defs><linearGradient id="silg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--sil)"/><stop offset="1" stop-color="var(--sil2)"/></linearGradient>`+HUE.map((h,i)=>`<linearGradient id="gr${i}" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0" stop-color="hsl(${h} 62% 66%)"/><stop offset="1" stop-color="hsl(${h} 58% 42%)"/></linearGradient>`).join("")+`</defs>`;
 const boneSvg=v=>{const list=[];B.forEach(b=>{if(v==="b"&&b[0]==="scap")return;list.push(b);if(v==="b"&&b[0]==="ribs")list.push(BB.scap)});
 return`<g class="bones">`+list.filter(b=>b[2].includes(v)).map(b=>{const s=typeof b[3]==="string"?b[3]:b[3][v];return`<g class="bn${b[5]===v?" deep":""}" data-b="${b[0]}">${s}${b[4]?"":`<g ${MIR}>${s}</g>`}</g>`}).join("")+`</g>`};
-const viewSvg=v=>`<g class="sil">${HALF}<g ${MIR}>${HALF}</g><ellipse cx="150" cy="43" rx="30" ry="39"/><path d="M134.4 76.1 L165.6 76.1 L168.7 101 L131.3 101Z"/></g>`+boneSvg(v)+M.filter(m=>m.view.includes(v)).map(m=>`<g class="mu" data-id="${m.id}" style="--gf:url(#gr${m.group})">${shape(m.shape)}<g ${MIR}>${shape(m.shape)}</g></g>`).join("");
+const viewSvg=v=>`<g class="sil">${HALF}<g ${MIR}>${HALF}</g><ellipse cx="150" cy="43" rx="30" ry="39"/><path d="M134.4 76.1 L165.6 76.1 L168.7 101 L131.3 101Z"/></g>`+boneSvg(v)+[4,3,2,1].map(d=>{const h=M.filter(m=>m.view.includes(v)&&m.depth===d).map(m=>`<g class="mu" data-id="${m.id}" style="--gf:url(#gr${m.group})">${shape(m.shape)}</g>`).join("");return`<g class="dl" data-d="${d}"><g class="side">${h}</g><g ${MIR}><g class="side">${h}</g></g></g>`}).join("");
 svg.innerHTML=defs+`<g id="fv" class="v">${viewSvg("f")}</g><g id="bv" class="v off">${viewSvg("b")}</g><text id="lbl" class="lbl" x="150" y="632" text-anchor="middle"></text>`;
 const LOC=m=>`${GR[m.group]} group, ${m.view==="b"?"back":"front"} view`;
 let tok=0,vw="f",mode="learn",vb=[0,0,300,640],q=null,qa=null,tried=new Set(),streak=0,score=[0,0],busy=false,sp=null,spT=null,cur=null,layer="fb";
 let prog={g:{},badges:[],best:0};try{prog=Object.assign(prog,JSON.parse(localStorage.getItem("mt3")||"{}"))}catch(e){}
-try{layer=localStorage.getItem("mtl")||"fb"}catch(e){}
+try{layer=localStorage.getItem("mtl")||"fb"}catch(e){}if(layer==="b")layer="fb";
 const save=()=>{try{localStorage.setItem("mt3",JSON.stringify(prog))}catch(e){}};
 function toast(t){const e=$("toast");e.textContent="🏅 "+t;e.style.display="block";setTimeout(()=>e.style.display="none",3200)}
 function award(n){if(prog.badges.includes(n))return;prog.badges.push(n);save();toast("Badge earned: "+n);bdg()}
@@ -311,17 +318,22 @@ function bdg(){$("bdg").innerHTML=prog.badges.length?prog.badges.map(b=>`<span c
 function face(v){vw=v;$("fv").classList.toggle("off",v!=="f");$("bv").classList.toggle("off",v!=="b");$("front").classList.toggle("on",v==="f");$("back").classList.toggle("on",v==="b")}
 function redraw(){if(cur)cur[0]==="m"?drawAtt(cur[1]):drawBone(cur[1])}
 $("front").onclick=()=>{face("f");redraw()};$("back").onclick=()=>{face("b");redraw()};
-function setLayer(l){layer=l;svg.dataset.layer=l;document.querySelectorAll("#lyr [data-l]").forEach(b=>b.classList.toggle("on",b.dataset.l===l));try{localStorage.setItem("mtl",l)}catch(e){}}
+const DN=["","Surface","Middle","Deep","Deepest","Bones"];let depth=1;
+function setDepth(d){depth=Math.max(1,Math.min(5,d));document.querySelectorAll(".dl").forEach(g=>g.classList.toggle("peel",+g.dataset.d<depth));document.querySelectorAll("#dep [data-d]").forEach(b=>b.classList.toggle("on",+b.dataset.d===depth));if(depth===5&&layer==="m")setLayer("fb")}
+$("dep").addEventListener("click",e=>{const b=e.target.closest("[data-d]");if(b)setDepth(+b.dataset.d)});
+let wl=0;svg.addEventListener("wheel",e=>{e.preventDefault();const t=Date.now();if(t-wl<280||Math.abs(e.deltaY)<4)return;wl=t;setDepth(depth+(e.deltaY>0?1:-1))},{passive:false});
+svg.addEventListener("contextmenu",e=>{e.preventDefault();setDepth(depth<5?depth+1:1)});
+function setLayer(l){if(l==="m"&&depth===5)setDepth(4);layer=l;svg.dataset.layer=l;document.querySelectorAll("#lyr [data-l]").forEach(b=>b.classList.toggle("on",b.dataset.l===l));try{localStorage.setItem("mtl",l)}catch(e){}}
 $("lyr").addEventListener("click",e=>{const b=e.target.closest("[data-l]");if(b)setLayer(b.dataset.l)});
 const tween=to=>{const from=vb.slice();let i=0;(function s(){i++;const t=i/16,k=t*t*(3-2*t);vb=from.map((x,j)=>x+(to[j]-x)*k);svg.setAttribute("viewBox",vb.join(" "));if(i<16)requestAnimationFrame(s)})()};
 // drag to pan, tap to select
 let dr=null;svg.addEventListener("pointerdown",e=>{dr={x:e.clientX,y:e.clientY,vb:vb.slice(),moved:false}});
 svg.addEventListener("pointermove",e=>{if(!dr)return;const dx=e.clientX-dr.x,dy=e.clientY-dr.y;if(Math.hypot(dx,dy)>6)dr.moved=true;if(dr.moved){const k=dr.vb[2]/svg.clientWidth;vb=[dr.vb[0]-dx*k,dr.vb[1]-dy*k,dr.vb[2],dr.vb[3]];svg.setAttribute("viewBox",vb.join(" "))}});
-svg.addEventListener("pointerup",e=>{const tap=dr&&!dr.moved;dr=null;if(!tap)return;const m=e.target.closest(".mu"),b=e.target.closest(".bn");if(m)pick(m.dataset.id);else if(b)pickBone(b.dataset.b)});
+svg.addEventListener("pointerup",e=>{const tap=dr&&!dr.moved&&e.button===0;dr=null;if(!tap)return;const m=e.target.closest(".mu"),b=e.target.closest(".bn");if(m)pick(m.dataset.id);else if(b)pickBone(b.dataset.b)});
 const cls=(id,c,on)=>document.querySelectorAll(`.mu[data-id="${id}"]`).forEach(g=>g.classList.toggle(c,on));
 const clsB=(id,c,on)=>document.querySelectorAll(`.bn[data-b="${id}"]`).forEach(g=>g.classList.toggle(c,on));
 function clearMarks(){document.querySelectorAll(".mu").forEach(g=>g.classList.remove("sel","q","bad","ans"));document.querySelectorAll(".bn").forEach(g=>g.classList.remove("hit","hit2"));svg.querySelectorAll(".att").forEach(e=>e.remove());svg.classList.remove("foc");$("lbl").textContent="";cur=null}
-function show(id,c,l){cls(id,c,true);$("lbl").textContent=l||""}
+function show(id,c,l){setDepth(BY[id].depth);cls(id,c,true);$("lbl").textContent=l||""}
 // attachment overlay: O = origin, I = insertion, dashed lines run to the muscle belly
 function overlay(){svg.querySelectorAll(".att").forEach(e=>e.remove());const g=document.createElementNS("http://www.w3.org/2000/svg","g");g.setAttribute("class","att");$(vw==="b"?"bv":"fv").appendChild(g);return g}
 const dotSvg=(x,y,r)=>`<circle class="${r}" cx="${x}" cy="${y}" r="4"/><text x="${x}" y="${y}">${r==="o"?"O":"I"}</text>`;
@@ -349,7 +361,7 @@ $("lev").onchange=e=>setLevel(+e.target.value);applyLevel();
 const stepG=d=>{const i=VG.indexOf(+$("gs").value);focus(VG[(i+d+VG.length)%VG.length],mode==="learn")};
 $("zo").onclick=out;$("gs").onchange=e=>focus(+e.target.value,mode==="learn");$("gp").onclick=()=>stepG(-1);$("gn").onclick=()=>stepG(1);
 function pick(id){if(mode!=="learn")return;clearMarks();const m=BY[id];if(!m.view.includes(vw))face(m.view[0]);show(id,"sel",m.name);drawAtt(id);cur=["m",id];
-$("info").innerHTML=`<b>${m.name}</b><br><span class="k">${LOC(m)} · ${LV[m.tier-1]} level</span><p style="margin:6px 0">${m.action}.</p>${attLines(id)}<div class="k" style="margin:6px 0 2px">Bones it attaches to:</div><div>${bonesOf(id).map(chipB).join("")}</div><div class="row"><button id="zg">Zoom to ${GR[m.group]}</button></div>`;$("zg").onclick=()=>focus(m.group,true)}
+$("info").innerHTML=`<b>${m.name}</b><br><span class="k">${LOC(m)} · ${DN[m.depth]} layer · ${LV[m.tier-1]} level</span><p style="margin:6px 0">${m.action}.</p>${attLines(id)}<div class="k" style="margin:6px 0 2px">Bones it attaches to:</div><div>${bonesOf(id).map(chipB).join("")}</div><div class="row"><button id="zg">Zoom to ${GR[m.group]}</button></div>`;$("zg").onclick=()=>focus(m.group,true)}
 function pickBone(b){if(mode!=="learn")return;if(layer==="m")setLayer("fb");clearMarks();const B0=BB[b];if(!B0[2].includes(vw))face(B0[2][0]);$("lbl").textContent=B0[1];drawBone(b);cur=["b",b];
 const on=w=>P.filter(m=>att(m.id,w).some(k=>onBone(k,b))),o=on(0),i=on(1);
 $("info").innerHTML=`<b>${B0[1]}</b><p style="margin:6px 0">${B0[6]}</p><div class="att-row"><span class="dot o">O</span> <b>Muscles that start here:</b></div><div>${o.length?o.map(chipM).join(""):'<span class="k">None at this level.</span>'}</div><div class="att-row" style="margin-top:8px"><span class="dot i">I</span> <b>Muscles that end here:</b></div><div>${i.length?i.map(chipM).join(""):'<span class="k">None at this level.</span>'}</div>`}
@@ -396,10 +408,10 @@ $("spc").innerHTML=`<b>Name the flashing muscle.</b> <span class="k"><span id="t
 const go=()=>{const a=find($("si").value);if(a&&a.id===sp.queue[0].id){sp.named.push(sp.queue.shift());spNext()}else $("sf").textContent="Not that one. Try again or skip."};$("sok").onclick=go;$("si").onkeydown=e=>{if(e.key==="Enter")go()};$("ssk").onclick=()=>{sp.queue.push(sp.queue.shift());spNext()};$("sfn").onclick=endSpeed;$("si").focus();tick()}
 function endSpeed(){sp.over=true;clearInterval(spT);clearMarks();const t=Math.round((Date.now()-sp.t0)/1000);$("spc").innerHTML=`<b>Time!</b> You named <b>${sp.named.length}</b> of ${sp.total} in ${t}s.<p class="k"><b>Named:</b> ${sp.named.map(m=>m.name).join(", ")||"none"}</p><p class="k"><b>Still to learn:</b> ${sp.queue.map(m=>m.name).join(", ")||"nothing, perfect!"}</p><button class="p" id="sag">Play again</button>`;$("sag").onclick=startSpeed;if(!sp.queue.length)award("Speed run complete: "+($("sg").value==="all"?"whole body":GR[+$("sg").value])+" ("+LV[level-1]+")")}
 $("sgo").onclick=startSpeed;
-function setMode(m){mode=m;document.querySelectorAll("#modes>button").forEach(b=>b.classList.toggle("on",b.dataset.m===m));$("po").style.display=m==="practice"?"flex":"none";$("so").style.display=m==="speed"?"flex":"none";$("pq").style.display=m==="practice"?"":"none";$("spc").style.display=m==="speed"?"":"none";$("info").style.display=m==="learn"?"":"none";$("lyb").style.display=m==="learn"?"":"none";if(m!=="learn"&&layer==="b")setLayer("fb");clearMarks();clearInterval(spT);sp=null;out();
+function setMode(m){mode=m;document.querySelectorAll("#modes>button").forEach(b=>b.classList.toggle("on",b.dataset.m===m));$("po").style.display=m==="practice"?"flex":"none";$("so").style.display=m==="speed"?"flex":"none";$("pq").style.display=m==="practice"?"":"none";$("spc").style.display=m==="speed"?"":"none";$("info").style.display=m==="learn"?"":"none";clearMarks();clearInterval(spT);sp=null;out();
 if(m==="practice"){score=[0,0];streak=0;q=null;ask()}if(m==="speed")$("spc").innerHTML='<b>Speed run.</b> Pick the whole body or one group, and a time limit, then press Start. Skip any muscle you don’t know.'}
 $("modes").addEventListener("click",e=>{const b=e.target.closest("[data-m]");if(b)setMode(b.dataset.m)});$("qt").onchange=()=>{if(mode==="practice")ask()};
-setLayer(layer);bdg();
+setLayer(layer);setDepth(1);bdg();
 </script>
 </body>
 </html>
