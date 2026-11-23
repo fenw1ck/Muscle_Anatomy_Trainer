@@ -82,19 +82,48 @@ svg.slv .mu.dim{opacity:0;pointer-events:none}svg.slv .mu:not(.sel):not(.dim) *{
 .chip{padding:4px 9px;margin:2px 2px 2px 0;font-size:13px}.att-row{margin:4px 0}
 .ch{display:block;width:100%;text-align:left;margin:5px 0}.ch.x{opacity:.35;text-decoration:line-through}.k{color:var(--mute);font-size:14px}#fb{min-height:2.4em;margin:6px 0}
 #toast{position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);left:50%;transform:translateX(-50%);background:var(--gold);color:#222;padding:10px 18px;border-radius:30px;font-weight:700;display:none;z-index:9;box-shadow:0 4px 16px #0006}
+/* ---------- phase 8: slideshow buttons with strong contrast; fibre arrows, danger zones, massage trainer ---------- */
+#slctl{opacity:1;gap:8px;flex-wrap:wrap;justify-content:flex-end;max-width:calc(100vw - 24px)}
+#slctl button,#sldone{background:#0a0d0c;color:#fff;border:2px solid #fff;border-radius:26px;padding:10px 18px;min-height:46px;font:700 16px/1.1 system-ui,sans-serif;cursor:pointer;box-shadow:0 0 0 2px rgba(0,0,0,.75),0 4px 16px rgba(0,0,0,.55);display:inline-flex;align-items:center;gap:8px}
+#slctl button:hover,#slctl button:focus-visible,#sldone:hover,#sldone:focus-visible{background:#fff;color:#0a0d0c;border-color:#0a0d0c;outline:3px solid #ffd54a;outline-offset:2px}
+#slctl button:disabled{opacity:.45;cursor:default;border-style:dashed}
+#slctl button[hidden]{display:none}
+#slctl button svg{flex:none}
+#slvol{background:#fffdf8;color:#25292c}
+.dot.fb{background:#3b3b3b;font-size:13px}
+.caut{background:#fdeceb;border:2px solid #b3261e;color:#3d0b07;border-radius:10px;padding:8px 10px;margin:6px 0;font-size:14px;line-height:1.35}
+:root[data-theme="dark"] .caut{background:#3a1512;color:#ffe3df;border-color:#ff8a7c}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .caut{background:#3a1512;color:#ffe3df;border-color:#ff8a7c}}
+.zn{display:none}svg.zon .zn{display:block}.zn ellipse{fill:url(#znh);stroke:#b3261e;stroke-width:1.5;stroke-dasharray:3 2;cursor:help}
+body[data-mode="practice"] .zn,body[data-mode="speed"] .zn,body[data-mode="med"] .zn{display:none!important}
+.ctl{display:flex;gap:10px;margin:10px 0}
+.big{flex:1;min-height:60px;justify-content:center;gap:10px;font:800 18px/1 system-ui,sans-serif;background:#0d3b2e;color:#fff;border:3px solid #0d3b2e;border-radius:14px;display:inline-flex;align-items:center;box-shadow:0 0 0 2px var(--card),0 0 0 4px #0d3b2e}
+.big:disabled{opacity:.4}
+.big:focus-visible{outline:3px solid #ffb300;outline-offset:3px}
+:root[data-theme="dark"] .big{background:#f2f6f3;color:#0b1a15;border-color:#f2f6f3;box-shadow:0 0 0 2px var(--card),0 0 0 4px #f2f6f3}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .big{background:#f2f6f3;color:#0b1a15;border-color:#f2f6f3;box-shadow:0 0 0 2px var(--card),0 0 0 4px #f2f6f3}}
+.sflist{margin:6px 0 6px 18px;padding:0;font-size:14px}.sflist li{margin:4px 0}
+.pinb{margin:6px 0;padding:6px 8px;border:1px solid var(--line);border-radius:8px}.pinp summary,.srcs summary,#msafe summary{cursor:pointer;margin:6px 0}
+.slw{margin-top:.6vh;font-weight:700;color:#ffe9a8;font-size:clamp(13px,2vw,20px)}
+body.masslide #slcap{max-height:36vh;overflow:auto}
+body[data-mode="mas"] #lvr,body[data-mode="mas"] #pq,body[data-mode="mas"] #info{display:none}
+.fibl{margin-top:4px}
+button svg{width:26px;height:26px;min-width:26px;background:none;border:0;border-radius:0;display:inline-block;cursor:inherit;touch-action:auto;flex:none}
+#slctl button svg{width:24px;height:24px;min-width:24px}
+#mas{order:2}
 </style>
 </head>
 <body>
 <main>
 <h1>Muscle Trainer</h1>
 <p class="sub">Drag the picture to move it; zoom in with ＋ or by holding the left mouse button. Peel the muscles away layer by layer to reach the bones. Tap a muscle to see where it attaches, or tap a bone to see which muscles attach to it. Pick a level to choose which muscles to study: Core, Standard, Advanced or Expert. Each level includes the ones before it. 24 bones, drawn as a simplified schematic.</p>
-<div class="row" id="modes"><button data-m="learn" class="on">Learn</button><button data-m="practice">Practice</button><button data-m="speed">Speed run</button><button data-m="med">Meditate</button></div>
+<div class="row" id="modes"><button data-m="learn" class="on">Learn</button><button data-m="practice">Practice</button><button data-m="speed">Speed run</button><button data-m="med">Meditate</button><button data-m="mas">Massage Trainer</button></div>
 <div class="row" id="lvr"><span class="k">Level:</span><select id="lev" aria-label="Difficulty level"></select><span class="k" id="cnt"></span></div>
 <div class="row" id="po" style="display:none"><select id="qt"><option value="mc">Multiple choice</option><option value="fill">Fill in the blank</option><option value="att">Origins &amp; insertions</option><option value="tap">Tap the origin / insertion</option><option value="nick">Colloquial names</option></select></div>
 <div class="row" id="so" style="display:none"><select id="sg"></select><select id="stm"><option value="60">1 minute</option><option value="300">5 minutes</option><option value="0">Untimed</option></select><button class="p" id="sgo">Start</button></div>
 <div id="wrap"><div id="stage"><svg id="s" viewBox="0 0 300 640" aria-label="Human muscle and skeleton diagram"></svg>
 <div class="row"><button id="front" class="on">Front</button><button id="back">Back</button><button id="zin" aria-label="Zoom in" title="Zoom in (+)">＋</button><button id="zout" aria-label="Zoom out" title="Zoom out (−)">−</button><button id="zo" title="Whole body (0)">Whole body</button><span class="k" id="vwk"></span></div>
-<div class="row" id="lyr"><span class="k">Show:</span><button data-l="m">Muscles</button><button data-l="fb">Muscles + bones</button></div>
+<div class="row" id="lyr"><span class="k">Show:</span><button data-l="m">Muscles</button><button data-l="fb">Muscles + bones</button><button id="fibt" class="on" title="Hatch lines show which way the muscle fibres run; the arrow shows which way to glide">Fibre direction</button><button id="znt" title="Show areas to treat with extra care">Danger zones</button></div>
 <div class="row" id="dep"><span class="k">Layer:</span><button class="chip" data-d="1">Surface</button><button class="chip" data-d="2">Middle</button><button class="chip" data-d="3">Deep</button><button class="chip" data-d="4">Deepest</button><button class="chip" data-d="5">Bones</button></div>
 <p class="k" id="dhint" style="margin:0 0 6px">Mouse: scroll or right-click to peel a layer away (scroll up to put it back); hold the left button to zoom in, hold the right button to zoom out; drag to move. Keys: + and − zoom, arrows move, 0 whole body, [ and ] change layer. Touch: pinch to zoom.</p>
 <div class="row"><button id="gp">◀</button><select id="gs" aria-label="Muscle group"></select><button id="gn">▶</button></div>
@@ -102,11 +131,12 @@ svg.slv .mu.dim{opacity:0;pointer-events:none}svg.slv .mu:not(.sel):not(.dim) *{
 <div class="card" id="pq" style="display:none"></div>
 <div class="card" id="spc" style="display:none"></div>
 <div class="card" id="med" style="display:none"></div>
+<div class="card" id="mas" style="display:none"></div>
 <div class="card" id="bcard"><b>Badges</b><div id="bdg" class="k">None yet.</div></div></div></div>
 </main>
 <div id="slide" hidden><div class="slbg" id="slbg0"></div><div class="slbg" id="slbg1"></div><div id="slpanel"></div>
 <div id="slcap"><div id="slname"></div><div id="slsub"></div></div>
-<div id="slctl"><button id="slfs" title="Full screen">⛶</button><button id="slvb" aria-expanded="false">🔊 Volume</button><button id="slpa">Pause</button><button id="slx">✕ Close</button></div><div id="slvol" class="vol" hidden></div></div>
+<div id="slctl"><button id="slpv" hidden aria-label="Previous step"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M6 5h3v14H6zM20 5v14L10 12z" fill="currentColor"/></svg>Back</button><button id="slnx" hidden aria-label="Next step">Next<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M15 5h3v14h-3zM4 5v14l10-7z" fill="currentColor"/></svg></button><button id="slfs" title="Full screen">Full screen</button><button id="slvb" aria-expanded="false">Volume</button><button id="slpa">Pause</button><button id="slx">Close ✕</button></div><div id="slvol" class="vol" hidden></div></div>
 <div id="toast"></div>
 <script>
 const $=id=>document.getElementById(id),svg=$("s");
@@ -833,7 +863,8 @@ const attText=(id,w)=>att(id,w).map(k=>L[k][0]).join("; ");
 const onBone=(k,b)=>L[k][1].split(" ").includes(b);
 const bonesOf=id=>[...new Set([...BY[id].origin,...BY[id].insert].flatMap(k=>L[k][1].split(" ").filter(Boolean)))];
 
-const defs=`<defs><linearGradient id="silg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--sil)"/><stop offset="1" stop-color="var(--sil2)"/></linearGradient>`+HUE.map((h,i)=>`<linearGradient id="gr${i}" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0" stop-color="hsl(${h} 62% 66%)"/><stop offset="1" stop-color="hsl(${h} 58% 42%)"/></linearGradient>`).join("")+`</defs>`;
+const FIBDEFS=Array.from({length:12},(_,k)=>`<pattern id="fh${k}" width="3.4" height="3.4" patternUnits="userSpaceOnUse" patternTransform="rotate(${k*15})"><line x1="0" y1="2.6" x2="3.4" y2="2.6" stroke="#111" stroke-opacity=".7" stroke-width=".7"/><line x1="0" y1=".9" x2="3.4" y2=".9" stroke="#fff" stroke-opacity=".8" stroke-width=".6"/></pattern>`).join("")+`<pattern id="fhr" width="3.6" height="3.6" patternUnits="userSpaceOnUse"><circle cx="1.8" cy="1.8" r=".7" fill="#111" fill-opacity=".7"/><circle cx="0" cy="0" r=".6" fill="#fff" fill-opacity=".8"/></pattern><pattern id="znh" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="4" height="4" fill="#d93a2b" fill-opacity=".2"/><line x1="0" y1="2" x2="4" y2="2" stroke="#b3261e" stroke-width="1.2"/></pattern>`;
+const defs=`<defs><linearGradient id="silg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--sil)"/><stop offset="1" stop-color="var(--sil2)"/></linearGradient>`+HUE.map((h,i)=>`<linearGradient id="gr${i}" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0" stop-color="hsl(${h} 62% 66%)"/><stop offset="1" stop-color="hsl(${h} 58% 42%)"/></linearGradient>`).join("")+FIBDEFS+`</defs>`;
 const boneSvg=v=>{const list=[];B.forEach(b=>{if(v==="b"&&b[0]==="scap")return;list.push(b);if(v==="b"&&b[0]==="ribs")list.push(BB.scap)});
 return`<g class="bones">`+list.filter(b=>b[2].includes(v)).map(b=>{const s=typeof b[3]==="string"?b[3]:b[3][v];return`<g class="bn${b[5]===v?" deep":""}" data-b="${b[0]}">${s}${b[4]?"":`<g ${MIR}>${s}</g>`}</g>`}).join("")+`</g>`};
 
@@ -916,7 +947,7 @@ const endTouch=e=>{touches.delete(e.pointerId);if(touches.size<2)pinch=null};
 svg.addEventListener("pointercancel",e=>{endTouch(e);if(dr)clearTimeout(dr.timer);dr=null});
 svg.addEventListener("pointerup",e=>{endTouch(e);const d=dr;dr=null;if(!d)return;clearTimeout(d.timer);if(d.held||d.moved)return;
   if(d.btn===2){setDepth(depth<5?depth+1:1);return}
-  if(d.btn!==0)return;if(mode==="practice"&&$("qt").value==="tap"){answerTap(e);return}const m=e.target.closest(".mu"),b=e.target.closest(".bn");if(m)pick(m.dataset.id);else if(b)pickBone(b.dataset.b)});
+  if(d.btn!==0)return;if(mode==="practice"&&$("qt").value==="tap"){answerTap(e);return}const zz=svg.classList.contains("zon")&&e.target.closest("[data-z]");if(zz&&(mode==="learn"||mode==="mas")){if(mode==="mas"){if($("masz"))$("masz").innerHTML=zoneBox(ZB[zz.dataset.z])}else zoneInfo(zz.dataset.z);return}const m=e.target.closest(".mu"),b=e.target.closest(".bn");if(m)pick(m.dataset.id);else if(b)pickBone(b.dataset.b)});
 document.addEventListener("keydown",e=>{if(e.target.closest("input,select,textarea")||e.ctrlKey||e.metaKey||e.altKey)return;const k=e.key;
   if(k==="+"||k==="=")zoomAt(.8);else if(k==="-"||k==="_")zoomAt(1.25);else if(k==="0")out();
   else if(k==="ArrowLeft")panBy(-.12,0);else if(k==="ArrowRight")panBy(.12,0);else if(k==="ArrowUp")panBy(0,-.12);else if(k==="ArrowDown")panBy(0,.12);
@@ -930,7 +961,7 @@ function overlay(){svg.querySelectorAll(".att").forEach(e=>e.remove());const g=d
 const dotSvg=(x,y,r)=>`<circle class="${r}" cx="${x}" cy="${y}" r="4"/><text x="${x}" y="${y}">${r==="o"?"O":"I"}</text>`;
 function drawAtt(id){const g=overlay();let c=null;const el=svg.querySelector(`#${vw==="b"?"bv":"fv"} .mu[data-id="${id}"]>.bel`);if(el){const bb=el.getBBox();c=[bb.x+bb.width/2,bb.y+bb.height/2]}
 let ls="",ds="";[...BY[id].origin.map(k=>[k,"o"]),...BY[id].insert.map(k=>[k,"i"])].forEach(([k,r])=>L[k][2].forEach(([x,y])=>[1,-1].forEach(sd=>{const X=sd>0?x:300-x;if(sd<0&&(x<=152.5||insetPt(x,y)))return;ds+=dotSvg(X,y,r)})));
-g.innerHTML=ls+ds;svg.classList.add("foc");bonesOf(id).forEach(b=>clsB(b,"hit2",true))}
+g.innerHTML=(fibOn&&mode==="learn"?fibSvg(id):"")+ls+ds;svg.classList.add("foc");bonesOf(id).forEach(b=>clsB(b,"hit2",true))}
 function drawBone(b){const g=overlay();let ds="";const seen=new Set();P.forEach(m=>[m.origin,m.insert].forEach((ks,w)=>ks.forEach(k=>{if(!onBone(k,b)||seen.has(k+w))return;seen.add(k+w);L[k][2].forEach(([x,y])=>[1,-1].forEach(sd=>{if(sd<0&&insetPt(x,y))return;if(sd<0&&x<=152.5)return;ds+=dotSvg(sd>0?x:300-x,y,w?"i":"o")}))})));g.innerHTML=ds;clsB(b,"hit",true)}
 const attLines=id=>`<div class="att-row"><span class="dot o">O</span> <b>Origin:</b> ${attText(id,0)}</div><div class="att-row"><span class="dot i">I</span> <b>Insertion:</b> ${attText(id,1)}</div>`;
 const chipB=b=>`<button class="chip" data-bone="${b}">${BB[b][1]}</button>`,chipM=m=>`<button class="chip" data-mus="${m.id}">${NMH(m)}</button>`;
@@ -954,7 +985,7 @@ $("lev").onchange=e=>setLevel(+e.target.value);applyLevel();
 const stepG=d=>{const i=VG.indexOf(+$("gs").value);focus(VG[(i+d+VG.length)%VG.length],mode==="learn")};
 $("zo").onclick=out;$("zin").onclick=()=>zoomAt(.7);$("zout").onclick=()=>zoomAt(1/.7);$("gs").onchange=e=>focus(+e.target.value,mode==="learn");$("gp").onclick=()=>stepG(-1);$("gn").onclick=()=>stepG(1);
 function pick(id){if(mode!=="learn")return;clearMarks();const m=BY[id];if(!m.view.includes(vw))face(m.view[0]);show(id,"sel",m.name);drawAtt(id);cur=["m",id];
-$("info").innerHTML=`<div class="mt">${NMH(m)}</div>${nickLine(m)}${pronLine(m)}<span class="k">${LOC(m)} · ${DN[m.depth]} layer · ${LV[m.tier-1]} level</span><p style="margin:6px 0">${m.action}.</p>${attLines(id)}<div class="k" style="margin:6px 0 2px">Bones it attaches to:</div><div>${bonesOf(id).length?bonesOf(id).map(chipB).join(""):'<span class="k">None: it attaches only to cartilage or soft tissue.</span>'}</div><div class="row"><button id="zg">Zoom to ${GR[m.group]}</button></div>${TTS||AL?soundsBox(m):""}`;$("zg").onclick=()=>focus(m.group,true)}
+$("info").innerHTML=`<div class="mt">${NMH(m)}</div>${nickLine(m)}${pronLine(m)}<span class="k">${LOC(m)} · ${DN[m.depth]} layer · ${LV[m.tier-1]} level</span><p style="margin:6px 0">${m.action}.</p>${attLines(id)}${fibOn?fibLine(id):""}${zonesNear(id,vw).map(z=>zoneBox(ZB[z])).join("")}<div class="k" style="margin:6px 0 2px">Bones it attaches to:</div><div>${bonesOf(id).length?bonesOf(id).map(chipB).join(""):'<span class="k">None: it attaches only to cartilage or soft tissue.</span>'}</div><div class="row"><button id="zg">Zoom to ${GR[m.group]}</button></div>${TTS||AL?soundsBox(m):""}`;$("zg").onclick=()=>focus(m.group,true)}
 function pickBone(b){if(mode!=="learn")return;if(layer==="m")setLayer("fb");clearMarks();const B0=BB[b];if(!B0[2].includes(vw))face(B0[2][0]);$("lbl").textContent=B0[1];drawBone(b);cur=["b",b];
 const on=w=>P.filter(m=>att(m.id,w).some(k=>onBone(k,b))),o=on(0),i=on(1);
 $("info").innerHTML=`<b>${B0[1]}</b><p style="margin:6px 0">${B0[6]}</p><div class="att-row"><span class="dot o">O</span> <b>Muscles that start here:</b></div><div>${o.length?o.map(chipM).join(""):'<span class="k">None at this level.</span>'}</div><div class="att-row" style="margin-top:8px"><span class="dot i">I</span> <b>Muscles that end here:</b></div><div>${i.length?i.map(chipM).join(""):'<span class="k">None at this level.</span>'}</div>`}
@@ -1226,14 +1257,211 @@ function slideOpen(){if(SL)return;SL=true;$("slvol").innerHTML=triSet("sv");$("s
 function slideShow(m,i,n){slideScene();$("slname").innerHTML=NMH(m);$("slsub").innerHTML=`${respell(m)}${NK[m.id]?" · “"+NK[m.id].n+"”":""} · ${i+1} of ${n}`}
 function slideEnd(g){slideScene();$("slname").textContent="All of "+GSAY[g];$("slsub").textContent="Breathe slowly."}
 function slideDone(){$("slsub").innerHTML='Take your time. <button id="sldone" class="p">Close</button>';$("sldone").onclick=()=>medStop()}
-function slideClose(){if(!SL)return;SL=false;svg.classList.remove("slv");svgHome.p.insertBefore(svg,svgHome.n);$("slide").hidden=true;document.body.classList.remove("sliding");
- if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});if(med&&!med.done)return;const g=+$("mg").value;setTimeout(()=>focus(g,true),50)}
+function slideClose(){if(typeof masOff==="function")masOff();if(!SL)return;SL=false;svg.classList.remove("slv");svgHome.p.insertBefore(svg,svgHome.n);$("slide").hidden=true;document.body.classList.remove("sliding");
+ if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});if(med&&!med.done)return;const g=+($("mg")?$("mg").value:$("gs").value);if(mode==="mas")return;setTimeout(()=>focus(g,true),50)}
 function setMode(m){mode=m;document.body.dataset.mode=m;if(m!=="learn"&&document.body.dataset.ready)requestAnimationFrame(()=>$("wrap").scrollIntoView({block:"start",behavior:"smooth"}));document.querySelectorAll("#modes>button").forEach(b=>b.classList.toggle("on",b.dataset.m===m));$("po").style.display=m==="practice"?"flex":"none";$("so").style.display=m==="speed"?"flex":"none";$("pq").style.display=m==="practice"?"":"none";$("spc").style.display=m==="speed"?"":"none";$("med").style.display=m==="med"?"":"none";if(m!=="med")medStop();else medPanel();$("info").style.display=m==="learn"?"":"none";clearMarks();clearInterval(spT);sp=null;out();
 if(m==="practice"){score=[0,0];streak=0;q=null;ask()}if(m==="speed")$("spc").innerHTML='<b>Speed run.</b> Pick the whole body or one group, and a time limit, then press Start. Skip any muscle you don’t know.'}
 $("modes").addEventListener("click",e=>{const b=e.target.closest("[data-m]");if(b)setMode(b.dataset.m)});$("qt").onchange=()=>{if(mode==="practice")ask()};
 setLayer(layer);setDepth(1);bdg();document.body.dataset.ready=1;
 $("slx").onclick=()=>medStop();$("slvb").onclick=()=>{const p=$("slvol");p.hidden=!p.hidden;$("slvb").setAttribute("aria-expanded",String(!p.hidden));$("slctl").classList.toggle("open",!p.hidden)};$("slpa").onclick=()=>medPause();$("slfs").onclick=()=>{const e=$("slide");if(document.fullscreenElement)document.exitFullscreen();else if(e.requestFullscreen)e.requestFullscreen().then(()=>{if(med)focus(+$("mg").value,true)}).catch(()=>{})};
 document.addEventListener("keydown",e=>{if(SL&&e.key==="Escape"&&!document.fullscreenElement)medStop();if(SL&&e.key===" "){e.preventDefault();medPause()}},true);
+/* ---------- FIBRE DIRECTION, DANGER ZONES, MASSAGE TRAINER (phase 8) ----------
+ Fibre direction is worked out from each muscle's own origin and insertion points (L), so it always agrees with the O and I dots.
+ The glide arrow points the way that moves toward the heart (the usual rule for relaxing strokes); sphincter-like muscles get a circle. */
+let fibOn=true,zonOn=false;try{fibOn=localStorage.getItem("mtfib")!=="0";zonOn=localStorage.getItem("mtzon")==="1"}catch(e){}
+const HEART=[152,150];
+const cenPts=(m,ks)=>{const p=ks.flatMap(k=>L[k][2]).filter(([x,y])=>insetPt(x,y)===!!m.inset);return p.length?[p.reduce((s,a)=>s+a[0],0)/p.length,p.reduce((s,a)=>s+a[1],0)/p.length]:null};
+function fibre(m){if(m._f!==undefined)return m._f;
+  const polys=outline(m.shape),pts=polys.flat();if(!pts.length)return m._f=null;
+  let cx=0,cy=0;pts.forEach(p=>{cx+=p[0];cy+=p[1]});cx/=pts.length;cy/=pts.length;
+  let sxx=0,syy=0,sxy=0;pts.forEach(p=>{const a=p[0]-cx,b=p[1]-cy;sxx+=a*a;syy+=b*b;sxy+=a*b});
+  const th=.5*Math.atan2(2*sxy,sxx-syy),tr=sxx+syy,df=Math.sqrt(Math.max(0,(sxx-syy)**2/4+sxy*sxy)),l1=tr/2+df,l2=Math.max(1e-6,tr/2-df);
+  const o=cenPts(m,m.origin),i=cenPts(m,m.insert);let ux,uy,oi=false;
+  if(o&&i&&Math.hypot(i[0]-o[0],i[1]-o[1])>=7){const d=Math.hypot(i[0]-o[0],i[1]-o[1]);ux=(i[0]-o[0])/d;uy=(i[1]-o[1])/d;oi=true}
+  else{ux=Math.cos(th);uy=Math.sin(th)}
+  const ring=!oi&&Math.sqrt(l1/l2)<1.6;
+  let mn=1e9,mx=-1e9,px0=1e9,px1=-1e9,py0=1e9,py1=-1e9;pts.forEach(p=>{const t=p[0]*ux+p[1]*uy;mn=Math.min(mn,t);mx=Math.max(mx,t);px0=Math.min(px0,p[0]);px1=Math.max(px1,p[0]);py0=Math.min(py0,p[1]);py1=Math.max(py1,p[1])});
+  let s;if(m.inset)s=oi?-1:1;else s=((HEART[0]-cx)*ux+(HEART[1]-cy)*uy)>0?1:-1;
+  const deg=((Math.atan2(uy,ux)*180/Math.PI)%180+180)%180,k=Math.round(deg/15)%12;
+  return m._f={ux,uy,gx:ux*s,gy:uy*s,s,oi,ring,k,c:[cx,cy],hl:(mx-mn)/2,bb:[px0,py0,px1,py1],polys}}
+function wdir(x,y){const a=[];if(y<-.38)a.push("up");else if(y>.38)a.push("down");if(x>.38)a.push("out to the side");else if(x<-.38)a.push("in toward the middle");return a.join(" and ")||"along the muscle"}
+function axisWords(f){const c=Math.abs(f.ux),s=Math.abs(f.uy);if(s>.92)return"straight up and down";if(c>.92)return"straight across, side to side";return"slanting (up-and-"+((f.ux*f.uy<0)?"out":"in")+", down-and-"+((f.ux*f.uy<0)?"in":"out")+")"}
+/* arrows: white casing under a dark core, so they read on any muscle colour; heads scale with the muscle */
+function arrowSvg(x1,y1,x2,y2,h,two,dash){const dx=x2-x1,dy=y2-y1,l=Math.hypot(dx,dy)||1,ux=dx/l,uy=dy/l,w=h*.56,sw=Math.max(.9,h*.34),f=n=>n.toFixed(1);
+  const hd=(x,y,a,b)=>{const bx=x-a*h,by=y-b*h;return`${f(x)},${f(y)} ${f(bx-b*w)},${f(by+a*w)} ${f(bx+b*w)},${f(by-a*w)}`};
+  const sx=two?x1+ux*h*.7:x1,sy=two?y1+uy*h*.7:y1,ex=x2-ux*h*.7,ey=y2-uy*h*.7,da=dash?` stroke-dasharray="${f(sw*2)} ${f(sw*1.4)}"`:"",d=`M${f(sx)} ${f(sy)}L${f(ex)} ${f(ey)}`;
+  /* paths, not lines: the page's .att line rule would dash and thin real <line> elements */
+  return`<g class="ga"><path d="${d}" fill="none" stroke="#fff" stroke-width="${f(sw*2.6)}" stroke-linecap="round"/><path d="${d}" fill="none" stroke="#101010" stroke-width="${f(sw)}"${da} stroke-linecap="round"/><polygon points="${hd(x2,y2,ux,uy)}" fill="#101010" stroke="#fff" stroke-width="${f(sw*.8)}" stroke-linejoin="round"/>${two?`<polygon points="${hd(x1,y1,-ux,-uy)}" fill="#101010" stroke="#fff" stroke-width="${f(sw*.8)}" stroke-linejoin="round"/>`:""}</g>`}
+function circSvg(cx,cy,r,h,mr){const f=n=>n.toFixed(1),sw=Math.max(.9,h*.34),a0=-1.0,a1=a0+4.7,P=a=>[cx+r*Math.cos(a),cy+r*Math.sin(a)],p0=P(a0),p1=P(a1),tx=-Math.sin(a1),ty=Math.cos(a1);
+  const X=(x)=>mr?300-x:x,d=`M${f(X(p0[0]))} ${f(p0[1])} A${f(r)} ${f(r)} 0 1 ${mr?0:1} ${f(X(p1[0]))} ${f(p1[1])}`;
+  const ex=X(p1[0]),ey=p1[1],ax=mr?-tx:tx,ay=ty,bx=ex-ax*h,by=ey-ay*h,w=h*.56;
+  return`<g class="ga"><path d="${d}" fill="none" stroke="#fff" stroke-width="${f(sw*2.6)}" stroke-linecap="round"/><path d="${d}" fill="none" stroke="#101010" stroke-width="${f(sw)}" stroke-linecap="round"/><polygon points="${f(ex+ax*h*.35)},${f(ey+ay*h*.35)} ${f(bx-ay*w)},${f(by+ax*w)} ${f(bx+ay*w)},${f(by-ax*w)}" fill="#101010" stroke="#fff" stroke-width="${f(sw*.8)}" stroke-linejoin="round"/></g>`}
+function pinSvg(x,y,r){const f=n=>n.toFixed(1),R=r*1.9,ring=`M${f(x-R)} ${f(y)}a${f(R)} ${f(R)} 0 1 0 ${f(2*R)} 0a${f(R)} ${f(R)} 0 1 0 ${f(-2*R)} 0`,dot=`M${f(x-r*.75)} ${f(y)}a${f(r*.75)} ${f(r*.75)} 0 1 0 ${f(r*1.5)} 0a${f(r*.75)} ${f(r*.75)} 0 1 0 ${f(-r*1.5)} 0`,cr=`M${f(x-r*2.8)} ${f(y)}H${f(x-r*1.3)}M${f(x+r*1.3)} ${f(y)}H${f(x+r*2.8)}M${f(x)} ${f(y-r*2.8)}V${f(y-r*1.3)}M${f(x)} ${f(y+r*1.3)}V${f(y+r*2.8)}`;
+  return`<g class="ga"><path d="${ring}" fill="none" stroke="#fff" stroke-width="${f(r*.9)}"/><path d="${ring}" fill="none" stroke="#101010" stroke-width="${f(r*.4)}"/><path d="${cr}" fill="none" stroke="#fff" stroke-width="${f(r*.9)}" stroke-linecap="round"/><path d="${cr}" fill="none" stroke="#101010" stroke-width="${f(r*.4)}" stroke-linecap="round"/><path d="${dot}" fill="#101010" stroke="#fff" stroke-width="${f(r*.35)}"/></g>`}
+/* the hatch only (fibre lines); the arrows are added by whoever draws */
+const hatchSvg=m=>{const f=fibre(m);if(!f)return"";const sh=shape(m.shape);return`<g class="fib" fill="url(#${f.ring?"fhr":"fh"+f.k})" stroke="none"><g>${sh}</g>${m.inset?"":`<g ${MIR}>${sh}</g>`}</g>`};
+function glideSvg(m,mode,both,sg){const f=fibre(m);if(!f)return"";const len=Math.max(9,f.hl*1.6),h=Math.max(2.4,Math.min(7,len*.2));let out="";
+  const one=mr=>{const X=x=>mr?300-x:x,cx=X(f.c[0]),cy=f.c[1];
+    if(f.ring||mode==="circ"){const w=f.bb[2]-f.bb[0],hh=f.bb[3]-f.bb[1],r=Math.max(h*1.2,Math.min(w,hh)*.34);return circSvg(f.c[0],cy,r,h,mr)}
+    if(mode==="across"){const vx=(mr?-1:1)*-f.uy,vy=f.ux,half=Math.max(4,Math.min((f.bb[2]-f.bb[0])*Math.abs(f.uy)+(f.bb[3]-f.bb[1])*Math.abs(f.ux),len)*.42);return arrowSvg(cx-vx*half,cy-vy*half,cx+vx*half,cy+vy*half,h,true,true)}
+    const gx=(mr?-1:1)*f.gx*(sg||1),gy=f.gy*(sg||1),hl=len/2;return arrowSvg(cx-gx*hl,cy-gy*hl,cx+gx*hl,cy+gy*hl,h,false,false)};
+  out+=one(false);if(both&&!m.inset)out+=one(true);return out}
+function fibSvg(id){const m=BY[id];return hatchSvg(m)+glideSvg(m,"along",true)}
+/* one line in the muscle card: fibre direction and which way to glide */
+function fibLine(id){const m=BY[id],f=fibre(m);if(!f)return"";
+  const gl=m.inset?"toward the origin end (follow the arrow)":(f.ring?"in slow circles":wdir(f.gx,f.gy)+" (toward the heart)");
+  const ends=f.ring||m.inset?"":(f.oi?(f.s>0?"from the origin end toward the insertion end":"from the insertion end toward the origin end"):"");
+  const ax=f.ring?"fibres ring around the opening":"fibres line up "+(m.inset?"along the hatch lines":axisWords(f));
+  return`<div class="att-row fibl"><span class="dot fb">≋</span> <b>Fibre direction:</b> ${ax}. <b>Massage glide:</b> ${gl}${ends?", "+ends:""}.</div>`}
+/* ---------- DANGER ZONES (endangerment sites) ----------
+ [id, name, views, cx, cy, rx, ry, mirrored?, what lies there, what to do]. Sources: ABMP (R. Werner, "Take the Danger Out of Endangerment Sites"),
+ Massage For Dummies "Avoiding vulnerable massage areas", NYS Education Dept. precautions, MBLEX study guides. Positions are approximate. */
+const Z=[
+["ear","Just behind and below the ear","fb",173,63,6.5,7.5,1,"The facial nerve leaves the skull here, with the parotid gland and large vessels close to the surface.","No thumb or fingertip pressure. If you work nearby, use a light, flat glide that stays on the muscle and stops well short of the notch."],
+["tmj","Jaw joint and cheek just in front of the ear","fb",168,53,4.5,5.5,1,"The jaw joint, with branches of the facial nerve crossing it.","Slow, gentle circles with flat finger pads only."],
+["eye","Eyes and eye sockets","f",161,38,8,6,1,"The eyeball and the thin bone around it.","Never press on the eyeball or into the socket. Work on the brow bone and cheekbone only."],
+["ant","Front of the neck (anterior triangle)","f",157,87,5.5,13,1,"Carotid artery, jugular vein, windpipe, thyroid cartilage and hyoid bone.","No pressure, no pinching, no thumbs. Skip entirely unless trained."],
+["post","Side of the neck above the collarbone (posterior triangle)","fb",179,102,8,5.5,1,"Nerves of the brachial plexus, large vessels and lymph nodes lie close to the skin.","Broad, light contact only. Do not dig in with fingertips or thumbs."],
+["axilla","Armpit (axilla)","fb",224,142,5.5,11,1,"Axillary artery and vein, brachial plexus nerves and lymph nodes.","Avoid pressure. Stop strokes on the chest wall and upper arm before reaching the armpit."],
+["medarm","Inner upper arm (medial brachium)","f",234,184,4,28,1,"Brachial artery and the median and ulnar nerves run in the groove along the inner arm.","Keep to the front and outer surface of the arm; use light, flat contact on the inside."],
+["cub","Inside of the elbow crease (cubital fossa)","f",247,238,9,6,1,"Brachial artery and its branches, and the median nerve, near the surface.","Light, flat contact only. Do not press with thumbs or elbows."],
+["xiph","Tip of the breastbone (xiphoid process)","f",150,170,4.5,4.5,0,"A small, fragile tip of cartilage and bone just above the belly.","Never press on it. Keep strokes off the breastbone."],
+["abd","Abdomen","f",162,238,15,32,1,"Organs and large vessels lie behind a thin muscular wall.","Light, flat, slow strokes only. Skip with pregnancy, hernia, recent surgery or pain."],
+["fem","Groin (femoral triangle)","f",178,316,11,11,1,"Femoral artery, vein and nerve, with lymph nodes. Pressing hard can cut off circulation to the leg.","Stop upper-thigh strokes before the crease; light, flat contact only."],
+["kid","Kidney area","b",174,205,10,16,1,"The kidneys sit deep below the lowest ribs beside the spine, with little bone protecting them.","Flat, light strokes only. No fists, elbows, deep thumbs or tapping."],
+["sciatic","Deep buttock (sciatic nerve)","b",191,322,9,7,1,"The sciatic nerve passes under the piriformis muscle between the sit bone and the hip joint.","Broad flat pressure only. Stop at once if there is shooting pain or tingling down the leg."],
+["popl","Back of the knee (popliteal fossa)","b",192,462,12,10,1,"Popliteal artery and vein, the tibial and common fibular nerves.","Begin strokes above or below the crease; only light, flat contact over the hollow."]];
+const ZB={};Z.forEach(z=>ZB[z[0]]=z);
+const znSvg=v=>`<g class="zn">`+Z.filter(z=>z[2].includes(v)).map(z=>{const e=`<ellipse cx="${z[3]}" cy="${z[4]}" rx="${z[5]}" ry="${z[6]}"/>`;return`<g data-z="${z[0]}">${e}${z[7]?`<g ${MIR}>${e}</g>`:""}</g>`}).join("")+`</g>`;
+["fv","bv"].forEach(id=>$(id).insertAdjacentHTML("beforeend",znSvg(id==="fv"?"f":"b")));
+const inZ=(z,x,y)=>((x-z[3])/z[5])**2+((y-z[4])/z[6])**2<=1||((300-x-z[3])/z[5])**2+((y-z[4])/z[6])**2<=1&&z[7];
+function zonesNear(id,v){const m=BY[id],f=fibre(m);if(!f||m.inset)return[];const vv=v||(m.view.includes("f")?"f":"b");return Z.filter(z=>z[2].includes(vv)&&f.polys.some(p=>p.some(([x,y])=>inZ(z,x,y)))).map(z=>z[0])}
+const zoneBox=z=>`<div class="caut"><b>⚠ ${z[1]}.</b> ${z[8]} <b>What to do:</b> ${z[9]}</div>`;
+function zoneInfo(id){const z=ZB[id];if(!z)return;$("info").innerHTML=`<div class="mt">⚠ ${z[1]}</div><p style="margin:6px 0"><b>What lies here:</b> ${z[8]}</p><p style="margin:6px 0"><b>What to do:</b> ${z[9]}</p><p class="k">Tap a muscle to go back. These red hatched zones are a simplified guide to endangerment sites, not a complete list.</p>`;clearMarks();cur=null}
+function setFib(on){fibOn=on;$("fibt").classList.toggle("on",on);try{localStorage.setItem("mtfib",on?"1":"0")}catch(e){}if(cur&&cur[0]==="m"&&mode==="learn")drawAtt(cur[1])}
+function setZon(on){zonOn=on;$("znt").classList.toggle("on",on);svg.classList.toggle("zon",on||mode==="mas");try{localStorage.setItem("mtzon",on?"1":"0")}catch(e){}}
+$("fibt").onclick=()=>setFib(!fibOn);$("znt").onclick=()=>setZon(!zonOn);setFib(fibOn);setZon(zonOn);
+/* ---------- MASSAGE TRAINER ---------- */
+const St=(t,k,v,m,o)=>Object.assign({t,k,v,m},o);
+const WARM="Light to medium";
+const RT=[
+{id:"full",name:"Full-body relaxation (Swedish style)",blurb:"About 45 minutes. Face down first, then face up. Long gliding strokes, then kneading, then slow finishing strokes. Press firmly on the way toward the heart and ease off on the way back.",steps:[
+St("Warm up the back","Effleurage (long gliding strokes)","b",["erector"],{b:1,p:WARM,s:90,d:"Warm oil in your hands. With the person face down, rest both palms flat on either side of the spine. Glide along the muscles beside the spine, fan out across the shoulders, then slide back with featherlight contact. 5–8 slow passes.",c:"Keep pressure on the muscles beside the spine, never on the spine bones."}),
+St("Fan along the lats","Effleurage","b",["lat"],{b:1,p:"Medium",s:60,d:"Flat hands on the low back. Glide along the diagonal of the muscle toward the side of the body, then slide back lightly.",c:"Stop well short of the armpit.",zn:["axilla"]}),
+St("Knead the top of the shoulders","Petrissage (kneading)","b",["trap"],{b:1,dir:"circ",p:"Medium",s:90,d:"Lift, roll and gently squeeze the muscle between thumb and fingers, moving in small steps from the base of the neck toward the shoulder tip. Release slowly.",c:"Stay on the thick muscle. Do not press into the soft hollow above the collarbone.",zn:["post"]}),
+St("Along the inner edge of the shoulder blade","Thumb glides (friction)","b",["rhomb"],{b:1,p:WARM,s:60,d:"Use the pad of the thumb to follow the strip between the spine and the inner edge of the shoulder blade. If you find a tender spot, hold gently until it eases.",c:"Slide, don’t dig, and keep the pressure off the ribs."}),
+St("Beside the spine","Thumb glides","b",["erector"],{b:1,p:"Medium",s:90,d:"Thumbs about a finger-width either side of the spine, on the muscle and not on the bone. Short overlapping strokes along the whole length.",c:"No pressure directly on the bumps of the spine."}),
+St("Low back, kidney zone","Very light effleurage","b",["ql"],{b:1,p:"Very light",s:45,d:"Below the lowest ribs, beside the spine, use only flat, light, slow strokes.",c:"The kidneys sit deep here. No fists, elbows, deep thumbs or tapping.",zn:["kid"]}),
+St("Glutes","Petrissage and compression","b",["glutmax","glutmed"],{b:1,dir:"circ",p:"Medium to firm, broad",s:90,d:"Knead with the heel of the hand or a loose fist in slow circles over the thick muscle of the buttock, from the hip bone down to the fold under the buttock.",c:"Stay on the fleshy part. Avoid sharp thumb or elbow pressure deep in the buttock where the sciatic nerve passes.",zn:["sciatic"]}),
+St("Back of the thigh","Effleurage","b",["bf","st","sm"],{p:"Medium",s:90,d:"Cup both hands around the back of the thigh. Glide from just above the knee crease to the base of the buttock, then slide back lightly. A pillow under the ankle keeps the knee relaxed.",c:"Start above the back of the knee. The hollow behind the knee holds the popliteal artery, vein and nerves.",zn:["popl"]}),
+St("Calf","Effleurage and kneading","b",["gas","sol"],{p:"Medium",s:90,d:"From the ankle glide toward the back of the knee with firm, even pressure; return lightly. Kneading the thickest part of the calf is fine.",c:"Check first: skip any calf that is swollen, warm, red or painful on one side. A blood clot (DVT) can be dislodged by massage. Stop below the back of the knee.",zn:["popl"]}),
+St("Front of the thigh","Effleurage","f",["rf","vl","vm"],{p:"Medium",s:90,d:"Both hands on the front of the thigh. Glide from just above the knee toward the hip, then slide back lightly. Add gentle kneading of the thick muscle.",c:"Stop before the crease where the thigh meets the pelvis (the groin).",zn:["fem"]}),
+St("Tapping the thigh (optional)","Tapotement (light percussion)","f",["rf","vl"],{dir:"none",p:"Light and springy",s:20,d:"With loose, relaxed hands, drum or hack lightly over the thick part of the thigh for 10–20 seconds. A short wake-up, normally used before the finishing strokes.",c:"Thick muscle only. Never over bones, the kidney area, bruises or varicose veins."}),
+St("Outer hip and thigh","Effleurage","f",["tfl","vl"],{p:"Medium",s:60,d:"Use the heel of the hand to glide along the outer thigh toward the hip bone. If sore, finish with small circles."}),
+St("Shin muscle","Thumb glides","f",["ta"],{p:WARM,s:45,d:"Thumbs slide along the muscle just outside the shin bone, not on the bone itself.",c:"The sharp front edge of the shin bone is tender: stay on the muscle."}),
+St("Top of the foot","Thumb glides","f",["edb","ehb"],{p:"Medium",s:60,d:"Hold the foot in both hands. Slide the thumbs from the toes toward the ankle along the top of the foot, then circle around the edges.",c:"Skip any foot with broken skin or a skin infection such as athlete’s foot."}),
+St("Palm of the hand","Thumb circles","f",["apb","adm","adp","op"],{dir:"circ",p:WARM,s:60,d:"Support the hand and make slow thumb circles in the thick pads at the base of the thumb and little finger and across the palm."}),
+St("Forearm","Effleurage","f",["fcr","pl","fcu","brach","pron"],{p:"Medium",s:60,d:"Hold the wrist with one hand. With the other, glide from the wrist toward the elbow, finishing just below the crease.",c:"Stop short of the inside of the elbow crease, where an artery and nerve run close to the skin.",zn:["cub"]}),
+St("Upper arm","Effleurage","f",["bic","bra"],{p:"Medium",s:60,d:"Glide from just above the elbow along the front and outer arm toward the shoulder. Keep to the outer and top surface.",c:"Avoid the inner upper arm and the armpit.",zn:["medarm","axilla"]}),
+St("Shoulder cap","Petrissage","fb",["delt"],{dir:"circ",v:"f",p:"Medium",s:45,d:"Cup the round of the shoulder in your hand and make slow, firm circles over the whole muscle."}),
+St("Upper chest","Effleurage","f",["pec"],{b:1,p:"Light to medium",s:60,d:"With flat fingers, glide along the muscle above any breast tissue; keep the drape in place and ask permission first.",c:"Do not press on the breastbone or the tip below it.",zn:["xiph"]}),
+St("Belly (optional, very light)","Light circles","f",["rect","obl"],{b:1,dir:"circ",p:"Very light",s:45,d:"Only if the person is comfortable and has not eaten recently. Flat hand, very light pressure, slow clockwise circles around the navel (the direction the large intestine moves).",c:"Caution area: no deep pressure. Skip with pregnancy, hernia, recent abdominal surgery or pain.",zn:["abd"]}),
+St("Back of the neck","Fingertip glides","b",["spl","lev","splc"],{b:1,p:"Light",s:60,d:"With the person face up, slide the fingertips under the neck and glide with a gentle upward lift. Keep strokes slow and never force the head to turn.",c:"Stay on the back of the neck. Keep off the throat and the notch behind and below the ear.",zn:["ear","post"]}),
+St("Side of the neck (optional)","Very light glides","f",["scm"],{b:1,p:"Very light",s:30,d:"Flat finger pads, one slow glide along the muscle, starting midway down and well below the ear.",c:"The carotid artery and jugular vein run beside this muscle. No pinching, no thumbs. Beginners can skip this step.",zn:["ant","ear"]}),
+St("Forehead and temples","Light strokes","f",["front","temp"],{b:1,dir:"across",p:"Very light",s:60,d:"Pads of the fingers move the skin over the bone: forehead from the middle outward, then slow circles over the temples.",c:"Keep away from the eyes and the notch below the ear.",zn:["eye","ear"]}),
+St("Cheeks and jaw","Light strokes","f",["mass","zyg"],{b:1,p:"Light",s:60,d:"Flat finger pads glide along the cheekbone and the thick jaw muscle. Small slow circles where it feels tight.",c:"Stay clear of the jaw joint and the notch just below and behind the ear.",zn:["ear","tmj"]}),
+St("Finish: long, slow strokes","Closing effleurage","f",[],{dir:"none",p:"Very light",s:90,d:"Finish with long, light, unhurried strokes from the shoulders toward the feet. Rest your hands still for a few breaths, then let the person lie quietly. Offer water.",c:"Rise slowly afterwards: some people feel light-headed."})]},
+{id:"neck",name:"Focused: neck and shoulder tension",blurb:"Trigger-point routine for the upper trapezius, levator scapulae and the muscles at the base of the skull. About 15 minutes.",steps:[
+St("Warm up first","Effleurage","b",["trap","lev"],{b:1,p:"Light to medium",s:60,d:"One minute of slow glides over the top of the shoulders and neck. Tight, cold muscle is more painful to work, and gentle gliding comes before deeper work."}),
+St("Find it: upper trapezius","Locate the trigger point","b",["trap"],{b:1,dir:"hold",pf:[.5,.1],p:"Light, searching",s:30,d:"Slide a fingertip pad across the muscle on top of the shoulder, halfway between neck and shoulder tip. A trigger point feels like a tight rope or small knot that is tender and may send an ache toward the head or neck.",c:"Stay on top of the shoulder muscle. Do not press into the hollow in front of it.",zn:["post"]}),
+St("Hold: ischemic compression","Sustained pressure","b",["trap"],{b:1,dir:"hold",pf:[.5,.1],p:"Build to about 5–6 out of 10",s:30,d:"Press slowly with a thumb pad until you meet the tender spot, then hold steady until it eases, about 30 seconds. Release slowly and repeat 3–6 times with short rests.",c:"Stop if the pain is sharp, electric, or causes tingling or numbness."}),
+St("Levator scapulae","Sustained pressure","b",["lev"],{b:1,dir:"hold",pf:[.5,.85],p:"Medium",s:30,d:"Find the rope where the muscle meets the top inner corner of the shoulder blade. Hold steady pressure about 30 seconds, then release slowly.",c:"Keep pressure on the muscle, away from the side of the neck.",zn:["post"]}),
+St("Base of the skull","Gentle sustained pressure","b",["rcpma","rcpmi","oci","ocs"],{b:1,dir:"hold",pf:[.5,.5],p:"Light to medium",s:45,d:"Two fingertip pads on the small muscles just below the bony ridge at the base of the skull, a thumb-width either side of the midline. Let the weight of the head rest into your fingers.",c:"Stay near the middle. The notch behind and below the ear is off limits.",zn:["ear"]}),
+St("Finish with a stretch","Gentle stretch","b",["trap"],{b:1,dir:"none",p:"Gentle",s:30,d:"Slowly tilt the ear toward the shoulder on the side you worked and hold 20–30 seconds, breathing slowly. Pressure followed by a stretch is a common pairing for trigger points.",c:"Never force the stretch. Stop with any dizziness, tingling or sharp pain."})]},
+{id:"cuff",name:"Focused: shoulder blade and rotator cuff",blurb:"For the muscles that sit on the shoulder blade and lift and turn the arm. About 15 minutes.",steps:[
+St("Warm up","Effleurage","b",["trap","delt"],{b:1,v:"b",p:WARM,s:60,d:"Slow glides over the shoulders and upper back to warm the area before pressing."}),
+St("Infraspinatus","Sustained pressure","b",["infra"],{dir:"hold",pf:[.5,.45],p:"Medium",s:30,d:"On the broad flat part of the shoulder blade below its bony ridge. Press with a thumb pad until you find a tender spot, hold about 30 seconds, then release slowly.",c:"Stay on the shoulder blade. Stop if the pain spreads down the arm as tingling."}),
+St("Supraspinatus","Sustained pressure","b",["supra"],{dir:"hold",pf:[.5,.5],p:"Medium",s:30,d:"In the hollow above the bony ridge of the shoulder blade, under the top of the trapezius. Hold steady pressure about 30 seconds.",c:"Keep pressure on the muscle, away from the hollow above the collarbone.",zn:["post"]}),
+St("Teres minor and major","Cross-fibre friction","b",["tmin","tmaj"],{dir:"across",p:"Light to medium",s:45,d:"Small back-and-forth strokes across the fibres along the outer edge of the shoulder blade. Slow, light friction warms stuck spots.",c:"Stop before the armpit.",zn:["axilla"]}),
+St("Round of the shoulder","Petrissage","b",["delt"],{dir:"circ",p:"Medium",s:45,d:"Cup the deltoid and make slow circles, then finish with a few long glides."})]},
+{id:"back",name:"Focused: low back and hips",blurb:"For stiffness from sitting. About 20 minutes. Check for kidney-area and sciatic cautions first.",steps:[
+St("Warm up","Effleurage","b",["erector"],{b:1,p:"Light to medium",s:60,d:"Slow glides along the muscles beside the spine, then fan out over the buttocks.",c:"Keep pressure off the spine bones.",zn:["kid"]}),
+St("Beside the spine: cross-fibre","Cross-fibre friction","b",["erector"],{b:1,dir:"across",p:"Medium",s:60,d:"With thumb pads, small strokes across the muscle fibres, a finger-width from the spine, working from the sacrum upward.",c:"Never on the spine bones. Stay below the lowest ribs very light.",zn:["kid"]}),
+St("Quadratus lumborum (light)","Light sustained pressure","b",["ql"],{b:1,dir:"hold",pf:[.5,.5],p:"Light",s:30,d:"Flat finger pads on the muscle between the lowest rib and the top of the hip bone, beside the spine. Light and slow only.",c:"The kidneys lie nearby and are poorly protected. No deep thumbs, elbows or tapping.",zn:["kid"]}),
+St("Gluteus medius","Sustained pressure","b",["glutmed"],{b:1,dir:"hold",pf:[.5,.35],p:"Medium",s:30,d:"On the side of the hip, just below the top ridge of the pelvis. Press with a thumb or palm until you find a tender spot and hold about 30 seconds.",c:"Broad pressure only. Stop if pain shoots down the leg.",zn:["sciatic"]}),
+St("Piriformis","Broad flat pressure","b",["pirif"],{b:1,dir:"hold",pf:[.5,.5],p:"Medium, broad",s:30,d:"Use the flat of the hand or forearm, not a point, over the muscle running from the base of the spine to the top of the thigh bone.",c:"The sciatic nerve runs right beneath it. Stop immediately if there is shooting pain, tingling or numbness.",zn:["sciatic"]}),
+St("Outer hip","Sustained pressure","f",["tfl"],{b:1,dir:"hold",pf:[.5,.5],p:"Medium",s:30,d:"At the front-outer hip, just below the bony point at the front of the pelvis. Hold about 30 seconds, then glide down the outer thigh."})]},
+{id:"arm",name:"Focused: forearm and hand",blurb:"For typing and gripping strain. About 15 minutes.",steps:[
+St("Warm up the forearm","Effleurage","b",["extd","ecrl","ecrb","ecu"],{p:"Light to medium",s:60,d:"Glide from the wrist toward the elbow along the back of the forearm.",c:"Finish at the elbow, not past the inside crease.",zn:["cub"]}),
+St("Extensor muscles near the elbow","Sustained pressure","b",["extd","ecrb"],{dir:"hold",pf:[.5,.12],p:"Medium",s:30,d:"A thumb-width below the outer bump of the elbow. Hold on a tender spot about 30 seconds, then release slowly."}),
+St("Brachioradialis","Sustained pressure","f",["brach"],{dir:"hold",pf:[.5,.15],p:"Medium",s:30,d:"The muscle on the thumb side of the forearm, just below the elbow crease. Hold steady pressure about 30 seconds.",c:"Stay just below the crease: the inside of the elbow is an endangerment site.",zn:["cub"]}),
+St("Flexors and pronator","Cross-fibre friction","f",["fcr","pron","pl","fcu"],{dir:"across",p:"Light to medium",s:45,d:"Small strokes across the muscles on the palm side of the forearm, working from near the elbow toward the wrist.",c:"Light, flat contact near the elbow crease.",zn:["cub"]}),
+St("Base of the thumb","Thumb circles","f",["apb","adp","op"],{dir:"circ",p:WARM,s:45,d:"Slow thumb circles in the thick pad at the base of the thumb."}),
+St("Between the knuckle bones","Thumb glides","b",["dio"],{p:"Light to medium",s:45,d:"Slide a thumb pad in the grooves between the long hand bones on the back of the hand."})]},
+{id:"leg",name:"Focused: calf, shin and foot",blurb:"For runners and long days on your feet. About 15 minutes. Do the clot check first.",steps:[
+St("Check first, then warm up","Effleurage","b",["gas","sol"],{p:"Light",s:60,d:"Look and feel before you start. If one calf is swollen, warm, red or painful, stop and seek medical advice. Otherwise, slow glides toward the back of the knee.",c:"A blood clot (DVT) can be dislodged by massage. Stop below the back of the knee.",zn:["popl"]}),
+St("Gastrocnemius","Sustained pressure","b",["gas"],{dir:"hold",pf:[.5,.25],p:"Medium",s:30,d:"On the bulge of the upper calf. Hold on a tender spot about 30 seconds, release slowly, repeat a few times.",c:"Stay below the back of the knee.",zn:["popl"]}),
+St("Soleus","Thumb glides","b",["sol"],{p:"Medium",s:45,d:"Lower on the calf, either side of the central line. Thumb glides along the fibres toward the knee.",c:"Skip painful, swollen or warm areas.",zn:["popl"]}),
+St("Shin muscle","Sustained pressure","f",["ta"],{dir:"hold",pf:[.5,.25],p:"Medium",s:30,d:"A thumb-width outside the shin bone, in the upper third. Hold about 30 seconds.",c:"Press on the muscle, not the bone."}),
+St("Outer lower leg","Thumb glides","f",["fib","edl"],{p:"Medium",s:45,d:"Glide along the outer side of the lower leg toward the knee.",c:"Avoid the bony bump just below the knee on the outside (head of the fibula): a nerve passes close by."}),
+St("Top of the foot","Thumb glides","f",["edb","ehb"],{p:"Medium",s:45,d:"Thumb glides from the toes toward the ankle along the top of the foot."})]},
+{id:"jaw",name:"Focused: jaw and face tension",blurb:"For clenching and headaches. About 10 minutes. Very light pressure throughout.",steps:[
+St("Settle the face","Light strokes","f",["front","temp"],{b:1,dir:"across",p:"Very light",s:45,d:"Finger pads move the skin over the bone: forehead from the middle outward, then slow small circles over the temples.",c:"Keep away from the eyes.",zn:["eye"]}),
+St("Temple muscle","Slow circles","f",["temp"],{b:1,dir:"circ",p:"Very light",s:45,d:"Flat finger pads on the muscle above and behind the eyebrow, small slow circles.",c:"The temple area is delicate: light pressure only."}),
+St("Masseter (chewing muscle)","Sustained pressure","f",["mass"],{b:1,dir:"hold",pf:[.5,.5],p:"Light to medium",s:30,d:"Clench the teeth to feel the muscle bulge at the angle of the cheek, then relax the jaw before pressing. Hold gently on a tender spot about 30 seconds.",c:"Stay in the middle of the muscle. The notch below and behind the ear and the jaw joint in front of the ear are off limits.",zn:["ear","tmj"]}),
+St("Cheeks","Light glides","f",["zyg","buc"],{b:1,p:"Light",s:45,d:"Flat finger pads glide along the cheekbone and cheek. No pressing into the eyes or nose.",c:"Stay clear of the eyes and the ear notch.",zn:["eye","ear"]})]}];
+const SRC=[["ABMP: Take the Danger Out of Endangerment Sites","https://www.abmp.com/massage-and-bodywork-magazine/take-danger-out-endangerment-sites-good-education"],["Massage For Dummies: Avoiding vulnerable massage areas","https://www.dummies.com/article/body-mind-spirit/physical-health-well-being/massage/avoiding-vulnerable-massage-areas-192808"],["NYS Education Dept: Precautions in massage therapy","https://www.op.nysed.gov/professions/massage-therapy/precautions-massagebodywork-therapy"],["MBLEX study guide: Contraindications and medications","https://open-exam-prep.com/study-guides/mblex/pathology-contraindications/contraindications-medications"],["Physiopedia: Massage (effleurage, petrissage, direction)","https://physio-pedia.com/Massage"],["NUHS: Swedish massage","https://www.nuhs.edu/patients/health-information/articles/swedish-massage/"],["Moraska et al. 2017: trigger point release massage (PubMed)","https://pubmed.ncbi.nlm.nih.gov/28248690/"],["Hanten et al. 2000: ischemic pressure then stretch (PubMed)","https://pubmed.ncbi.nlm.nih.gov/11002435/"]];
+const MS={on:false,ri:0,si:0,auto:false,left:0,timer:null,ack:false,slide:false,lvl:null};try{MS.ack=localStorage.getItem("mtmasack")==="1"}catch(e){}
+const masIds=ids=>ids.flatMap(id=>id==="erector"&&level>=3?["ilco","long","spinl"]:[id]).filter(id=>BY[id]&&atLv(BY[id]));
+const fmtT=s=>Math.floor(s/60)+":"+String(s%60).padStart(2,"0");
+function masBox(ids){let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;ids.forEach(id=>{const f=fibre(BY[id]);if(!f)return;x0=Math.min(x0,f.bb[0]);y0=Math.min(y0,f.bb[1]);x1=Math.max(x1,f.bb[2]);y1=Math.max(y1,f.bb[3])});return[x0,y0,x1,y1]}
+function masZoom(ids,both){if(!ids.length)return tween([0,0,300,640]);let[x0,y0,x1,y1]=masBox(ids);const ins=ids.every(id=>BY[id].inset);
+  if(both&&!ins){const a=x0;x0=Math.min(x0,300-x1);x1=Math.max(x1,300-a)}
+  const w=Math.max(x1-x0+(ins?14:34),ins?56:90),h=Math.max(y1-y0+(ins?14:34),ins?56:90),cw=svg.clientWidth||360,ch=svg.clientHeight||480,k=Math.max(w/cw,h/ch),W=k*cw,H=k*ch;tween([(x0+x1)/2-W/2,(y0+y1)/2-H/2,W,H])}
+function masPinPoint(m,pf){const f=fibre(m),[x0,y0,x1,y1]=f.bb;let x=x0+(x1-x0)*pf[0],y=y0+(y1-y0)*pf[1];if(!f.polys.some(p=>inPoly(x,y,p))){let best=null,bd=1e9;f.polys.forEach(p=>p.forEach(([a,b])=>{const d=Math.hypot(a-x,b-y);if(d<bd){bd=d;best=[a,b]}}));if(best){x=best[0]+(f.c[0]-best[0])*.25;y=best[1]+(f.c[1]-best[1])*.25}}return[x,y]}
+function masDraw(){const S=RT[MS.ri].steps[MS.si],ids=masIds(S.m||[]);clearMarks();face(S.v);
+  const gs=new Set(ids.map(id=>BY[id].group));document.querySelectorAll(".mu").forEach(e=>e.classList.toggle("dim",ids.length>0&&!gs.has(BY[e.dataset.id].group)));
+  setDepth(ids.length?Math.min(...ids.map(id=>BY[id].depth)):1);ids.forEach(id=>cls(id,"sel",true));
+  const g=overlay();let h="";const dir=S.dir||"along";
+  ids.forEach((id,j)=>{const m=BY[id];h+=hatchSvg(m);if(dir==="hold"){if(j===0){const[px,py]=masPinPoint(m,S.pf||[.5,.5]),f=fibre(m),r=Math.max(2.2,Math.min(5,Math.min(f.bb[2]-f.bb[0],f.bb[3]-f.bb[1])*.12));h+=pinSvg(px,py,r);if(S.b&&!m.inset)h+=pinSvg(300-px,py,r)}}else if(dir!=="none"&&j<2)h+=glideSvg(m,dir,!!S.b)});
+  g.innerHTML=h;svg.classList.add("foc","zon");masZoom(ids,!!S.b);return{S,ids}}
+const zoneChips=(S,ids)=>{const set=new Set(S.zn||[]);ids.forEach(id=>zonesNear(id,S.v).forEach(z=>set.add(z)));return[...set].filter(z=>ZB[z])};
+function masStep(go){const R=RT[MS.ri];if(typeof go==="number")MS.si=Math.max(0,Math.min(R.steps.length-1,go));const{S,ids}=masDraw(),n=R.steps.length;MS.left=S.s||60;
+  const zs=zoneChips(S,ids),pin=ids.slice(0,2).map(id=>`<div class="pinb"><b>${BY[id].name}</b>${attLines(id)}${fibLine(id)}</div>`).join("");
+  const dirTxt={along:"Glide along the fibres, following the arrow.",across:"Small back-and-forth strokes across the fibres (dashed double arrow).",circ:"Slow circles (curved arrow).",hold:"Press and hold on the target ring.",none:""}[S.dir||"along"];
+  if($("masbody"))$("masbody").innerHTML=`<div class="k">Step ${MS.si+1} of ${n} · ${R.name}</div><div class="mt" style="margin:2px 0">${S.t}</div><div class="k"><b>${S.k}</b> · ${S.p||""} · <span id="mast">⏱ ${fmtT(MS.left)}</span></div><p style="margin:6px 0">${S.d}</p>${dirTxt?`<p class="k" style="margin:2px 0 6px">${dirTxt}</p>`:""}${S.c?`<div class="caut">⚠ ${S.c}</div>`:""}${zs.map(z=>zoneBox(ZB[z])).join("")}<details class="pinp"><summary>Pinpoint: origin and insertion</summary>${pin||'<span class="k">Whole-body step.</span>'}</details>`;
+  if($("masj"))$("masj").value=MS.si;if($("masprev"))$("masprev").disabled=MS.si===0;if($("masnext"))$("masnext").disabled=MS.si===n-1;
+  if(MS.slide)masCaption(S,zs,n)}
+function masCaption(S,zs,n){slideScene();$("slname").textContent=S.t;$("slsub").innerHTML=`<span class="k">Step ${MS.si+1} of ${n} · ${S.k} · ${S.p||""} · <span id="slt">⏱ ${fmtT(MS.left)}</span></span><div>${S.d}</div>${S.c?`<div class="slw">⚠ ${S.c}</div>`:""}${zs.length?`<div class="slw">⚠ Danger zone in view: ${zs.map(z=>ZB[z][1]).join("; ")}</div>`:""}`;$("slpv").disabled=MS.si===0;$("slnx").disabled=MS.si===n-1}
+function masTick(){if(!MS.on||!MS.auto)return;if(MS.left>0)MS.left--;document.querySelectorAll("#mast,#slt").forEach(e=>e.textContent="⏱ "+fmtT(MS.left));if(MS.left<=0){if(MS.si<RT[MS.ri].steps.length-1)masStep(MS.si+1);else{MS.auto=false;masUi()}}}
+function masUi(){if($("masauto")){$("masauto").textContent=MS.auto?"Pause timer":"Auto-advance";$("masauto").classList.toggle("on",MS.auto)}$("slpa").textContent=MS.auto?"Pause":"Auto-play"}
+const ICN={prev:'<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M6 5h3v14H6zM20 5v14L10 12z" fill="currentColor"/></svg>',next:'<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M15 5h3v14h-3zM4 5v14l10-7z" fill="currentColor"/></svg>'};
+function masPanel(){const R=RT[MS.ri];
+  $("mas").innerHTML=`<b>Massage Trainer</b><p class="caut" style="margin:6px 0"><b>Educational only.</b> This is not medical advice and does not replace hands-on training. Practise on a willing adult, ask about pressure often, and stop at any sharp, electric, numb or tingling feeling.</p>
+<div class="row"><select id="mrt" aria-label="Routine">${RT.map((r,i)=>`<option value="${i}">${r.name}</option>`).join("")}</select></div><p class="k" id="mrb" style="margin:2px 0 6px">${R.blurb}</p>
+<details id="msafe" ${MS.ack?"":"open"}><summary><b>Before you start: who and where not to massage</b></summary>
+<ul class="sflist"><li><b>Do not massage</b> anyone with a fever or infection, or who may have a blood clot (DVT): a leg or calf that is swollen, warm, red or painful, usually on one side. Massage can dislodge a clot.</li>
+<li><b>Get a doctor’s OK first</b> for cancer, heart disease, uncontrolled high blood pressure, osteoporosis, pregnancy, blood thinners, or diabetes with reduced feeling.</li>
+<li><b>Skip the local area</b> over open wounds, recent surgery, fresh bruises or fractures, rashes or skin infections, severe varicose veins, injection sites and any cancer site.</li>
+<li><b>Red hatched zones</b> on the picture are endangerment sites, where nerves and vessels lie close to the surface. Use broad, flat, light contact or skip them. Tap a zone for details.</li></ul></details>
+<div class="row"><button class="p" id="mgo2">${MS.ack?"Start":"I have read this. Start"}</button></div>
+<div id="masrun" style="display:none"><div class="row"><select id="masj" aria-label="Jump to step" style="flex:1;min-width:0"></select></div><div id="masbody"></div><div id="masz"></div>
+<div class="ctl"><button class="big" id="masprev" aria-label="Previous step">${ICN.prev}<span>Back</span></button><button class="big" id="masnext" aria-label="Next step"><span>Next</span>${ICN.next}</button></div>
+<div class="row"><button id="masauto">Auto-advance</button><button id="masslide" class="p">Open slideshow</button><span class="k">Timer uses each step’s suggested time.</span></div></div>
+<details class="srcs"><summary>Sources and what is sourced</summary><p class="k">Stroke direction toward the heart, stroke order, endangerment sites, contraindications and the hold-then-release trigger-point method come from these:</p><ul class="sflist">${SRC.map(s=>`<li><a href="${s[1]}" target="_blank" rel="noopener">${s[0]}</a></li>`).join("")}</ul><p class="k">Not from a single source: fibre and glide arrows are worked out from this app’s own origin and insertion points, and zone positions are approximate. Hand positions, hold times and the 1–10 pressure scale are common teaching practice. Check any detail against an anatomy atlas or a trained therapist.</p></details>`;
+  $("mrt").value=MS.ri;$("mrt").onchange=e=>{MS.ri=+e.target.value;MS.si=0;MS.auto=false;masPanel();if(MS.ack)masStart(true)};
+  $("mgo2").onclick=()=>{MS.ack=true;try{localStorage.setItem("mtmasack","1")}catch(e){}masStart()};
+  $("masprev").onclick=()=>masStep(MS.si-1);$("masnext").onclick=()=>masStep(MS.si+1);
+  $("masj").onchange=e=>masStep(+e.target.value);$("masauto").onclick=()=>{MS.auto=!MS.auto;masUi()};$("masslide").onclick=masOpen;
+  $("masj").innerHTML=R.steps.map((s,i)=>`<option value="${i}">${i+1}. ${s.t}</option>`).join("")}
+function masStart(keep){$("masrun").style.display="";$("msafe").open=false;if(!keep)MS.si=0;$("mgo2").textContent="Restart routine";masStep(MS.si);}
+function masOpen(){if(!MS.on)return;MS.slide=true;slideOpen();$("slpv").hidden=$("slnx").hidden=false;$("slvb").style.display="none";$("slpv").onclick=()=>masStep(MS.si-1);$("slnx").onclick=()=>masStep(MS.si+1);document.body.classList.add("masslide");masUi();setTimeout(()=>masStep(MS.si),60)}
+function masOff(){if(!MS.slide)return;MS.slide=false;$("slpv").hidden=$("slnx").hidden=true;$("slvb").style.display="";document.body.classList.remove("masslide");$("slpa").textContent="Pause";setTimeout(()=>{if(mode==="mas"&&MS.on)masStep(MS.si)},200)}
+function masEnter(){MS.on=true;MS.lvl=level;if(level<4){level=4;applyLevel()}masPanel();svg.classList.add("zon");clearInterval(MS.timer);MS.timer=setInterval(masTick,1000)}
+function masLeave(){MS.on=false;MS.auto=false;clearInterval(MS.timer);if(MS.slide){slideClose()}if(MS.lvl!=null&&MS.lvl!==level){level=MS.lvl;applyLevel()}MS.lvl=null;svg.classList.toggle("zon",zonOn);document.querySelectorAll(".mu").forEach(e=>e.classList.remove("dim"))}
+const _setMode=setMode;setMode=function(m){const was=mode;if(was==="mas"&&m!=="mas")masLeave();_setMode(m);$("mas").style.display=m==="mas"?"":"none";if(m==="mas"&&was!=="mas")masEnter()};
+$("slpa").onclick=()=>{if(MS.slide){MS.auto=!MS.auto;masUi()}else medPause()};
+document.addEventListener("keydown",e=>{if(!MS.slide)return;if(e.key==="ArrowRight"){e.preventDefault();masStep(MS.si+1)}else if(e.key==="ArrowLeft"){e.preventDefault();masStep(MS.si-1)}else if(e.key===" "){MS.auto=!MS.auto;masUi()}});
 </script>
 </body>
 </html>
