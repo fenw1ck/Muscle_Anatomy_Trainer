@@ -55,6 +55,7 @@ svg.qz .mu:not(.q):not(.ans):not(.bad) *{fill-opacity:.25}.lbl{font:700 14px sys
 .dot{display:inline-block;width:18px;height:18px;border-radius:50%;color:#fff;font:800 11px/18px system-ui,sans-serif;text-align:center;vertical-align:1px}.dot.o{background:var(--oc)}.dot.i{background:var(--ic)}
 .mt{font-size:1.2em;font-weight:500}.nm b{font-weight:800;color:var(--acc)}.ch .nm,.chip .nm{font-weight:500}.ch .nm b,.chip .nm b{font-weight:800;color:inherit}.pron i{font-style:normal;letter-spacing:.02em}.say{padding:1px 6px;margin-left:4px}
 #mnow .mt{font-size:1.45em}#med input[type=range]{width:90px}
+.sl{border-top:1px solid var(--line);margin-top:8px;padding-top:6px}.sl .row{margin:4px 0}
 .tune{border-top:1px solid var(--line);margin-top:8px;padding-top:4px}
 body[data-mode="med"] #pq,body[data-mode="med"] #info{display:none}
 .chip{padding:4px 9px;margin:2px 2px 2px 0;font-size:13px}.att-row{margin:4px 0}
@@ -929,7 +930,7 @@ $("lev").onchange=e=>setLevel(+e.target.value);applyLevel();
 const stepG=d=>{const i=VG.indexOf(+$("gs").value);focus(VG[(i+d+VG.length)%VG.length],mode==="learn")};
 $("zo").onclick=out;$("zin").onclick=()=>zoomAt(.7);$("zout").onclick=()=>zoomAt(1/.7);$("gs").onchange=e=>focus(+e.target.value,mode==="learn");$("gp").onclick=()=>stepG(-1);$("gn").onclick=()=>stepG(1);
 function pick(id){if(mode!=="learn")return;clearMarks();const m=BY[id];if(!m.view.includes(vw))face(m.view[0]);show(id,"sel",m.name);drawAtt(id);cur=["m",id];
-$("info").innerHTML=`<div class="mt">${NMH(m)}</div>${nickLine(m)}${pronLine(m)}<span class="k">${LOC(m)} · ${DN[m.depth]} layer · ${LV[m.tier-1]} level</span><p style="margin:6px 0">${m.action}.</p>${attLines(id)}<div class="k" style="margin:6px 0 2px">Bones it attaches to:</div><div>${bonesOf(id).length?bonesOf(id).map(chipB).join(""):'<span class="k">None: it attaches only to cartilage or soft tissue.</span>'}</div><div class="row"><button id="zg">Zoom to ${GR[m.group]}</button></div>`;$("zg").onclick=()=>focus(m.group,true)}
+$("info").innerHTML=`<div class="mt">${NMH(m)}</div>${nickLine(m)}${pronLine(m)}<span class="k">${LOC(m)} · ${DN[m.depth]} layer · ${LV[m.tier-1]} level</span><p style="margin:6px 0">${m.action}.</p>${attLines(id)}<div class="k" style="margin:6px 0 2px">Bones it attaches to:</div><div>${bonesOf(id).length?bonesOf(id).map(chipB).join(""):'<span class="k">None: it attaches only to cartilage or soft tissue.</span>'}</div><div class="row"><button id="zg">Zoom to ${GR[m.group]}</button></div>${TTS||AL?soundsBox(m):""}`;$("zg").onclick=()=>focus(m.group,true)}
 function pickBone(b){if(mode!=="learn")return;if(layer==="m")setLayer("fb");clearMarks();const B0=BB[b];if(!B0[2].includes(vw))face(B0[2][0]);$("lbl").textContent=B0[1];drawBone(b);cur=["b",b];
 const on=w=>P.filter(m=>att(m.id,w).some(k=>onBone(k,b))),o=on(0),i=on(1);
 $("info").innerHTML=`<b>${B0[1]}</b><p style="margin:6px 0">${B0[6]}</p><div class="att-row"><span class="dot o">O</span> <b>Muscles that start here:</b></div><div>${o.length?o.map(chipM).join(""):'<span class="k">None at this level.</span>'}</div><div class="att-row" style="margin-top:8px"><span class="dot i">I</span> <b>Muscles that end here:</b></div><div>${i.length?i.map(chipM).join(""):'<span class="k">None at this level.</span>'}</div>`}
@@ -948,7 +949,10 @@ let SAYU={};try{SAYU=JSON.parse(localStorage.getItem("mtsay")||"{}")}catch(e){}
 const sayW=w=>{const k=w.toLowerCase();return SAYU[k]||SAY[k]||w};
 const sayWords=t=>t.replace(/[A-Za-z']+/g,sayW);
 const spokenName=n=>{const r=n.match(/^(.*) \((.*)\)$/);return r?(r[2]==="foot"?`${r[1]} of the foot.`:`${r[1]}, also called ${r[2]}.`):n+"."};
-const sayText=(m,ph)=>ph?sayWords(spokenName(m.name)):spokenName(m.name);
+let SAYN={};try{SAYN=JSON.parse(localStorage.getItem("mtsayn")||"{}")}catch(e){}
+const sayText=(m,ph)=>ph?(SAYN[m.id]?SAYN[m.id]+".":sayWords(spokenName(m.name))):spokenName(m.name);
+const sayExample=m=>sayWords(spokenName(m.name)).replace(/\.$/,"");
+const REPO="https://github.com/fenw1ck/Muscle_Anatomy_Trainer";
 const nickPlain=n=>n.replace(/\s*\(.*\)/,"");
 const TTS=("speechSynthesis" in window)?window.speechSynthesis:null;let voices=[];
 // recorded library (Kokoro clips in audio/ next to index.html); used when present
@@ -973,7 +977,7 @@ function stopAudio(){if(CUR){const d=CURDONE;CUR.onended=null;try{CUR.stop()}cat
 function sayLine(key,text,done){const c=useRec()&&AL.clips[key];if(window._played)window._played.push((c?"rec ":"tts ")+key);
 if(c&&acx()){abuf(c[0]).then(b=>{const s=AC.createBufferSource();s.buffer=b;s.connect(AC.destination);let fin=false;const end=()=>{if(fin)return;fin=true;if(CUR===s){CUR=null;CURDONE=null}done&&done()};CUR=s;CURDONE=end;s.onended=end;s.start(0,c[1],c[2]+.05)}).catch(()=>speak(text,medRate(),done));return}
 speak(text,medRate(),done)}
-const sayBtn=m=>(TTS||AL)?`<button class="chip say" data-say="${m.id}" title="Hear it" aria-label="Hear ${m.name}">🔊</button><button class="chip say" data-tune="${m.id}" title="Fix how the browser voice says it">✎</button>`:"";
+const sayBtn=m=>(TTS||AL)?`<button class="chip say" data-say="${m.id}" title="Hear it" aria-label="Hear ${m.name}">🔊</button>`:"";
 document.addEventListener("click",e=>{const b=e.target.closest("[data-say]");if(b){e.stopPropagation();stopAudio();sayLine("name:"+b.dataset.say,sayText(BY[b.dataset.say],true),null);return}
 const t=e.target.closest("[data-tune]");if(t){e.stopPropagation();tuner(BY[t.dataset.tune],t.closest(".card"))}});
 const medPh=()=>!$("mph")||$("mph").checked;
@@ -990,6 +994,14 @@ if(e.target.closest("[data-ts]")){ws.forEach(w=>{const v=inp(w).value.trim();if(
 if(e.target.closest("[data-tc]")){const txt=Object.entries(SAYU).map(([k,v])=>`${k} = ${v}`).join("\n")||"(no fixes yet)";(navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>box.querySelector("[data-tm]").textContent="Copied. Paste it into our chat.",()=>box.querySelector("[data-tm]").textContent=txt)}}}
 function nickLine(m){const g=groupsOf(m.id).filter(g=>g[2].some(i=>P.some(x=>x.id===i)));const a=[];if(NK[m.id])a.push(`Nickname: <b>${NK[m.id].n}</b>`);if(g.length)a.push("One of the "+g.map(g=>`<b>${g[0]}</b>`).join(", "));return a.length?`<div class="k" style="margin:2px 0">${a.join(" · ")}</div>`:""}
 const pronLine=m=>`<div class="k pron">Say it: <i>${respell(m)}</i> ${sayBtn(m)}</div>`;
+// "Sounds like" box (Learn card): type the name as everyday English words, hear it, keep it, or send it as a suggestion
+const soundsBox=m=>`<div class="sl"><label class="k" for="slt">Sounds like, in everyday words:</label><div class="row"><input type="text" id="slt" data-sl="${m.id}" value="${(SAYN[m.id]||"").replace(/"/g,"&quot;")}" placeholder="e.g. ${sayExample(m)}" autocomplete="off" style="flex:1;min-width:150px"><button class="chip" data-slp title="Hear it">▶</button></div><div class="row"><button class="chip" data-sls>Use for my voice</button><button class="chip" data-slg>Suggest it</button><span class="k" data-slm></span></div></div>`;
+document.addEventListener("click",e=>{const box=e.target.closest(".sl");if(!box)return;const inp=box.querySelector("[data-sl]"),m=BY[inp.dataset.sl],v=inp.value.trim(),msg=box.querySelector("[data-slm]");
+if(e.target.closest("[data-slp]")){stopAudio();speak((v||sayExample(m))+".",medRate())}
+if(e.target.closest("[data-sls]")){if(v)SAYN[m.id]=v;else delete SAYN[m.id];try{localStorage.setItem("mtsayn",JSON.stringify(SAYN))}catch(e){}msg.textContent=v?"Saved. The browser voice will say it your way.":"Back to the original."}
+if(e.target.closest("[data-slg]")){if(!v){msg.textContent="Type how it sounds first.";inp.focus();return}
+const body=`Muscle: ${m.name}\nSounds like: ${v}\nCurrent guide: ${respell(m)}\n\n(Sent from the Sounds like box.)`;
+window.open(`${REPO}/issues/new?title=${encodeURIComponent("Pronunciation: "+m.name)}&body=${encodeURIComponent(body)}`,"_blank","noopener");msg.textContent="A GitHub page opened. Press Submit there to send it."}});
 // quiz helpers
 const shuf=a=>a.map(x=>[Math.random(),x]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
 function lev(a,b){const d=[...Array(b.length+1).keys()];for(let i=1;i<=a.length;i++){let p=d[0];d[0]=i;for(let j=1;j<=b.length;j++){const t=d[j];d[j]=Math.min(d[j]+1,d[j-1]+1,p+(a[i-1]===b[j-1]?0:1));p=t}}return d[b.length]}
