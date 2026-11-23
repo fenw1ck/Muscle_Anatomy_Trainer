@@ -13,6 +13,11 @@ body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 -apple-system
 main{max-width:600px;margin:0 auto;padding:12px 12px 40px}h1{font:700 26px Georgia,serif;margin:4px 0}.sub{color:var(--mute);font-size:14px;margin:0 0 8px}
 .row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:6px 0}
 button,select,input{font:600 14px system-ui,sans-serif;border-radius:10px;border:2px solid var(--line);background:var(--card);color:var(--ink);padding:9px 12px}button.on,button.p{background:var(--acc);color:var(--accink);border-color:var(--acc)}input[type=text]{border-color:var(--acc)}
+#wrap{display:flex;flex-direction:column}#stage,#side{display:contents}
+#s{order:1}#pq,#spc,#info{order:2}#stage>.row,#stage>p{order:3}#bcard{order:4}
+body[data-mode="practice"] svg,body[data-mode="speed"] svg{height:min(52vh,480px)}
+@media (min-width:960px){main{max-width:1200px}#wrap{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:18px;align-items:start}#stage,#side{display:block}#side{position:sticky;top:10px}svg,body[data-mode="practice"] svg,body[data-mode="speed"] svg{height:min(calc(100vh - 24px),920px)}}
+#zin,#zout{min-width:44px;font-size:18px;padding:6px 10px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin:8px 0}
 svg{width:100%;height:min(66vh,580px);display:block;background:radial-gradient(circle at 50% 35%,var(--card),var(--bg));border:1px solid var(--line);border-radius:14px;touch-action:none;user-select:none;cursor:grab}
 .v{transition:opacity .35s}.v.off{opacity:0;pointer-events:none}
@@ -35,11 +40,12 @@ svg[data-layer="fb"]{--mo:.6}
 .mu *{fill:var(--gf);fill-opacity:var(--mo,.9);stroke:#0006;stroke-width:.7;cursor:pointer;transition:fill-opacity .2s}.mu:hover *{fill-opacity:1;stroke-width:1.4}
 .mu.lvx{display:none}.mu.dim *{fill-opacity:.18}.mu.sel *{stroke:var(--ink);stroke-width:2.6;fill-opacity:1}
 svg.foc .mu:not(.sel):not(.ans):not(.q):not(.bad) *{fill-opacity:.12}
-.mu.q *{fill:var(--gold);animation:pl 1s infinite}.mu.bad *{fill:var(--bad);fill-opacity:1;stroke-width:2.4}.mu.ans *{fill:#3aa66b;fill-opacity:1;stroke-width:2.4}
+.mu.q *{fill:var(--gold);fill-opacity:1;stroke:#5c3a00;stroke-width:2.2;animation:pl .75s ease-in-out infinite}.mu.bad *{fill:var(--bad);fill-opacity:1;stroke-width:2.4}.mu.ans *{fill:#3aa66b;fill-opacity:1;stroke-width:2.4}
 /* tendons: pale bands from a muscle to the bone */
 .mu .tdn{fill:var(--tdn);fill-opacity:var(--mo,.95);stroke:#0005;stroke-width:.35}.mu:hover .tdn{stroke-width:.8}
 .mu.sel .tdn{stroke:var(--ink);stroke-width:1;fill-opacity:1}.mu.q .tdn{fill:var(--gold)}.mu.bad .tdn{fill:var(--bad);stroke-width:.8}.mu.ans .tdn{fill:#3aa66b;stroke-width:.8}.mu.dim .tdn{fill-opacity:.18}
-@keyframes pl{50%{fill-opacity:.4}}.lbl{font:700 14px system-ui;fill:var(--ink);paint-order:stroke;stroke:var(--card);stroke-width:4px;pointer-events:none}
+@keyframes pl{0%,100%{fill-opacity:1;stroke-width:2.6}50%{fill-opacity:.2;stroke-width:1}}
+svg.qz .mu:not(.q):not(.ans):not(.bad) *{fill-opacity:.25}.lbl{font:700 14px system-ui;fill:var(--ink);paint-order:stroke;stroke:var(--card);stroke-width:4px;pointer-events:none}
 /* attachment overlay */
 .att{pointer-events:none}.att line{stroke-width:1.4;stroke-dasharray:3 2;stroke-linecap:round}.att line.o{stroke:var(--oc)}.att line.i{stroke:var(--ic)}
 .att circle{stroke:#fff;stroke-width:1.1}.att circle.o{fill:var(--oc)}.att circle.i{fill:var(--ic)}.inf rect{fill:var(--card);stroke:var(--line);stroke-width:.8}.inf text{font:700 4.4px system-ui,sans-serif;fill:var(--mute)}.inc{fill:none;stroke:var(--mute);stroke-width:.6;stroke-dasharray:1.5 1.5}.sil .silf{fill:none;stroke:var(--sil);stroke-width:6;stroke-linecap:round}svg[data-layer="m"] .ins-b{display:none}.mu.px *{fill:none!important;stroke:none!important;animation:none!important;pointer-events:none}.v:not(.off) .dl:not(.peel) .mu.px *{pointer-events:all}
@@ -55,21 +61,21 @@ svg.foc .mu:not(.sel):not(.ans):not(.q):not(.bad) *{fill-opacity:.12}
 <body>
 <main>
 <h1>Muscle Trainer</h1>
-<p class="sub">Drag the picture to move it. Peel the muscles away layer by layer to reach the bones. Tap a muscle to see where it attaches, or tap a bone to see which muscles attach to it. Pick a level to choose which muscles to study: Core, Standard, Advanced or Expert. Each level includes the ones before it. 24 bones, drawn as a simplified schematic.</p>
+<p class="sub">Drag the picture to move it; zoom in with ＋ or by holding the left mouse button. Peel the muscles away layer by layer to reach the bones. Tap a muscle to see where it attaches, or tap a bone to see which muscles attach to it. Pick a level to choose which muscles to study: Core, Standard, Advanced or Expert. Each level includes the ones before it. 24 bones, drawn as a simplified schematic.</p>
 <div class="row" id="modes"><button data-m="learn" class="on">Learn</button><button data-m="practice">Practice</button><button data-m="speed">Speed run</button></div>
 <div class="row" id="lvr"><span class="k">Level:</span><select id="lev" aria-label="Difficulty level"></select><span class="k" id="cnt"></span></div>
 <div class="row" id="po" style="display:none"><select id="qt"><option value="mc">Multiple choice</option><option value="fill">Fill in the blank</option><option value="att">Origins &amp; insertions</option><option value="tap">Tap the origin / insertion</option></select></div>
 <div class="row" id="so" style="display:none"><select id="sg"></select><select id="stm"><option value="60">1 minute</option><option value="300">5 minutes</option><option value="0">Untimed</option></select><button class="p" id="sgo">Start</button></div>
-<svg id="s" viewBox="0 0 300 640" aria-label="Human muscle and skeleton diagram"></svg>
-<div class="row"><button id="front" class="on">Front</button><button id="back">Back</button><button id="zo">Zoom out</button><span class="k" id="vwk"></span></div>
+<div id="wrap"><div id="stage"><svg id="s" viewBox="0 0 300 640" aria-label="Human muscle and skeleton diagram"></svg>
+<div class="row"><button id="front" class="on">Front</button><button id="back">Back</button><button id="zin" aria-label="Zoom in" title="Zoom in (+)">＋</button><button id="zout" aria-label="Zoom out" title="Zoom out (−)">−</button><button id="zo" title="Whole body (0)">Whole body</button><span class="k" id="vwk"></span></div>
 <div class="row" id="lyr"><span class="k">Show:</span><button data-l="m">Muscles</button><button data-l="fb">Muscles + bones</button></div>
 <div class="row" id="dep"><span class="k">Layer:</span><button class="chip" data-d="1">Surface</button><button class="chip" data-d="2">Middle</button><button class="chip" data-d="3">Deep</button><button class="chip" data-d="4">Deepest</button><button class="chip" data-d="5">Bones</button></div>
-<p class="k" id="dhint" style="margin:0 0 6px">Scroll down or right-click the picture to peel a layer away; scroll up to put it back.</p>
+<p class="k" id="dhint" style="margin:0 0 6px">Mouse: scroll or right-click to peel a layer away (scroll up to put it back); hold the left button to zoom in, hold the right button to zoom out; drag to move. Keys: + and − zoom, arrows move, 0 whole body, [ and ] change layer. Touch: pinch to zoom.</p>
 <div class="row"><button id="gp">◀</button><select id="gs" aria-label="Muscle group"></select><button id="gn">▶</button></div>
-<div class="card" id="info"><b>Tap a muscle or a bone.</b><p class="k" style="margin:4px 0 0"><span class="dot o">O</span> marks where a muscle starts (origin) and <span class="dot i">I</span> where it ends (insertion).</p></div>
+</div><div id="side"><div class="card" id="info"><b>Tap a muscle or a bone.</b><p class="k" style="margin:4px 0 0"><span class="dot o">O</span> marks where a muscle starts (origin) and <span class="dot i">I</span> where it ends (insertion).</p></div>
 <div class="card" id="pq" style="display:none"></div>
 <div class="card" id="spc" style="display:none"></div>
-<div class="card"><b>Badges</b><div id="bdg" class="k">None yet.</div></div>
+<div class="card" id="bcard"><b>Badges</b><div id="bdg" class="k">None yet.</div></div></div></div>
 </main>
 <div id="toast"></div>
 <script>
@@ -852,19 +858,42 @@ $("front").onclick=()=>{face("f");redraw()};$("back").onclick=()=>{face("b");red
 const DN=["","Surface","Middle","Deep","Deepest","Bones"];let depth=1;
 function setDepth(d){depth=Math.max(1,Math.min(5,d));document.querySelectorAll(".dl").forEach(g=>{g.classList.toggle("peel",+g.dataset.d<depth);g.classList.toggle("below",+g.dataset.d>depth)});document.querySelectorAll("#dep [data-d]").forEach(b=>b.classList.toggle("on",+b.dataset.d===depth));if(depth===5&&layer==="m")setLayer("fb")}
 $("dep").addEventListener("click",e=>{const b=e.target.closest("[data-d]");if(b)setDepth(+b.dataset.d)});
-let wl=0;svg.addEventListener("wheel",e=>{e.preventDefault();const t=Date.now();if(t-wl<280||Math.abs(e.deltaY)<4)return;wl=t;setDepth(depth+(e.deltaY>0?1:-1))},{passive:false});
-svg.addEventListener("contextmenu",e=>{e.preventDefault();setDepth(depth<5?depth+1:1)});
+let wl=0;svg.addEventListener("wheel",e=>{e.preventDefault();if(e.ctrlKey||e.metaKey){const p=toSvg(e.clientX,e.clientY);zoomAt(Math.exp(Math.max(-.5,Math.min(.5,e.deltaY*.01))),p.x,p.y);return}const t=Date.now();if(t-wl<280||Math.abs(e.deltaY)<4)return;wl=t;setDepth(depth+(e.deltaY>0?1:-1))},{passive:false});
+svg.addEventListener("contextmenu",e=>e.preventDefault());
 function setLayer(l){if(l==="m"&&depth===5)setDepth(4);layer=l;svg.dataset.layer=l;document.querySelectorAll("#lyr [data-l]").forEach(b=>b.classList.toggle("on",b.dataset.l===l));try{localStorage.setItem("mtl",l)}catch(e){}}
 $("lyr").addEventListener("click",e=>{const b=e.target.closest("[data-l]");if(b)setLayer(b.dataset.l)});
 let twk=0;const tween=to=>{const from=vb.slice(),my=++twk;let i=0;(function s(){if(my!==twk)return;i++;const t=i/16,k=t*t*(3-2*t);vb=from.map((x,j)=>x+(to[j]-x)*k);svg.setAttribute("viewBox",vb.join(" "));if(i<16)requestAnimationFrame(s)})()};
-// drag to pan, tap to select
-let dr=null;svg.addEventListener("pointerdown",e=>{dr={x:e.clientX,y:e.clientY,vb:vb.slice(),moved:false}});
-svg.addEventListener("pointermove",e=>{if(!dr)return;const dx=e.clientX-dr.x,dy=e.clientY-dr.y;if(Math.hypot(dx,dy)>6)dr.moved=true;if(dr.moved){const k=dr.vb[2]/svg.clientWidth;vb=[dr.vb[0]-dx*k,dr.vb[1]-dy*k,dr.vb[2],dr.vb[3]];svg.setAttribute("viewBox",vb.join(" "))}});
-svg.addEventListener("pointerup",e=>{const tap=dr&&!dr.moved&&e.button===0;dr=null;if(!tap)return;if(mode==="practice"&&$("qt").value==="tap"){answerTap(e);return}const m=e.target.closest(".mu"),b=e.target.closest(".bn");if(m)pick(m.dataset.id);else if(b)pickBone(b.dataset.b)});
+/* ---------- MOVE AND ZOOM ----------
+   Left drag moves the picture; a quick left click selects. Holding the left button zooms in at the pointer,
+   holding the right button zooms out; a quick right click peels one layer. Two fingers pinch to zoom. */
+const toSvg=(x,y)=>{const pt=svg.createSVGPoint();pt.x=x;pt.y=y;return pt.matrixTransform(svg.getScreenCTM().inverse())};
+function zoomAt(f,cx,cy){twk++;const w=Math.min(Math.max(vb[2]*f,14),360),k=w/vb[2];if(cx==null){cx=vb[0]+vb[2]/2;cy=vb[1]+vb[3]/2}
+  vb=[cx-(cx-vb[0])*k,cy-(cy-vb[1])*k,w,vb[3]*k];svg.setAttribute("viewBox",vb.join(" "))}
+function panBy(fx,fy){twk++;vb=[vb[0]+vb[2]*fx,vb[1]+vb[3]*fy,vb[2],vb[3]];svg.setAttribute("viewBox",vb.join(" "))}
+let dr=null;const touches=new Map();let pinch=null;
+function holdZoom(){if(!dr||!dr.held)return;const p=toSvg(dr.cx,dr.cy);zoomAt(dr.btn===0?.975:1/.975,p.x,p.y);requestAnimationFrame(holdZoom)}
+svg.addEventListener("pointerdown",e=>{
+  if(e.pointerType==="touch"){touches.set(e.pointerId,[e.clientX,e.clientY]);if(touches.size===2){const[a,b]=[...touches.values()];pinch={d:Math.hypot(a[0]-b[0],a[1]-b[1]),vb:vb.slice(),m:toSvg((a[0]+b[0])/2,(a[1]+b[1])/2)};dr=null;return}}
+  dr={x:e.clientX,y:e.clientY,cx:e.clientX,cy:e.clientY,vb:vb.slice(),moved:false,btn:e.button,held:false};
+  if(e.pointerType==="mouse"&&(e.button===0||e.button===2)){const me=dr;dr.timer=setTimeout(()=>{if(dr===me&&!me.moved){me.held=true;holdZoom()}},380)}});
+svg.addEventListener("pointermove",e=>{
+  if(pinch&&touches.has(e.pointerId)){touches.set(e.pointerId,[e.clientX,e.clientY]);const[a,b]=[...touches.values()];const d=Math.hypot(a[0]-b[0],a[1]-b[1])||1,k=Math.min(Math.max(pinch.d/d*pinch.vb[2],14),360)/pinch.vb[2];
+    twk++;vb=[pinch.m.x-(pinch.m.x-pinch.vb[0])*k,pinch.m.y-(pinch.m.y-pinch.vb[1])*k,pinch.vb[2]*k,pinch.vb[3]*k];svg.setAttribute("viewBox",vb.join(" "));return}
+  if(!dr)return;dr.cx=e.clientX;dr.cy=e.clientY;if(dr.held)return;const dx=e.clientX-dr.x,dy=e.clientY-dr.y;if(Math.hypot(dx,dy)>6)dr.moved=true;
+  if(dr.moved&&dr.btn===0){twk++;const k=dr.vb[2]/svg.clientWidth;vb=[dr.vb[0]-dx*k,dr.vb[1]-dy*k,dr.vb[2],dr.vb[3]];svg.setAttribute("viewBox",vb.join(" "))}});
+const endTouch=e=>{touches.delete(e.pointerId);if(touches.size<2)pinch=null};
+svg.addEventListener("pointercancel",e=>{endTouch(e);if(dr)clearTimeout(dr.timer);dr=null});
+svg.addEventListener("pointerup",e=>{endTouch(e);const d=dr;dr=null;if(!d)return;clearTimeout(d.timer);if(d.held||d.moved)return;
+  if(d.btn===2){setDepth(depth<5?depth+1:1);return}
+  if(d.btn!==0)return;if(mode==="practice"&&$("qt").value==="tap"){answerTap(e);return}const m=e.target.closest(".mu"),b=e.target.closest(".bn");if(m)pick(m.dataset.id);else if(b)pickBone(b.dataset.b)});
+document.addEventListener("keydown",e=>{if(e.target.closest("input,select,textarea")||e.ctrlKey||e.metaKey||e.altKey)return;const k=e.key;
+  if(k==="+"||k==="=")zoomAt(.8);else if(k==="-"||k==="_")zoomAt(1.25);else if(k==="0")out();
+  else if(k==="ArrowLeft")panBy(-.12,0);else if(k==="ArrowRight")panBy(.12,0);else if(k==="ArrowUp")panBy(0,-.12);else if(k==="ArrowDown")panBy(0,.12);
+  else if(k==="[")setDepth(depth-1);else if(k==="]")setDepth(depth+1);else return;e.preventDefault()});
 const cls=(id,c,on)=>document.querySelectorAll(`.mu[data-id="${id}"]`).forEach(g=>g.classList.toggle(c,on));
 const clsB=(id,c,on)=>document.querySelectorAll(`.bn[data-b="${id}"]`).forEach(g=>g.classList.toggle(c,on));
-function clearMarks(){document.querySelectorAll(".mu").forEach(g=>g.classList.remove("sel","q","bad","ans"));document.querySelectorAll(".bn").forEach(g=>g.classList.remove("hit","hit2"));svg.querySelectorAll(".att").forEach(e=>e.remove());svg.classList.remove("foc");$("lbl").textContent="";cur=null}
-function show(id,c,l){setDepth(BY[id].depth);cls(id,c,true);$("lbl").textContent=l||""}
+function clearMarks(){document.querySelectorAll(".mu").forEach(g=>g.classList.remove("sel","q","bad","ans"));document.querySelectorAll(".bn").forEach(g=>g.classList.remove("hit","hit2"));svg.querySelectorAll(".att").forEach(e=>e.remove());svg.classList.remove("foc","qz");$("lbl").textContent="";cur=null}
+function show(id,c,l){setDepth(BY[id].depth);cls(id,c,true);if(c==="q")svg.classList.add("qz");$("lbl").textContent=l||""}
 // attachment overlay: O = origin, I = insertion, dashed lines run to the muscle belly
 function overlay(){svg.querySelectorAll(".att").forEach(e=>e.remove());const g=document.createElementNS("http://www.w3.org/2000/svg","g");g.setAttribute("class","att");$(vw==="b"?"bv":"fv").appendChild(g);return g}
 const dotSvg=(x,y,r)=>`<circle class="${r}" cx="${x}" cy="${y}" r="4"/><text x="${x}" y="${y}">${r==="o"?"O":"I"}</text>`;
@@ -892,7 +921,7 @@ $("cnt").textContent=`${P.length} of ${M.length} muscles, ${VG.length} groups`}
 function setLevel(l){level=l;try{localStorage.setItem("mtlv",l)}catch(e){}applyLevel();setMode(mode)}
 $("lev").onchange=e=>setLevel(+e.target.value);applyLevel();
 const stepG=d=>{const i=VG.indexOf(+$("gs").value);focus(VG[(i+d+VG.length)%VG.length],mode==="learn")};
-$("zo").onclick=out;$("gs").onchange=e=>focus(+e.target.value,mode==="learn");$("gp").onclick=()=>stepG(-1);$("gn").onclick=()=>stepG(1);
+$("zo").onclick=out;$("zin").onclick=()=>zoomAt(.7);$("zout").onclick=()=>zoomAt(1/.7);$("gs").onchange=e=>focus(+e.target.value,mode==="learn");$("gp").onclick=()=>stepG(-1);$("gn").onclick=()=>stepG(1);
 function pick(id){if(mode!=="learn")return;clearMarks();const m=BY[id];if(!m.view.includes(vw))face(m.view[0]);show(id,"sel",m.name);drawAtt(id);cur=["m",id];
 $("info").innerHTML=`<b>${m.name}</b><br><span class="k">${LOC(m)} · ${DN[m.depth]} layer · ${LV[m.tier-1]} level</span><p style="margin:6px 0">${m.action}.</p>${attLines(id)}<div class="k" style="margin:6px 0 2px">Bones it attaches to:</div><div>${bonesOf(id).length?bonesOf(id).map(chipB).join(""):'<span class="k">None: it attaches only to cartilage or soft tissue.</span>'}</div><div class="row"><button id="zg">Zoom to ${GR[m.group]}</button></div>`;$("zg").onclick=()=>focus(m.group,true)}
 function pickBone(b){if(mode!=="learn")return;if(layer==="m")setLayer("fb");clearMarks();const B0=BB[b];if(!B0[2].includes(vw))face(B0[2][0]);$("lbl").textContent=B0[1];drawBone(b);cur=["b",b];
@@ -961,10 +990,10 @@ $("spc").innerHTML=`<b>Name the flashing muscle.</b> <span class="k"><span id="t
 const go=()=>{const a=find($("si").value);if(a&&a.id===sp.queue[0].id){sp.named.push(sp.queue.shift());spNext()}else $("sf").textContent="Not that one. Try again or skip."};$("sok").onclick=go;$("si").onkeydown=e=>{if(e.key==="Enter")go()};$("ssk").onclick=()=>{sp.queue.push(sp.queue.shift());spNext()};$("sfn").onclick=endSpeed;$("si").focus();tick()}
 function endSpeed(){sp.over=true;clearInterval(spT);clearMarks();const t=Math.round((Date.now()-sp.t0)/1000);$("spc").innerHTML=`<b>Time!</b> You named <b>${sp.named.length}</b> of ${sp.total} in ${t}s.<p class="k"><b>Named:</b> ${sp.named.map(m=>m.name).join(", ")||"none"}</p><p class="k"><b>Still to learn:</b> ${sp.queue.map(m=>m.name).join(", ")||"nothing, perfect!"}</p><button class="p" id="sag">Play again</button>`;$("sag").onclick=startSpeed;if(!sp.queue.length)award("Speed run complete: "+($("sg").value==="all"?"whole body":GR[+$("sg").value])+" ("+LV[level-1]+")")}
 $("sgo").onclick=startSpeed;
-function setMode(m){mode=m;document.querySelectorAll("#modes>button").forEach(b=>b.classList.toggle("on",b.dataset.m===m));$("po").style.display=m==="practice"?"flex":"none";$("so").style.display=m==="speed"?"flex":"none";$("pq").style.display=m==="practice"?"":"none";$("spc").style.display=m==="speed"?"":"none";$("info").style.display=m==="learn"?"":"none";clearMarks();clearInterval(spT);sp=null;out();
+function setMode(m){mode=m;document.body.dataset.mode=m;if(m!=="learn"&&document.body.dataset.ready)requestAnimationFrame(()=>$("wrap").scrollIntoView({block:"start",behavior:"smooth"}));document.querySelectorAll("#modes>button").forEach(b=>b.classList.toggle("on",b.dataset.m===m));$("po").style.display=m==="practice"?"flex":"none";$("so").style.display=m==="speed"?"flex":"none";$("pq").style.display=m==="practice"?"":"none";$("spc").style.display=m==="speed"?"":"none";$("info").style.display=m==="learn"?"":"none";clearMarks();clearInterval(spT);sp=null;out();
 if(m==="practice"){score=[0,0];streak=0;q=null;ask()}if(m==="speed")$("spc").innerHTML='<b>Speed run.</b> Pick the whole body or one group, and a time limit, then press Start. Skip any muscle you don’t know.'}
 $("modes").addEventListener("click",e=>{const b=e.target.closest("[data-m]");if(b)setMode(b.dataset.m)});$("qt").onchange=()=>{if(mode==="practice")ask()};
-setLayer(layer);setDepth(1);bdg();
+setLayer(layer);setDepth(1);bdg();document.body.dataset.ready=1;
 </script>
 </body>
 </html>
