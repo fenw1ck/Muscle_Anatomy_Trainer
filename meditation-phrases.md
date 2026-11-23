@@ -1,12 +1,12 @@
 # Meditation phrases (Muscle Trainer, Meditate mode)
 
-Source of truth: `PHRASES` in tools/voice_data.py, built into index.html as `PHR` and into the Kokoro notebook. If you change a line here, the audio clip for it must be made again (the app falls back to the browser voice for any line that has no clip).
+Source of truth: `PHRASES` in tools/voice_data.py, built into index.html as `PHR` and into the Kokoro notebook. If you change a line here, the audio clip for it must be made again by re-running the notebook. Until then, with the recorded voice, a line without a clip is skipped (a short pause) rather than read by the browser voice.
 
 ## How a session is put together
 1. **Intro** (one, names the body part) → pause 1.5 s
 2. **Settle** (one breathing cue) → pause 3.5 s
 3. For each muscle, deepest layer last:
-   - **First** (for muscle 1) or **Next** (for the rest), ending "...the..." → the **muscle name**
+   - **First** (for muscle 1) or **Next** (for the rest): a complete sentence → the **muscle name** as its own short sentence ("Soleus.")
    - optional: "Some people call it the [nickname]." and what the muscle does
    - **Hold** (one line)
    - the pause you choose (3–30 s); if it is 10 s or more, every second muscle gets a **Breath** line in the middle of the pause
@@ -17,7 +17,7 @@ Rules:
 - Within each kind, lines are drawn from a shuffled bag, so none repeats until all of that kind have been used.
 - Lines marked **(b)** give a breathing instruction. Two (b) lines are never placed back to back.
 - Intro and Close are the only lines that contain the body part (`{g}`, e.g. "the foot", "the hips and glutes"). Each is recorded once per body part.
-- First/Next lines end with "the..." so the separate name clip follows naturally ("Next, we come to the... soleus").
+- **Intonation (changed 22 Nov):** First/Next lines used to end "...the..." so the name followed mid-sentence. The trailing "..." made the voice rise at the end (upspeak). They are now complete sentences ending with a full stop, which makes the voice fall; the name follows as its own sentence. Avoid ending any line with "...", a comma or a question mark. In the app, every recorded line also eases down in volume over its last 0.22 s.
 
 ## Intro (opening only; contains {g})
 - Find a comfortable position, and let your body be still. In this session, we'll move slowly through {g}.
@@ -33,21 +33,21 @@ Rules:
 - Breathe in for a count of four... and out, slowly, for a count of six.
 
 ## First (leads into the first muscle only)
-- We'll start with the...
-- Let your attention come to rest on the...
-- Begin by bringing your awareness to the...
+- We'll start here, with the first muscle.
+- Let your attention come to rest on this first muscle.
+- Begin by bringing your awareness here.
 
 ## Next (leads into every later muscle)
-- (b) Breathe in, and on the out breath, we will recenter our minds on the...
-- Now, gently move your attention to the...
-- (b) As you exhale, let your awareness travel to the...
-- Next, we come to the...
-- Let that area soften, and turn your attention to the...
-- (b) Breathing in... and breathing out... we arrive at the...
-- Without hurrying, shift your focus to the...
-- Now let your awareness settle on the...
-- (b) Take one easy breath, and move on to the...
-- From here, we drift to the...
+- (b) Breathe in, and on the out breath, we will recenter our minds on the next muscle.
+- Now, gently move your attention to the next muscle.
+- (b) As you exhale, let your awareness travel onward.
+- Next, we come to another muscle.
+- Let that area soften, and turn your attention onward.
+- (b) Breathing in, and breathing out, we arrive at the next muscle.
+- Without hurrying, shift your focus.
+- Now let your awareness settle somewhere new.
+- (b) Take one easy breath, and move on.
+- From here, we drift onward.
 
 ## Hold (after the muscle's name)
 - Notice any tension here, and let it soften.
