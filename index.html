@@ -58,6 +58,22 @@ svg.qz .mu:not(.q):not(.ans):not(.bad) *{fill-opacity:.25}.lbl{font:700 14px sys
 .sl{border-top:1px solid var(--line);margin-top:8px;padding-top:6px}.sl .row{margin:4px 0}
 .tune{border-top:1px solid var(--line);margin-top:8px;padding-top:4px}
 body[data-mode="med"] #pq,body[data-mode="med"] #info{display:none}
+
+/* slideshow */
+#slide{position:fixed;inset:0;z-index:20;background:#222;overflow:hidden}#slide[hidden]{display:none}body.sliding{overflow:hidden}
+.slbg{position:absolute;inset:0;opacity:0;transition:opacity 2.5s ease}.slbg.on{opacity:1}.slbg svg{width:100%;height:100%;display:block}
+#slpanel{position:absolute;left:50%;top:3vh;transform:translateX(-50%);width:min(94vw,64vh);height:70vh;background:rgba(255,253,248,.55);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-radius:28px;box-shadow:0 10px 40px rgba(0,0,0,.18);overflow:hidden}
+#slpanel svg{width:100%;height:100%;background:none;border:0;border-radius:0;cursor:default}
+svg.slv .mu.dim{opacity:0;pointer-events:none}svg.slv .mu:not(.sel):not(.dim) *{fill-opacity:.3}svg.slv .lbl{display:none}svg.slv .inf rect{fill:none;stroke:none}svg.slv .inf text,svg.slv .inc{display:none}svg.slv .mu.sel *{stroke-width:1.5}
+#slcap{position:absolute;left:0;right:0;bottom:0;padding:3vh 5vw 4vh;text-align:center;color:#fff;background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.42) 35%,rgba(0,0,0,.6));text-shadow:0 2px 12px rgba(0,0,0,.45)}
+#slname{font:400 clamp(30px,6.4vw,76px)/1.05 Georgia,"Times New Roman",serif;letter-spacing:.01em}#slname .nm,#slname .nm b{color:#fff}#slname .nm b{font-weight:700}
+#slsub{margin-top:1vh;font-size:clamp(14px,2.2vw,22px);opacity:.92}#slsub .k{color:#fff}
+#slctl{position:absolute;top:12px;right:12px;display:flex;gap:6px;opacity:.35;transition:opacity .3s}#slctl:hover,#slctl:focus-within{opacity:1}
+#slctl button{background:rgba(255,255,255,.8);border:0;border-radius:20px;padding:6px 12px;font-size:14px;cursor:pointer}
+@keyframes drift{from{transform:translateX(-50px)}to{transform:translateX(50px)}}.drift{animation:drift 33s ease-in-out infinite alternate}
+@keyframes rise{from{transform:translateY(20px)}to{transform:translateY(-50px)}}.float{animation:rise var(--d,12s) ease-in-out infinite alternate}
+@keyframes tw{50%{opacity:.25}}.tw{animation:tw 4.5s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.drift,.float,.tw{animation:none}.slbg{transition:none}}
 .chip{padding:4px 9px;margin:2px 2px 2px 0;font-size:13px}.att-row{margin:4px 0}
 .ch{display:block;width:100%;text-align:left;margin:5px 0}.ch.x{opacity:.35;text-decoration:line-through}.k{color:var(--mute);font-size:14px}#fb{min-height:2.4em;margin:6px 0}
 #toast{position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);left:50%;transform:translateX(-50%);background:var(--gold);color:#222;padding:10px 18px;border-radius:30px;font-weight:700;display:none;z-index:9;box-shadow:0 4px 16px #0006}
@@ -83,6 +99,9 @@ body[data-mode="med"] #pq,body[data-mode="med"] #info{display:none}
 <div class="card" id="med" style="display:none"></div>
 <div class="card" id="bcard"><b>Badges</b><div id="bdg" class="k">None yet.</div></div></div></div>
 </main>
+<div id="slide" hidden><div class="slbg" id="slbg0"></div><div class="slbg" id="slbg1"></div><div id="slpanel"></div>
+<div id="slcap"><div id="slname"></div><div id="slsub"></div></div>
+<div id="slctl"><button id="slfs" title="Full screen">⛶</button><button id="slpa">Pause</button><button id="slx">✕ Close</button></div></div>
 <div id="toast"></div>
 <script>
 const $=id=>document.getElementById(id),svg=$("s");
@@ -1097,14 +1116,14 @@ $("med").innerHTML=(TTS||AL)?`<b>Meditate</b><p class="k" style="margin:4px 0">P
 <div class="row"><span class="k">Voice:</span><select id="mvoice" style="max-width:240px"></select></div><div class="k" id="mvnote"></div>
 <div class="row"><span class="k">Speed</span><input type="range" id="mrate" min=".7" max="1.15" step=".05" value="${sv.r||.95}"><span class="k">Pause</span><input type="range" id="mgap" min="3" max="30" step="1" value="${sv.g||8}"><span class="k" id="mgapv"></span></div>
 <div class="row"><label class="k"><input type="checkbox" id="mph" ${sv.p===false?"":"checked"}> Browser voice reads the pronunciation guide</label><label class="k"><input type="checkbox" id="mact" ${sv.a?"checked":""}> Also say what it does</label><label class="k"><input type="checkbox" id="mnk" ${sv.n===false?"":"checked"}> Say nicknames</label></div>
-<div id="mnow" style="min-height:4.5em;margin-top:8px"></div>`:`<b>Meditate</b><p>This browser has no built-in voice. Try Chrome, Edge or Safari.</p>`;if(!TTS&&!AL)return;
-if(VG.includes(sv.g0))$("mg").value=sv.g0;pickVoices();const keep=()=>{const o={r:+$("mrate").value,g:+$("mgap").value,p:$("mph").checked,a:$("mact").checked,n:$("mnk").checked,g0:+$("mg").value};try{localStorage.setItem("mtmed",JSON.stringify(o));localStorage.setItem("mtvoice",$("mvoice").value)}catch(e){}$("mgapv").textContent=o.g+" s";medVoiceNote()};
-$("med").querySelectorAll("input,select").forEach(e=>e.onchange=keep);$("mgap").oninput=keep;keep();
+<div class="row"><span class="k">Background:</span><select id="mamb" aria-label="Background sound"><option value="off">Silence</option><option value="creek">Creek</option><option value="breeze">Breeze in the trees</option><option value="birds">Birdsong</option></select><span class="k">Level</span><input type="range" id="mambv" min="0" max="1" step=".05" value="${sv.av??.4}"><button class="chip" id="mambt">Try</button></div><div class="row"><label class="k"><input type="checkbox" id="mslide" ${sv.sl?"checked":""}> Slideshow: full screen, a calm scene for each muscle</label></div><div id="mnow" style="min-height:4.5em;margin-top:8px"></div>`:`<b>Meditate</b><p>This browser has no built-in voice. Try Chrome, Edge or Safari.</p>`;if(!TTS&&!AL)return;
+if(VG.includes(sv.g0))$("mg").value=sv.g0;if(sv.amb)$("mamb").value=sv.amb;pickVoices();const keep=()=>{const o={r:+$("mrate").value,g:+$("mgap").value,p:$("mph").checked,a:$("mact").checked,n:$("mnk").checked,g0:+$("mg").value,amb:$("mamb").value,av:+$("mambv").value,sl:$("mslide").checked};if(med&&AMB?.kind!==o.amb)ambStart(o.amb,o.av);ambVol(o.av);try{localStorage.setItem("mtmed",JSON.stringify(o));localStorage.setItem("mtvoice",$("mvoice").value)}catch(e){}$("mgapv").textContent=o.g+" s";medVoiceNote()};
+$("med").querySelectorAll("input,select").forEach(e=>e.onchange=keep);$("mgap").oninput=keep;$("mambv").oninput=()=>ambVol(+$("mambv").value);keep();$("mambt").onclick=()=>{ambStart($("mamb").value,+$("mambv").value);if(!med)setTimeout(()=>{if(!med)ambStop()},7000)};
 $("mgo").onclick=()=>medStart(+$("mg").value);$("mpa").onclick=medPause;$("mst").onclick=medStop}
-function medShow(m,i,n){clearMarks();if(!m.view.includes(vw))face(m.view[0]);show(m.id,"sel","");
+function medShow(m,i,n){clearMarks();if(!m.view.includes(vw))face(m.view[0]);show(m.id,"sel","");drawAtt(m.id);if(SL)slideShow(m,i,n);
 $("mnow").innerHTML=`<div class="mt">${NMH(m)}</div><div class="k pron"><i>${respell(m)}</i></div>${nickLine(m)}<p class="k" style="margin:4px 0">${m.action}.</p><span class="k">${i+1} of ${n}</span>`}
 async function medStart(g){medStop();const ms=P.filter(m=>m.group===g).sort((a,b)=>a.depth-b.depth||a.tier-b.tier);if(!ms.length)return;
-med={g,tk:++tok,paused:false,pz:0};const tk=med.tk;$("mpa").disabled=$("mst").disabled=false;$("mgo").disabled=true;$("mpa").textContent="Pause";focus(g,true);
+med={g,tk:++tok,paused:false,pz:0};const tk=med.tk;$("mpa").disabled=$("mst").disabled=false;$("mgo").disabled=true;$("mpa").textContent="Pause";if($("mslide").checked)slideOpen();focus(g,true);ambStart($("mamb").value,+$("mambv").value);
 const alive=()=>med&&med.tk===tk,sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const gate=async()=>{while(alive()&&med.paused)await sleep(200);if(!alive())throw"stop"};
 const wait=async ms=>{let left=ms;while(left>0){await gate();const t0=Date.now();await sleep(Math.min(200,left));left-=Date.now()-t0}await gate()};
@@ -1122,16 +1141,85 @@ try{
   if($("mact").checked){await wait(500);await line("act:"+m.id,m.action+".")}
   await wait(900);await say(phr("hold",lastB));
   const gap=+$("mgap").value*1000;if(gap>=10000&&i%2===1){await wait(gap/2);await say(phr("breath",lastB));await wait(gap/2)}else await wait(gap)}
- clearMarks();focus(g,true);ms.forEach(m=>cls(m.id,"sel",true));$("mnow").innerHTML=`<b>All of ${GSAY[g]}.</b><p class="k">Breathe slowly. Come back when you're ready.</p>`;
+ clearMarks();focus(g,true);ms.forEach(m=>cls(m.id,"sel",true));if(SL)slideEnd(g);$("mnow").innerHTML=`<b>All of ${GSAY[g]}.</b><p class="k">Breathe slowly. Come back when you're ready.</p>`;
  await say(phr("close"),GSAY[g]);await wait(2500);await say(PHR.exit1[0]);await wait(4000);await say(phr("exit2"));await wait(1500);await say(PHR.exit3[0]);
- if(alive()){med=null;$("mpa").disabled=$("mst").disabled=true;$("mgo").disabled=false}
+ if(alive()){ambStop();med=null;$("mpa").disabled=$("mst").disabled=true;$("mgo").disabled=false;if(SL)slideDone()}
 }catch(e){if(e!=="stop")throw e}}
-function medPause(){if(!med)return;med.paused=!med.paused;$("mpa").textContent=med.paused?"Resume":"Pause";if(med.paused){med.pz++;stopAudio()}}
-function medStop(){med=null;stopAudio();if($("mpa")){$("mpa").disabled=$("mst").disabled=true;$("mgo").disabled=false;$("mpa").textContent="Pause"}}
+function medPause(){if(!med)return;med.paused=!med.paused;$("mpa").textContent=$("slpa").textContent=med.paused?"Resume":"Pause";if(med.paused){med.pz++;stopAudio()}}
+function medStop(){med=null;stopAudio();ambStop();slideClose();if($("mpa")){$("mpa").disabled=$("mst").disabled=true;$("mgo").disabled=false;$("mpa").textContent="Pause"}}
+
+// ---------- AMBIENT SOUND: creek, breeze, birdsong. Real loops in audio/ambient/<kind>.mp3 are used if present ----------
+let AMB=null;
+function noiseBuf(ac,sec,brown){const n=ac.sampleRate*sec,b=ac.createBuffer(1,n,ac.sampleRate),d=b.getChannelData(0);let last=0;
+for(let i=0;i<n;i++){const w=Math.random()*2-1;if(brown){last=(last+.02*w)/1.02;d[i]=last*3.5}else d[i]=w}
+const f=Math.floor(ac.sampleRate*.5);for(let i=0;i<f;i++){const k=i/f;d[i]=d[i]*k+d[n-f+i]*(1-k)}return b} // smooth loop seam
+function loopSrc(ac,buf,to){const s=ac.createBufferSource();s.buffer=buf;s.loop=true;s.connect(to);s.start();return s}
+function ambSynth(ac,kind,out,A){const rnd=(a,b)=>a+Math.random()*(b-a);
+ const breeze=(lvl)=>{const g=ac.createGain();g.gain.value=lvl*.6;g.connect(out);const lp=ac.createBiquadFilter();lp.type="lowpass";lp.frequency.value=500;lp.connect(g);A.src.push(loopSrc(ac,noiseBuf(ac,6,true),lp));
+  const lg=ac.createGain();lg.gain.value=0;lg.connect(out);const hp=ac.createBiquadFilter();hp.type="highpass";hp.frequency.value=3500;hp.connect(lg);A.src.push(loopSrc(ac,noiseBuf(ac,5,false),hp));
+  const gust=()=>{if(!A.on)return;const t=ac.currentTime,k=rnd(.25,1),tau=rnd(1.2,3);g.gain.setTargetAtTime(lvl*k,t,tau);lp.frequency.setTargetAtTime(300+k*900,t,tau);lg.gain.setTargetAtTime(lvl*k*k*.035,t,tau);A.t.push(setTimeout(gust,rnd(2000,5500)))};gust()};
+ if(kind==="creek"){const body=ac.createBiquadFilter();body.type="lowpass";body.frequency.value=1100;const bg=ac.createGain();bg.gain.value=.35;body.connect(bg);bg.connect(out);
+  const wn=noiseBuf(ac,6,false);A.src.push(loopSrc(ac,noiseBuf(ac,6,true),body));
+  const bands=[0,1,2,3].map(()=>{const f=ac.createBiquadFilter();f.type="bandpass";f.Q.value=rnd(5,9);f.frequency.value=rnd(500,2400);const g=ac.createGain();g.gain.value=.22;f.connect(g);g.connect(out);A.src.push(loopSrc(ac,wn,f));return[f,g]});
+  const bub=()=>{if(!A.on)return;const[f,g]=bands[Math.floor(Math.random()*4)],t=ac.currentTime;f.frequency.setTargetAtTime(rnd(450,2600),t,.03);g.gain.setTargetAtTime(rnd(.08,.3),t,.05);A.t.push(setTimeout(bub,rnd(50,160)))};bub()}
+ if(kind==="breeze")breeze(1);
+ if(kind==="birds"){breeze(.45);const chirp=()=>{if(!A.on)return;const t0=ac.currentTime+.05,p=ac.createStereoPanner?ac.createStereoPanner():null,g=ac.createGain();g.gain.value=0;
+  if(p){p.pan.value=rnd(-.8,.8);g.connect(p);p.connect(out)}else g.connect(out);const o=ac.createOscillator();o.type="sine";o.connect(g);
+  const base=rnd(2300,4600),trill=Math.random()<.3,n=trill?Math.floor(rnd(8,16)):Math.floor(rnd(2,6)),vol=rnd(.05,.12);let t=t0;
+  for(let i=0;i<n;i++){const d=trill?rnd(.025,.04):rnd(.05,.13),up=Math.random()<.6,f0=base*rnd(.85,1.1),f1=f0*(up?rnd(1.2,1.6):rnd(.6,.85));
+   o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(f1,t+d);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.008);g.gain.linearRampToValueAtTime(0,t+d);t+=d+(trill?.012:rnd(.04,.11))}
+  o.start(t0);o.stop(t+.05);A.t.push(setTimeout(chirp,rnd(1200,6000)))};A.t.push(setTimeout(chirp,800))}}
+async function ambStart(kind,vol){ambStop(true);if(!kind||kind==="off")return;const ac=acx();if(!ac)return;
+ const out=ac.createGain();out.gain.value=0;out.connect(ac.destination);const A=AMB={kind,out,src:[],t:[],on:true};
+ let buf=null;if(location.protocol!=="file:"){try{buf=await abuf("ambient/"+kind+".mp3")}catch(e){}}if(AMB!==A)return;
+ if(buf)A.src.push(loopSrc(ac,buf,out));else ambSynth(ac,kind,out,A);out.gain.setTargetAtTime(vol,ac.currentTime,1.5)}
+function ambVol(v){if(AMB&&AC)AMB.out.gain.setTargetAtTime(v,AC.currentTime,.3)}
+function ambStop(now){const A=AMB;if(!A)return;AMB=null;A.on=false;A.t.forEach(clearTimeout);const end=()=>{A.src.forEach(s=>{try{s.stop()}catch(e){}});try{A.out.disconnect()}catch(e){}};
+ if(now||!AC)end();else{A.out.gain.setTargetAtTime(0,AC.currentTime,1.8);setTimeout(end,7000)}}
+
+// ---------- SLIDESHOW: painted calm scenes; the muscle on its bones with O and I; the rest of its group see-through ----------
+let SL=false,svgHome=null,slN=0,slOrder=[];
+function rng(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function ridge(r,y,amp,col,op){const a=[r()*6,r()*6,r()*6],f=[.002+r()*.002,.006+r()*.004,.02+r()*.01];let d=`M0 900L0 ${y}`;
+ for(let x=0;x<=1600;x+=16)d+=`L${x} ${(y+amp*(Math.sin(x*f[0]+a[0])*.6+Math.sin(x*f[1]+a[1])*.3+Math.sin(x*f[2]+a[2])*.1)).toFixed(1)}`;return`<path d="${d}L1600 900Z" fill="${col}" fill-opacity="${op||1}"/>`}
+const lg=(id,stops,v)=>`<linearGradient id="${id}" x1="0" y1="0" x2="${v?0:1}" y2="${v?1:0}">${stops.map(([o,c,a])=>`<stop offset="${o}" stop-color="${c}" stop-opacity="${a??1}"/>`).join("")}</linearGradient>`;
+const stars=(r,n,ymax)=>Array.from({length:n},()=>`<circle class="tw" style="animation-delay:${(r()*4).toFixed(1)}s" cx="${(r()*1600).toFixed(0)}" cy="${(r()*ymax).toFixed(0)}" r="${(r()*1.6+.4).toFixed(1)}" fill="#fff" fill-opacity="${(r()*.6+.3).toFixed(2)}"/>`).join("");
+const pine=(x,y,h,c)=>{const w=h*.36;let d="";for(let k=0;k<3;k++){const yy=y-h*k*.28,ww=w*(1-k*.22);d+=`M${x-ww} ${yy}L${x} ${yy-h*.52}L${x+ww} ${yy}Z`}return`<path d="${d}" fill="${c}"/><rect x="${x-3}" y="${y}" width="6" height="${h*.12}" fill="${c}"/>`};
+const SCENES=[
+ ["Misty mountains at dawn",r=>`<defs>${lg("a",[[0,"#9fb8d6"],[.55,"#f2cdb4"],[1,"#fde9d2"]],1)}<radialGradient id="sun"><stop offset="0" stop-color="#fff6e0"/><stop offset=".35" stop-color="#ffe9c4" stop-opacity=".9"/><stop offset="1" stop-color="#ffe9c4" stop-opacity="0"/></radialGradient></defs>
+  <rect width="1600" height="900" fill="url(#a)"/><circle cx="1060" cy="430" r="260" fill="url(#sun)"/>${ridge(r,470,70,"#c3cedb")}<ellipse class="drift" cx="700" cy="520" rx="900" ry="40" fill="#fff" fill-opacity=".35"/>${ridge(r,560,60,"#9fb0c4")}<ellipse class="drift" style="animation-duration:41s" cx="900" cy="610" rx="1000" ry="46" fill="#fff" fill-opacity=".3"/>${ridge(r,650,55,"#7a8ea8")}${ridge(r,760,45,"#56677f")}`],
+ ["Forest lake",r=>{let tr="";for(let x=-20;x<1640;x+=r()*38+18)tr+=pine(x,560,r()*110+70,"#3e5a4c");return`<defs>${lg("a",[[0,"#d6e8ee"],[1,"#f5eddd"]],1)}${lg("w",[[0,"#a9c8cc"],[1,"#6f939c"]],1)}<clipPath id="lk"><rect y="560" width="1600" height="340"/></clipPath></defs>
+  <rect width="1600" height="900" fill="url(#a)"/>${ridge(r,450,50,"#b7c9bf")}${ridge(r,500,40,"#93ab9f")}<g>${tr}</g><rect y="560" width="1600" height="340" fill="url(#w)"/>
+  <g clip-path="url(#lk)" opacity=".22" transform="translate(0 1120) scale(1 -1)">${tr}</g>${Array.from({length:14},()=>{const y=600+r()*280,x=r()*1500;return`<line class="drift" x1="${x}" x2="${x+60+r()*160}" y1="${y}" y2="${y}" stroke="#fff" stroke-opacity=".35" stroke-width="2"/>`}).join("")}`}],
+ ["Cairn by the sea",r=>{const st=[[420,800,150,48],[428,742,118,40],[414,690,92,34],[424,648,66,26],[418,616,44,18]];return`<defs>${lg("a",[[0,"#e6dcef"],[1,"#f8e1cf"]],1)}${lg("s",[[0,"#a3bccd"],[1,"#cfdde4"]],1)}<radialGradient id="st" cx=".4" cy=".3"><stop offset="0" stop-color="#c9cbcc"/><stop offset="1" stop-color="#7d8287"/></radialGradient></defs>
+  <rect width="1600" height="900" fill="url(#a)"/><rect y="560" width="1600" height="160" fill="url(#s)"/>${Array.from({length:10},()=>{const y=580+r()*120,x=r()*1500;return`<line class="drift" x1="${x}" x2="${x+80+r()*200}" y1="${y}" y2="${y}" stroke="#fff" stroke-opacity=".45" stroke-width="2"/>`}).join("")}
+  <path d="M0 720 Q400 690 800 712 T1600 705 L1600 900 L0 900Z" fill="#eadcc6"/><ellipse cx="430" cy="835" rx="190" ry="20" fill="#000" fill-opacity=".12"/>${st.map(([x,y,a,b])=>`<ellipse cx="${x}" cy="${y}" rx="${a}" ry="${b}" fill="url(#st)"/>`).join("")}`}],
+ ["Lanterns at dusk",r=>{let L="";for(let i=0;i<15;i++){const x=r()*1500+50,y=r()*480+150,s=r()*24+22;L+=`<g class="float" style="--d:${(r()*8+9).toFixed(1)}s;animation-delay:-${(r()*9).toFixed(1)}s"><circle cx="${x}" cy="${y}" r="${s*2.6}" fill="url(#glow)"/><rect x="${x-s/2}" y="${y-s*.65}" width="${s}" height="${s*1.3}" rx="${s*.2}" fill="url(#ln)"/><rect x="${x-s/2}" y="${y-s*.65}" width="${s}" height="${s*.14}" fill="#7a3b1c" fill-opacity=".6"/></g>`}
+  return`<defs>${lg("a",[[0,"#121a38"],[.6,"#3c2f5c"],[1,"#c97b60"]],1)}${lg("ln",[[0,"#ffe09a"],[1,"#ff9548"]],1)}<radialGradient id="glow"><stop offset="0" stop-color="#ffc56b" stop-opacity=".55"/><stop offset="1" stop-color="#ffc56b" stop-opacity="0"/></radialGradient></defs>
+  <rect width="1600" height="900" fill="url(#a)"/>${stars(r,140,420)}${ridge(r,700,25,"#241f3a")}<rect y="730" width="1600" height="170" fill="#1b1e33"/>${L}`}],
+ ["Zen garden",r=>{let rk="";for(let y=430;y<900;y+=20)rk+=`<line x1="0" x2="1600" y1="${y}" y2="${y}" stroke="#d6ccb8" stroke-width="3"/>`;let rings="";for(let k=1;k<9;k++)rings+=`<ellipse cx="1290" cy="650" rx="${120+k*34}" ry="${46+k*16}" fill="none" stroke="#d6ccb8" stroke-width="3"/>`;
+  let bb="";for(let i=0;i<6;i++){const x=60+i*58+r()*20,w=24+r()*12;bb+=`<rect x="${x}" y="-20" width="${w}" height="940" fill="#93b06e"/>`;for(let y=60+r()*80;y<900;y+=110+r()*40)bb+=`<rect x="${x-2}" y="${y}" width="${w+4}" height="6" rx="3" fill="#6f8b4e"/>`;for(let k=0;k<4;k++){const y=r()*700+40;bb+=`<ellipse cx="${x+w+50}" cy="${y}" rx="60" ry="9" transform="rotate(${-20-r()*30} ${x+w} ${y})" fill="#7e9d58"/>`}}
+  return`<rect width="1600" height="900" fill="#efe8da"/><rect y="0" width="1600" height="420" fill="#e3ead9"/>${rk}<ellipse cx="1290" cy="650" rx="420" ry="180" fill="#efe8da"/>${rings}<ellipse cx="1295" cy="672" rx="110" ry="26" fill="#000" fill-opacity=".1"/><ellipse cx="1290" cy="640" rx="100" ry="44" fill="#6e6a63"/><ellipse cx="1270" cy="625" rx="50" ry="14" fill="#fff" fill-opacity=".12"/>${bb}`}],
+ ["Northern lights",r=>`<defs>${lg("a",[[0,"#081129"],[1,"#1d2f57"]],1)}${lg("au",[[0,"#5cf2b0",0],[.3,"#5cf2b0",.8],[.7,"#43c6d9",.6],[1,"#9a7cf0",0]])}<filter id="bl"><feGaussianBlur stdDeviation="28"/></filter></defs>
+  <rect width="1600" height="900" fill="url(#a)"/>${stars(r,180,600)}<g filter="url(#bl)" opacity=".55"><path class="drift" style="animation-duration:47s" d="M-100 380 C300 200 600 420 900 260 S1400 300 1700 180 L1700 260 C1400 380 1100 360 900 400 S300 330 -100 470Z" fill="url(#au)"/><path class="drift" style="animation-duration:59s" d="M-100 300 C400 160 800 300 1100 200 S1500 240 1700 120 L1700 170 C1400 290 1000 330 700 320 S200 300 -100 360Z" fill="url(#au)" opacity=".6"/></g>
+  ${ridge(r,640,50,"#cfdbe9")}${ridge(r,720,40,"#a9bbd3")}${ridge(r,800,30,"#8296b6")}`],
+];
+function sceneSvg(i,seed){return`<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${SCENES[i][1](rng(seed))}</svg>`}
+function slideScene(){if(!slOrder.length)slOrder=shuf(SCENES.map((x,i)=>i));const i=slOrder.pop(),a=$("slbg"+(slN%2)),b=$("slbg"+((slN+1)%2));slN++;
+ b.innerHTML=sceneSvg(i,Math.floor(Math.random()*1e6));b.title=SCENES[i][0];b.classList.add("on");a.classList.remove("on")}
+function slideOpen(){if(SL)return;SL=true;svgHome={p:svg.parentNode,n:svg.nextSibling};if(layer==="m")setLayer("fb");$("slpanel").appendChild(svg);svg.classList.add("slv");
+ $("slide").hidden=false;document.body.classList.add("sliding");$("slname").innerHTML="";$("slsub").innerHTML='<span class="k">Settle in…</span>';slideScene();$("slpa").textContent="Pause"}
+function slideShow(m,i,n){slideScene();$("slname").innerHTML=NMH(m);$("slsub").innerHTML=`${respell(m)}${NK[m.id]?" · “"+NK[m.id].n+"”":""} · ${i+1} of ${n}`}
+function slideEnd(g){slideScene();$("slname").textContent="All of "+GSAY[g];$("slsub").textContent="Breathe slowly."}
+function slideDone(){$("slsub").innerHTML='Take your time. <button id="sldone" class="p">Close</button>';$("sldone").onclick=()=>medStop()}
+function slideClose(){if(!SL)return;SL=false;svg.classList.remove("slv");svgHome.p.insertBefore(svg,svgHome.n);$("slide").hidden=true;document.body.classList.remove("sliding");
+ if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});if(med&&!med.done)return;const g=+$("mg").value;setTimeout(()=>focus(g,true),50)}
 function setMode(m){mode=m;document.body.dataset.mode=m;if(m!=="learn"&&document.body.dataset.ready)requestAnimationFrame(()=>$("wrap").scrollIntoView({block:"start",behavior:"smooth"}));document.querySelectorAll("#modes>button").forEach(b=>b.classList.toggle("on",b.dataset.m===m));$("po").style.display=m==="practice"?"flex":"none";$("so").style.display=m==="speed"?"flex":"none";$("pq").style.display=m==="practice"?"":"none";$("spc").style.display=m==="speed"?"":"none";$("med").style.display=m==="med"?"":"none";if(m!=="med")medStop();else medPanel();$("info").style.display=m==="learn"?"":"none";clearMarks();clearInterval(spT);sp=null;out();
 if(m==="practice"){score=[0,0];streak=0;q=null;ask()}if(m==="speed")$("spc").innerHTML='<b>Speed run.</b> Pick the whole body or one group, and a time limit, then press Start. Skip any muscle you don’t know.'}
 $("modes").addEventListener("click",e=>{const b=e.target.closest("[data-m]");if(b)setMode(b.dataset.m)});$("qt").onchange=()=>{if(mode==="practice")ask()};
 setLayer(layer);setDepth(1);bdg();document.body.dataset.ready=1;
+$("slx").onclick=()=>medStop();$("slpa").onclick=()=>medPause();$("slfs").onclick=()=>{const e=$("slide");if(document.fullscreenElement)document.exitFullscreen();else if(e.requestFullscreen)e.requestFullscreen().then(()=>{if(med)focus(+$("mg").value,true)}).catch(()=>{})};
+document.addEventListener("keydown",e=>{if(SL&&e.key==="Escape"&&!document.fullscreenElement)medStop();if(SL&&e.key===" "){e.preventDefault();medPause()}},true);
 </script>
 </body>
 </html>
